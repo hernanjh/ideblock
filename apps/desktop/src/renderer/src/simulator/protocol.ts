@@ -1,7 +1,12 @@
-import type { ComponentInput, ComponentInstance, SimulationFrame } from '@ideblock/simulator';
+import type {
+  ComponentInput,
+  ComponentInstance,
+  McuName,
+  SimulationFrame,
+} from '@ideblock/simulator';
 
 export type WorkerRequest =
-  | { type: 'start'; hex: string; components: ComponentInstance[] }
+  | { type: 'start'; hex: string; components: ComponentInstance[]; mcu: McuName }
   | { type: 'input'; id: string; input: ComponentInput }
   | { type: 'serial'; text: string }
   | { type: 'pause' }

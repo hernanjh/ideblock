@@ -1,5 +1,5 @@
 import { getBoard } from '@ideblock/boards';
-import type { ComponentInput, ComponentState } from '@ideblock/simulator';
+import { isSimulatedMcu, type ComponentInput, type ComponentState } from '@ideblock/simulator';
 import { create } from 'zustand';
 import { generateSimulationSketch } from '../blocks/simulation-sketch';
 import { librariesForCode } from '../build/libraries';
@@ -84,11 +84,10 @@ function launch(firmware: string): void {
     });
   };
   const { circuit, boardId } = useProjectStore.getState();
-  post({
-    type: 'start',
-    hex: firmware,
-    components: simulationParts(circuit, getBoard(boardId)),
-  });
+  const board = getBoard(boardId);
+  const mcu = board.simulation?.mcu;
+  if (!isSimulatedMcu(mcu)) return;
+  post({ type: 'start', hex: firmware, components: simulationParts(circuit, board), mcu });
   for (const [id, input] of Object.entries(useSimulationStore.getState().inputs)) {
     post({ type: 'input', id, input });
   }
@@ -109,7 +108,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
     get().stop();
     const project = useProjectStore.getState();
     const board = getBoard(project.boardId);
-    if (board.simulation?.mcu !== 'atmega328p') {
+    if (!isSimulatedMcu(board.simulation?.mcu)) {
       set({ status: 'unsupported' });
       return;
     }
