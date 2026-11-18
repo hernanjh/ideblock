@@ -164,6 +164,7 @@ export interface InvokeContract {
   'serial:close': { args: []; result: void };
   'serial:write': { args: [text: string]; result: void };
   'app:open-external': { args: [url: string]; result: void };
+  'app:focus-main': { args: []; result: void };
   'simulator:detach': { args: []; result: void };
   'simulator:attach': { args: []; result: void };
   'simulator:sync': { args: [snapshot: SimulatorSnapshot]; result: void };
@@ -210,6 +211,7 @@ const invokeChannelSet: Record<InvokeChannel, true> = {
   'serial:close': true,
   'serial:write': true,
   'app:open-external': true,
+  'app:focus-main': true,
   'simulator:detach': true,
   'simulator:attach': true,
   'simulator:sync': true,
