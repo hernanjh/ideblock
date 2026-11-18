@@ -3,19 +3,38 @@ import { z } from 'zod';
 export const LANGUAGE_PREFERENCES = ['system', 'en', 'es'] as const;
 export const THEMES = ['system', 'light', 'dark', 'high-contrast'] as const;
 
+export const EDITOR_VIEWS = ['blocks', 'split', 'code'] as const;
+
 export const FONT_SCALE_MIN = 0.8;
 export const FONT_SCALE_MAX = 1.6;
 export const FONT_SCALE_STEP = 0.1;
+
+/** Panel sizes are stored as fractions of the space they share. */
+export const PANEL_LIMITS = {
+  editorSplit: { min: 0.2, max: 0.8 },
+  simulatorSize: { min: 0.2, max: 0.6 },
+  consoleSize: { min: 0.15, max: 0.6 },
+} as const;
+
+const fraction = (limits: { min: number; max: number }) =>
+  z.number().min(limits.min).max(limits.max);
 
 export const settingsSchema = z.object({
   language: z.enum(LANGUAGE_PREFERENCES),
   theme: z.enum(THEMES),
   fontScale: z.number().min(FONT_SCALE_MIN).max(FONT_SCALE_MAX),
+  editorView: z.enum(EDITOR_VIEWS),
+  simulatorVisible: z.boolean(),
+  consoleVisible: z.boolean(),
+  editorSplit: fraction(PANEL_LIMITS.editorSplit),
+  simulatorSize: fraction(PANEL_LIMITS.simulatorSize),
+  consoleSize: fraction(PANEL_LIMITS.consoleSize),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
 export type LanguagePreference = Settings['language'];
 export type Theme = Settings['theme'];
+export type EditorView = Settings['editorView'];
 
 export const settingsPatchSchema = settingsSchema.partial();
 export type SettingsPatch = z.infer<typeof settingsPatchSchema>;
@@ -24,6 +43,12 @@ export const DEFAULT_SETTINGS: Settings = {
   language: 'system',
   theme: 'system',
   fontScale: 1,
+  editorView: 'blocks',
+  simulatorVisible: true,
+  consoleVisible: false,
+  editorSplit: 0.5,
+  simulatorSize: 0.35,
+  consoleSize: 0.3,
 };
 
 /**

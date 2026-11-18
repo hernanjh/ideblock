@@ -31,3 +31,18 @@ describe('clampFontScale', () => {
     expect(clampFontScale(9)).toBe(1.6);
   });
 });
+
+describe('layout settings', () => {
+  it('accepts every editor view', () => {
+    for (const editorView of ['blocks', 'split', 'code']) {
+      expect(sanitizeSettings({ editorView }).editorView).toBe(editorView);
+    }
+  });
+
+  it('rejects panel sizes outside their limits', () => {
+    const settings = sanitizeSettings({ editorSplit: 0.95, simulatorSize: 0.1, consoleSize: 0.3 });
+    expect(settings.editorSplit).toBe(DEFAULT_SETTINGS.editorSplit);
+    expect(settings.simulatorSize).toBe(DEFAULT_SETTINGS.simulatorSize);
+    expect(settings.consoleSize).toBe(0.3);
+  });
+});
