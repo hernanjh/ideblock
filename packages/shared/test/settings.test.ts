@@ -33,10 +33,12 @@ describe('clampFontScale', () => {
 });
 
 describe('layout settings', () => {
-  it('accepts every editor view', () => {
-    for (const editorView of ['blocks', 'split', 'code']) {
-      expect(sanitizeSettings({ editorView }).editorView).toBe(editorView);
-    }
+  it('shows the blocks panel by default and lets each editor panel be toggled', () => {
+    expect(DEFAULT_SETTINGS.blocksVisible).toBe(true);
+    expect(sanitizeSettings({ blocksVisible: false, codeVisible: true })).toMatchObject({
+      blocksVisible: false,
+      codeVisible: true,
+    });
   });
 
   it('rejects panel sizes outside their limits', () => {

@@ -3,7 +3,6 @@ import { z } from 'zod';
 export const LANGUAGE_PREFERENCES = ['system', 'en', 'es'] as const;
 export const THEMES = ['system', 'light', 'dark', 'high-contrast'] as const;
 
-export const EDITOR_VIEWS = ['blocks', 'split', 'code'] as const;
 export const BLOCK_LEVELS = ['beginner', 'advanced'] as const;
 
 export const FONT_SCALE_MIN = 0.8;
@@ -24,7 +23,8 @@ export const settingsSchema = z.object({
   language: z.enum(LANGUAGE_PREFERENCES),
   theme: z.enum(THEMES),
   fontScale: z.number().min(FONT_SCALE_MIN).max(FONT_SCALE_MAX),
-  editorView: z.enum(EDITOR_VIEWS),
+  blocksVisible: z.boolean(),
+  codeVisible: z.boolean(),
   blockLevel: z.enum(BLOCK_LEVELS),
   simulatorVisible: z.boolean(),
   consoleVisible: z.boolean(),
@@ -36,7 +36,6 @@ export const settingsSchema = z.object({
 export type Settings = z.infer<typeof settingsSchema>;
 export type LanguagePreference = Settings['language'];
 export type Theme = Settings['theme'];
-export type EditorView = Settings['editorView'];
 export type BlockLevel = Settings['blockLevel'];
 
 export const settingsPatchSchema = settingsSchema.partial();
@@ -46,7 +45,8 @@ export const DEFAULT_SETTINGS: Settings = {
   language: 'system',
   theme: 'system',
   fontScale: 1,
-  editorView: 'blocks',
+  blocksVisible: true,
+  codeVisible: false,
   blockLevel: 'beginner',
   simulatorVisible: true,
   consoleVisible: false,
