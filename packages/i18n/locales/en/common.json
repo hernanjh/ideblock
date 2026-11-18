@@ -1,0 +1,37 @@
+{
+  "app": {
+    "name": "IdeBlock",
+    "tagline": "Program your boards with blocks or code"
+  },
+  "toolbar": {
+    "label": "Main toolbar",
+    "language": "Language",
+    "theme": "Theme",
+    "fontSize": "Text size",
+    "decreaseFont": "Decrease text size",
+    "decreaseFontShort": "A−",
+    "increaseFont": "Increase text size",
+    "increaseFontShort": "A+",
+    "resetFont": "Reset text size"
+  },
+  "language": {
+    "system": "System language",
+    "en": "English",
+    "es": "Español"
+  },
+  "theme": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "high-contrast": "High contrast"
+  },
+  "panels": {
+    "blocks": "Blocks",
+    "code": "Code",
+    "simulator": "Simulator",
+    "comingSoon": "Coming soon"
+  },
+  "status": {
+    "version": "Version {{version}}"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "app": {
+    "name": "IdeBlock",
+    "tagline": "Programá tus placas con bloques o con código"
+  },
+  "toolbar": {
+    "label": "Barra de herramientas principal",
+    "language": "Idioma",
+    "theme": "Tema",
+    "fontSize": "Tamaño del texto",
+    "decreaseFont": "Achicar el texto",
+    "decreaseFontShort": "A−",
+    "increaseFont": "Agrandar el texto",
+    "increaseFontShort": "A+",
+    "resetFont": "Restablecer el tamaño del texto"
+  },
+  "language": {
+    "system": "Idioma del sistema",
+    "en": "English",
+    "es": "Español"
+  },
+  "theme": {
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "high-contrast": "Alto contraste"
+  },
+  "panels": {
+    "blocks": "Bloques",
+    "code": "Código",
+    "simulator": "Simulador",
+    "comingSoon": "Próximamente"
+  },
+  "status": {
+    "version": "Versión {{version}}"
+  }
+}
