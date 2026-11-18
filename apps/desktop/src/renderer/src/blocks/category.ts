@@ -6,6 +6,7 @@ import {
   Clock,
   GitBranch,
   Lightbulb,
+  Monitor,
   Radar,
   Repeat,
   Search,
@@ -29,6 +30,7 @@ const ICONS: Record<string, LucideIcon> = {
   pins: CircuitBoard,
   variables: Box,
   functions: Sigma,
+  display: Monitor,
   results: Search,
 };
 

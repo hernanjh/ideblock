@@ -7,9 +7,11 @@ interface WokwiElementProps {
   properties: Record<string, unknown>;
   events?: Record<string, (event: Event) => void>;
   label?: string;
+  /** For state that elements take through methods rather than properties. */
+  apply?: (element: HTMLElement) => void;
 }
 
-export function WokwiElement({ tag, properties, events, label }: WokwiElementProps) {
+export function WokwiElement({ tag, properties, events, label, apply }: WokwiElementProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<HTMLElement | null>(null);
 
@@ -29,6 +31,7 @@ export function WokwiElement({ tag, properties, events, label }: WokwiElementPro
     const element = elementRef.current as (HTMLElement & Record<string, unknown>) | null;
     if (!element) return;
     for (const [key, value] of Object.entries(properties)) element[key] = value;
+    apply?.(element);
   });
 
   useEffect(() => {

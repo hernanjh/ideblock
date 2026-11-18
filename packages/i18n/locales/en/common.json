@@ -270,13 +270,22 @@
     "photoresistor": "Light sensor (LDR)",
     "servo": "Servo motor",
     "buzzer": "Buzzer",
-    "hc-sr04": "Ultrasonic sensor"
+    "hc-sr04": "Ultrasonic sensor",
+    "rgb-led": "RGB LED",
+    "lcd1602": "LCD 16x2 screen (I2C)",
+    "neopixel-ring": "NeoPixel ring"
   },
   "componentPins": {
     "anode": "Pin",
     "signal": "Pin",
     "trig": "Trig pin",
-    "echo": "Echo pin"
+    "echo": "Echo pin",
+    "red": "Red pin",
+    "green": "Green pin",
+    "blue": "Blue pin",
+    "sda": "SDA pin",
+    "scl": "SCL pin",
+    "din": "Data pin (DIN)"
   },
   "menu": {
     "label": "Menu",
@@ -345,7 +354,10 @@
     "photoresistor": "Measures light. analogRead() returns a higher value when there is more light.",
     "servo": "A motor that turns to an angle from 0 to 180 degrees. It needs a PWM pin.",
     "buzzer": "Makes sounds. The tone() function chooses the note.",
-    "hc-sr04": "Measures distance with ultrasound, from 2 to 400 cm. It uses one pin to send the pulse (trig) and another to hear the echo."
+    "hc-sr04": "Measures distance with ultrasound, from 2 to 400 cm. It uses one pin to send the pulse (trig) and another to hear the echo.",
+    "rgb-led": "Three LEDs in one: red, green and blue. Mixing their brightness with analogWrite() makes any colour.",
+    "lcd1602": "A screen with 2 rows of 16 characters. It uses the I2C bus, so it only needs the SDA and SCL pins plus power.",
+    "neopixel-ring": "A ring of colour LEDs controlled through a single data pin. Each LED can have its own colour."
   },
   "languageShort": {
     "system": "Auto",

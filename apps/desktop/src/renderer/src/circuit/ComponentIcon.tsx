@@ -56,6 +56,40 @@ export function ComponentIcon({ type, size = 34 }: { type: string; size?: number
           <circle cx="24" cy="17" r="6" fill="#ccc" stroke="#555" />
         </svg>
       );
+    case 'rgb-led':
+      return (
+        <svg {...common}>
+          <defs>
+            <linearGradient id="rgb-icon">
+              <stop offset="0" stopColor="#f33" />
+              <stop offset="0.5" stopColor="#3c3" />
+              <stop offset="1" stopColor="#36f" />
+            </linearGradient>
+          </defs>
+          <path d="M9 22 v-10 a8 8 0 0 1 16 0 v10z" fill="url(#rgb-icon)" />
+          <line x1="11" y1="22" x2="11" y2="33" stroke="#888" strokeWidth="1.5" />
+          <line x1="15" y1="22" x2="15" y2="33" stroke="#888" strokeWidth="1.5" />
+          <line x1="19" y1="22" x2="19" y2="33" stroke="#888" strokeWidth="1.5" />
+          <line x1="23" y1="22" x2="23" y2="33" stroke="#888" strokeWidth="1.5" />
+        </svg>
+      );
+    case 'lcd1602':
+      return (
+        <svg {...common}>
+          <rect x="1" y="8" width="32" height="18" rx="2" fill="#2b6d2b" />
+          <rect x="4" y="11" width="26" height="12" fill="#9cd34a" />
+        </svg>
+      );
+    case 'neopixel-ring':
+      return (
+        <svg {...common}>
+          <circle cx="17" cy="17" r="12" fill="none" stroke="#333" strokeWidth="5" />
+          <circle cx="17" cy="5" r="2.5" fill="#f33" />
+          <circle cx="29" cy="17" r="2.5" fill="#3c3" />
+          <circle cx="17" cy="29" r="2.5" fill="#36f" />
+          <circle cx="5" cy="17" r="2.5" fill="#fc0" />
+        </svg>
+      );
     default:
       return <svg {...common} />;
   }

@@ -162,7 +162,7 @@ export function CircuitScene({
           key: `${item.id}-${signal}`,
           path: wirePath(target, from),
           colour,
-          ...(item.type === 'led' ? { resistorAt: wireMidpoint(target, from) } : {}),
+          ...(shape.resistors ? { resistorAt: wireMidpoint(target, from) } : {}),
           label: {
             at: {
               x: from.x + labelOffset[from.side]!.x,
@@ -275,6 +275,9 @@ export function CircuitScene({
                 tag={shape.tag}
                 label={names[item.id] ?? item.type}
                 properties={visual.properties(states[item.id], inputs[item.id], item.props)}
+                {...(visual.apply
+                  ? { apply: (element: HTMLElement) => visual.apply!(element, states[item.id]) }
+                  : {})}
                 {...(events && running ? { events } : {})}
               />
               <span className="scene__name">{names[item.id]}</span>

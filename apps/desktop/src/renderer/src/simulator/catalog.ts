@@ -11,6 +11,11 @@ interface VisualDefinition {
     input: ComponentInput | undefined,
     props: Record<string, unknown> | undefined,
   ) => Record<string, unknown>;
+  apply?: (element: HTMLElement, state: ComponentState | undefined) => void;
+}
+
+interface LedRingElement extends HTMLElement {
+  setPixel(pixel: number, colour: { r: number; g: number; b: number }): void;
 }
 
 /** How each simulated component is drawn and controlled in the interface. */
@@ -50,6 +55,37 @@ export const VISUALS: Record<string, VisualDefinition> = {
     tag: 'wokwi-buzzer',
     control: 'none',
     properties: (state) => ({ hasSignal: Number(state?.['frequency'] ?? 0) > 0 }),
+  },
+  'rgb-led': {
+    tag: 'wokwi-rgb-led',
+    control: 'none',
+    properties: (state) => ({
+      ledRed: Number(state?.['red'] ?? 0),
+      ledGreen: Number(state?.['green'] ?? 0),
+      ledBlue: Number(state?.['blue'] ?? 0),
+    }),
+  },
+  lcd1602: {
+    tag: 'wokwi-lcd1602',
+    control: 'none',
+    properties: (state) => ({
+      pins: 'i2c',
+      text: String(state?.['text'] ?? ''),
+      backlight: Boolean(state?.['backlight'] ?? true),
+    }),
+  },
+  'neopixel-ring': {
+    tag: 'wokwi-led-ring',
+    control: 'none',
+    properties: (_state, _input, props) => ({ pixels: Number(props?.['pixels'] ?? 8) }),
+    apply: (element, state) => {
+      const ring = element as LedRingElement;
+      const colours = String(state?.['colours'] ?? '').split(';');
+      colours.forEach((colour, pixel) => {
+        const [r = 0, g = 0, b = 0] = colour.split(',').map(Number);
+        ring.setPixel?.(pixel, { r: r / 255, g: g / 255, b: b / 255 });
+      });
+    },
   },
   'hc-sr04': {
     tag: 'wokwi-hc-sr04',

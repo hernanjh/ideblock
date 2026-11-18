@@ -21,6 +21,8 @@ export interface ComponentShape {
   signals: Record<string, string>;
   ground: string[];
   supply: string[];
+  /** Draw a series resistor on each signal wire, as LEDs need one. */
+  resistors?: boolean;
 }
 
 const MM = 3.7795;
@@ -35,6 +37,49 @@ export const SHAPES: Record<string, ComponentShape> = {
     signals: { anode: 'A' },
     ground: ['C'],
     supply: [],
+    resistors: true,
+  },
+  'rgb-led': {
+    tag: 'wokwi-rgb-led',
+    width: 42.1,
+    height: 72.6,
+    pins: {
+      R: { x: 8.5, y: 44 },
+      COM: { x: 18, y: 54 },
+      G: { x: 26.4, y: 44 },
+      B: { x: 35.7, y: 44 },
+    },
+    signals: { red: 'R', green: 'G', blue: 'B' },
+    ground: ['COM'],
+    supply: [],
+    resistors: true,
+  },
+  lcd1602: {
+    tag: 'wokwi-lcd1602',
+    width: 302.4,
+    height: 136.1,
+    pins: {
+      GND: { x: 4, y: 32 },
+      VCC: { x: 4, y: 41.5 },
+      SDA: { x: 4, y: 51 },
+      SCL: { x: 4, y: 60.5 },
+    },
+    signals: { sda: 'SDA', scl: 'SCL' },
+    ground: ['GND'],
+    supply: ['VCC'],
+  },
+  'neopixel-ring': {
+    tag: 'wokwi-led-ring',
+    width: 93.5,
+    height: 104.8,
+    pins: {
+      GND: { x: 32.3, y: 104.8 },
+      VCC: { x: 41.9, y: 104.8 },
+      DIN: { x: 51.5, y: 104.8 },
+    },
+    signals: { din: 'DIN' },
+    ground: ['GND'],
+    supply: ['VCC'],
   },
   pushbutton: {
     tag: 'wokwi-pushbutton',

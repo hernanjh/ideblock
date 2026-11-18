@@ -270,13 +270,22 @@
     "photoresistor": "Sensor de luz (LDR)",
     "servo": "Servomotor",
     "buzzer": "Buzzer",
-    "hc-sr04": "Sensor ultrasónico"
+    "hc-sr04": "Sensor ultrasónico",
+    "rgb-led": "LED RGB",
+    "lcd1602": "Pantalla LCD 16x2 (I2C)",
+    "neopixel-ring": "Anillo NeoPixel"
   },
   "componentPins": {
     "anode": "Pin",
     "signal": "Pin",
     "trig": "Pin trig",
-    "echo": "Pin echo"
+    "echo": "Pin echo",
+    "red": "Pin rojo",
+    "green": "Pin verde",
+    "blue": "Pin azul",
+    "sda": "Pin SDA",
+    "scl": "Pin SCL",
+    "din": "Pin de datos (DIN)"
   },
   "menu": {
     "label": "Menú",
@@ -345,7 +354,10 @@
     "photoresistor": "Mide la luz. analogRead() devuelve un valor más alto cuando hay más luz.",
     "servo": "Un motor que gira a un ángulo entre 0 y 180 grados. Necesita un pin PWM.",
     "buzzer": "Hace sonidos. La función tone() elige la nota.",
-    "hc-sr04": "Mide distancias con ultrasonido, de 2 a 400 cm. Usa un pin para enviar el pulso (trig) y otro para escuchar el eco (echo)."
+    "hc-sr04": "Mide distancias con ultrasonido, de 2 a 400 cm. Usa un pin para enviar el pulso (trig) y otro para escuchar el eco (echo).",
+    "rgb-led": "Tres LED en uno: rojo, verde y azul. Mezclando su brillo con analogWrite() se forma cualquier color.",
+    "lcd1602": "Una pantalla de 2 filas de 16 caracteres. Usa el bus I2C, así que solo necesita los pines SDA y SCL y la alimentación.",
+    "neopixel-ring": "Un anillo de LED de colores controlado con un solo pin de datos. Cada LED puede tener su propio color."
   },
   "languageShort": {
     "system": "Auto",

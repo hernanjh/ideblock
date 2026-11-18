@@ -1,5 +1,5 @@
 import { getBoard } from '@ideblock/boards';
-import { pinsFor } from '@ideblock/blocks';
+import { pinsFor, type PinKind } from '@ideblock/blocks';
 import { COMPONENTS, findComponent } from '@ideblock/simulator';
 import {
   Maximize,
@@ -233,7 +233,7 @@ interface PropertiesProps {
   name: string;
   boardName: string;
   supplyLabel: string;
-  pinOptions: (kind: 'output' | 'digital' | 'analog' | 'pwm') => string[];
+  pinOptions: (kind: PinKind) => string[];
   onChange: (change: (item: CircuitItem) => CircuitItem) => void;
   onRemove: (id: string) => void;
   onClose: () => void;
