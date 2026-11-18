@@ -472,15 +472,31 @@ export function CircuitScene({
                 }
               : item.type === 'potentiometer'
                 ? {
-                    input: (event: Event) =>
-                      onInput?.(item.id, { value: Number((event as CustomEvent).detail) }),
+                    // The element's inner range control also fires "input" events
+                    // without a detail, so the value is read from the element.
+                    input: (event: Event) => {
+                      const value = Number((event.currentTarget as { value?: unknown }).value);
+                      if (Number.isFinite(value)) onInput?.(item.id, { value });
+                    },
                   }
                 : item.type === 'slide-switch'
                   ? {
                       input: (event: Event) =>
-                        onInput?.(item.id, { on: Number((event as CustomEvent).detail) === 1 }),
+                        onInput?.(item.id, {
+                          on: Number((event.currentTarget as { value?: unknown }).value) === 1,
+                        }),
                     }
                   : undefined;
+          // Parts that are operated rather than moved: while the program runs,
+          // and always where the drawing cannot be edited, a press on them works
+          // the part instead of selecting or dragging it.
+          const operable =
+            visual.control !== 'none' &&
+            visual.control !== 'distance' &&
+            visual.control !== 'temperature' &&
+            visual.control !== 'joystick';
+          const interactive = operable && (running || !editable);
+          const current = inputs[item.id];
           const element = (
             <WokwiElement
               tag={shape.tag}
@@ -489,7 +505,7 @@ export function CircuitScene({
               {...(visual.apply
                 ? { apply: (target: HTMLElement) => visual.apply!(target, state) }
                 : {})}
-              {...(events && running ? { events } : {})}
+              {...(events && interactive ? { events } : {})}
             />
           );
           return (
@@ -505,9 +521,23 @@ export function CircuitScene({
               data-testid={`scene-item-${item.id}`}
               data-state={states[item.id] ? JSON.stringify(states[item.id]) : undefined}
               data-burned={isFried || undefined}
-              onPointerDown={(event) => startDrag(event, item.id, position)}
+              data-interactive={interactive || undefined}
+              onPointerDown={(event) => {
+                if (!interactive) {
+                  startDrag(event, item.id, position);
+                  return;
+                }
+                // Elements without their own controls are worked here.
+                if (item.type === 'tilt-switch') onInput?.(item.id, { on: !current?.['on'] });
+                if (item.type === 'pir-sensor') onInput?.(item.id, { motion: true });
+              }}
               onPointerMove={(event) => moveDrag(event, item.id)}
-              onPointerUp={() => endDrag(item.id)}
+              onPointerUp={() => {
+                if (interactive && item.type === 'pir-sensor') {
+                  onInput?.(item.id, { motion: false });
+                }
+                endDrag(item.id);
+              }}
               onPointerCancel={() => endDrag(item.id)}
             >
               {shape.rotation ? (

@@ -1536,6 +1536,10 @@ button:disabled {
   z-index: 2;
 }
 
+.scene__item[data-interactive] {
+  cursor: pointer;
+}
+
 .scene__item--selected {
   outline: 2px dashed #5b6cff;
   outline-offset: 6px;
