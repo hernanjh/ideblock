@@ -30,6 +30,15 @@ export function circuitComponents(circuit: CircuitDocument): CircuitItem[] {
   });
 }
 
+/** Parts that only exist in hand-wired circuits and are not simulated on their own. */
+export const PASSIVE_PARTS = new Set(['breadboard', 'resistor']);
+
+export type WiringMode = 'auto' | 'manual';
+
+/** Automatic wiring draws wires from the pins chosen per component; manual wiring uses drawn wires. */
+export const wiringMode = (circuit: CircuitDocument): WiringMode =>
+  circuit['wiring'] === 'manual' ? 'manual' : 'auto';
+
 /** Picks free pins for a new component, preferring the usual ones from examples. */
 export function newComponent(
   type: string,
@@ -37,10 +46,10 @@ export function newComponent(
   board: BoardDefinition,
 ): ComponentInstance | null {
   const definition = findComponent(type);
-  if (!definition) return null;
+  if (!definition && !PASSIVE_PARTS.has(type)) return null;
   const used = new Set(circuitComponents(circuit).flatMap((item) => Object.values(item.pins)));
   const pins: Record<string, string> = {};
-  for (const spec of definition.pins) {
+  for (const spec of definition?.pins ?? []) {
     const available = pinsFor(board, spec.kind).filter((pin) => !used.has(pin));
     const pin = available.includes(spec.defaultPin) ? spec.defaultPin : available[0];
     if (pin === undefined) return null;

@@ -3,7 +3,7 @@ import type { ComponentInput, ComponentState } from '@ideblock/simulator';
 import { create } from 'zustand';
 import { generateSimulationSketch } from '../blocks/simulation-sketch';
 import { librariesForCode } from '../build/libraries';
-import { circuitComponents } from '../simulator/circuit';
+import { simulatedComponents } from '../circuit/model';
 import type { WorkerRequest, WorkerResponse } from '../simulator/protocol';
 import SimulationWorker from '../simulator/sim.worker?worker';
 import { useBuildStore } from './build';
@@ -63,8 +63,12 @@ function launch(firmware: string): void {
       activeBlockId: frame.trace === null ? null : (tracedBlocks[frame.trace] ?? null),
     });
   };
-  const { circuit } = useProjectStore.getState();
-  post({ type: 'start', hex: firmware, components: circuitComponents(circuit) });
+  const { circuit, boardId } = useProjectStore.getState();
+  post({
+    type: 'start',
+    hex: firmware,
+    components: simulatedComponents(circuit, getBoard(boardId)),
+  });
   for (const [id, input] of Object.entries(useSimulationStore.getState().inputs)) {
     post({ type: 'input', id, input });
   }
