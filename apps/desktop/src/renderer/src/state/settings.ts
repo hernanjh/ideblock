@@ -14,6 +14,8 @@ interface SettingsState {
   appInfo: AppInfo | null;
   hydrate: (settings: Settings, appInfo: AppInfo) => void;
   receive: (settings: Settings) => void;
+  /** Applies a change locally without saving it, e.g. while dragging a splitter. */
+  preview: (patch: SettingsPatch) => void;
   update: (patch: SettingsPatch) => Promise<void>;
   changeFontScale: (direction: -1 | 0 | 1) => Promise<void>;
 }
@@ -23,8 +25,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   appInfo: null,
   hydrate: (settings, appInfo) => set({ settings, appInfo }),
   receive: (settings) => set({ settings }),
+  preview: (patch) => set({ settings: sanitizeSettings({ ...get().settings, ...patch }) }),
   update: async (patch) => {
-    set({ settings: sanitizeSettings({ ...get().settings, ...patch }) });
+    get().preview(patch);
     const confirmed = await window.ideblock.invoke('settings:update', patch);
     set({ settings: confirmed });
   },

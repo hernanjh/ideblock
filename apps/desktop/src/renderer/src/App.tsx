@@ -2,9 +2,10 @@ import { resolveLanguage } from '@ideblock/i18n';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { applyAppearance } from './appearance';
-import { Panel } from './components/Panel';
 import { Toolbar } from './components/Toolbar';
-import { useFontScaleShortcuts } from './hooks/useFontScaleShortcuts';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { PanelPlaceholder } from './layout/Panel';
+import { Workspace } from './layout/Workspace';
 import { useSettingsStore } from './state/settings';
 
 export function App() {
@@ -25,16 +26,17 @@ export function App() {
     document.title = t('app.name');
   }, [t]);
 
-  useFontScaleShortcuts();
+  useKeyboardShortcuts();
 
   return (
     <div className="app">
       <Toolbar />
-      <main className="workspace">
-        <Panel id="blocks" title={t('panels.blocks')} />
-        <Panel id="code" title={t('panels.code')} />
-        <Panel id="simulator" title={t('panels.simulator')} />
-      </main>
+      <Workspace
+        blocks={<PanelPlaceholder />}
+        code={<PanelPlaceholder />}
+        simulator={<PanelPlaceholder />}
+        console={<PanelPlaceholder />}
+      />
       <footer className="status-bar">
         <span>{t('app.tagline')}</span>
         {appInfo && (

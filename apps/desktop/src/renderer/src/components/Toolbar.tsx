@@ -1,92 +1,75 @@
-import {
-  FONT_SCALE_MAX,
-  FONT_SCALE_MIN,
-  LANGUAGE_PREFERENCES,
-  THEMES,
-  type LanguagePreference,
-  type Theme,
-} from '@ideblock/shared';
+import { Cpu, Settings, Terminal } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useShortcutHint } from '../hooks/useShortcutHint';
 import { useSettingsStore } from '../state/settings';
+import { SettingsDialog } from './SettingsDialog';
+import { ViewSwitcher } from './ViewSwitcher';
 
 export function Toolbar() {
   const { t } = useTranslation();
+  const hint = useShortcutHint();
   const settings = useSettingsStore((state) => state.settings);
   const update = useSettingsStore((state) => state.update);
-  const changeFontScale = useSettingsStore((state) => state.changeFontScale);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const percent = Math.round(settings.fontScale * 100);
+  const simulatorLabel = t('panels.simulator');
+  const consoleLabel = t('panels.console');
 
   return (
     <header className="toolbar" role="toolbar" aria-label={t('toolbar.label')}>
       <h1 className="toolbar__brand">{t('app.name')}</h1>
 
       <div className="toolbar__group">
-        <label className="toolbar__field">
-          <span>{t('toolbar.language')}</span>
-          <select
-            data-testid="language-select"
-            value={settings.language}
-            onChange={(event) =>
-              void update({ language: event.target.value as LanguagePreference })
-            }
-          >
-            {LANGUAGE_PREFERENCES.map((option) => (
-              <option key={option} value={option}>
-                {t(`language.${option}`)}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="toolbar__field">
-          <span>{t('toolbar.theme')}</span>
-          <select
-            data-testid="theme-select"
-            value={settings.theme}
-            onChange={(event) => void update({ theme: event.target.value as Theme })}
-          >
-            {THEMES.map((option) => (
-              <option key={option} value={option}>
-                {t(`theme.${option}`)}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <div className="toolbar__field" role="group" aria-label={t('toolbar.fontSize')}>
-          <span aria-hidden="true">{t('toolbar.fontSize')}</span>
-          <button
-            type="button"
-            data-testid="font-decrease"
-            aria-label={t('toolbar.decreaseFont')}
-            title={t('toolbar.decreaseFont')}
-            disabled={settings.fontScale <= FONT_SCALE_MIN}
-            onClick={() => void changeFontScale(-1)}
-          >
-            {t('toolbar.decreaseFontShort')}
-          </button>
-          <button
-            type="button"
-            data-testid="font-reset"
-            aria-label={t('toolbar.resetFont')}
-            title={t('toolbar.resetFont')}
-            onClick={() => void changeFontScale(0)}
-          >
-            {percent}%
-          </button>
-          <button
-            type="button"
-            data-testid="font-increase"
-            aria-label={t('toolbar.increaseFont')}
-            title={t('toolbar.increaseFont')}
-            disabled={settings.fontScale >= FONT_SCALE_MAX}
-            onClick={() => void changeFontScale(1)}
-          >
-            {t('toolbar.increaseFontShort')}
-          </button>
-        </div>
+        <ViewSwitcher />
       </div>
+
+      <div className="toolbar__group" role="group" aria-label={t('toolbar.panels')}>
+        <button
+          type="button"
+          className="toggle-button"
+          aria-pressed={settings.simulatorVisible}
+          title={hint(
+            t(settings.simulatorVisible ? 'panels.hide' : 'panels.show', { panel: simulatorLabel }),
+            'toggleSimulator',
+          )}
+          data-testid="toggle-simulator"
+          onClick={() => void update({ simulatorVisible: !settings.simulatorVisible })}
+        >
+          <Cpu aria-hidden="true" size="1.2em" />
+          <span>{simulatorLabel}</span>
+        </button>
+        <button
+          type="button"
+          className="toggle-button"
+          aria-pressed={settings.consoleVisible}
+          title={hint(
+            t(settings.consoleVisible ? 'panels.hide' : 'panels.show', { panel: consoleLabel }),
+            'toggleConsole',
+          )}
+          data-testid="toggle-console"
+          onClick={() => void update({ consoleVisible: !settings.consoleVisible })}
+        >
+          <Terminal aria-hidden="true" size="1.2em" />
+          <span>{consoleLabel}</span>
+        </button>
+      </div>
+
+      <div className="toolbar__spacer" />
+
+      <button
+        type="button"
+        className="icon-button"
+        aria-label={t('toolbar.settings')}
+        title={t('toolbar.settings')}
+        aria-haspopup="dialog"
+        data-testid="open-settings"
+        onClick={() => setSettingsOpen(true)}
+      >
+        <Settings aria-hidden="true" size="1.3em" />
+      </button>
+
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </header>
   );
 }

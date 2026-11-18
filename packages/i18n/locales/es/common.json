@@ -5,14 +5,40 @@
   },
   "toolbar": {
     "label": "Barra de herramientas principal",
+    "view": "Vista",
+    "panels": "Paneles",
+    "settings": "Ajustes"
+  },
+  "view": {
+    "blocks": "Bloques",
+    "split": "Bloques y código",
+    "code": "Código"
+  },
+  "panels": {
+    "blocks": "Bloques",
+    "code": "Código",
+    "simulator": "Simulador",
+    "console": "Consola",
+    "show": "Mostrar {{panel}}",
+    "hide": "Ocultar {{panel}}",
+    "close": "Cerrar {{panel}}",
+    "resize": "Cambiar el tamaño de {{panel}}",
+    "comingSoon": "Próximamente"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "close": "Cerrar ajustes",
     "language": "Idioma",
     "theme": "Tema",
     "fontSize": "Tamaño del texto",
     "decreaseFont": "Achicar el texto",
-    "decreaseFontShort": "A−",
     "increaseFont": "Agrandar el texto",
-    "increaseFontShort": "A+",
-    "resetFont": "Restablecer el tamaño del texto"
+    "resetFont": "Restablecer el tamaño del texto",
+    "decreaseFontShort": "A−",
+    "increaseFontShort": "A+"
+  },
+  "shortcut": {
+    "withKeys": "{{label}} ({{keys}})"
   },
   "language": {
     "system": "Idioma del sistema",
@@ -24,12 +50,6 @@
     "light": "Claro",
     "dark": "Oscuro",
     "high-contrast": "Alto contraste"
-  },
-  "panels": {
-    "blocks": "Bloques",
-    "code": "Código",
-    "simulator": "Simulador",
-    "comingSoon": "Próximamente"
   },
   "status": {
     "version": "Versión {{version}}"

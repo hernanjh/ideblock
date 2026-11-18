@@ -5,14 +5,40 @@
   },
   "toolbar": {
     "label": "Main toolbar",
+    "view": "View",
+    "panels": "Panels",
+    "settings": "Settings"
+  },
+  "view": {
+    "blocks": "Blocks",
+    "split": "Blocks and code",
+    "code": "Code"
+  },
+  "panels": {
+    "blocks": "Blocks",
+    "code": "Code",
+    "simulator": "Simulator",
+    "console": "Console",
+    "show": "Show {{panel}}",
+    "hide": "Hide {{panel}}",
+    "close": "Close {{panel}}",
+    "resize": "Resize {{panel}}",
+    "comingSoon": "Coming soon"
+  },
+  "settings": {
+    "title": "Settings",
+    "close": "Close settings",
     "language": "Language",
     "theme": "Theme",
     "fontSize": "Text size",
     "decreaseFont": "Decrease text size",
-    "decreaseFontShort": "A−",
     "increaseFont": "Increase text size",
-    "increaseFontShort": "A+",
-    "resetFont": "Reset text size"
+    "resetFont": "Reset text size",
+    "decreaseFontShort": "A−",
+    "increaseFontShort": "A+"
+  },
+  "shortcut": {
+    "withKeys": "{{label}} ({{keys}})"
   },
   "language": {
     "system": "System language",
@@ -24,12 +50,6 @@
     "light": "Light",
     "dark": "Dark",
     "high-contrast": "High contrast"
-  },
-  "panels": {
-    "blocks": "Blocks",
-    "code": "Code",
-    "simulator": "Simulator",
-    "comingSoon": "Coming soon"
   },
   "status": {
     "version": "Version {{version}}"
