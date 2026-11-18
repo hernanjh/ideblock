@@ -10,6 +10,7 @@ import { BOARD_ORIGIN, WIRE_ROOM, defaultPositions } from './layout';
 import { BoardDrawing, boardLayout, type BoardLayout } from './boards';
 import { BREADBOARD_HOLES, BREADBOARD_SIZE, describeHole } from './breadboard';
 import { BreadboardDrawing } from './BreadboardDrawing';
+import { legName } from './legs';
 import {
   SHAPES,
   pinSide,
@@ -361,8 +362,7 @@ export function CircuitScene({
     }
     return t('circuit.leg', {
       name: names[owner] ?? owner,
-      // Leg names such as "1.l" contain the key separator.
-      leg: t(`legs.${part.replace('.', '_')}` as never, { defaultValue: part }),
+      leg: legName(t, items.find((item) => item.id === owner)?.type ?? '', part),
     });
   };
 

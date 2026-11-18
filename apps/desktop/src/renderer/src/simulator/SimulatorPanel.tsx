@@ -357,6 +357,29 @@ function ComponentCard({ item, name, state, input, onInput, onOpen }: ComponentC
           {(state?.['on'] ?? input?.['on']) ? t('simulator.on') : t('simulator.off')}
         </button>
       )}
+      {visual?.control === 'joystick' && (
+        <>
+          {JOYSTICK_AXES.map((config) => (
+            <Slider
+              key={config.key}
+              item={item}
+              name={name}
+              config={config}
+              initial={0}
+              input={input}
+              onInput={onInput}
+            />
+          ))}
+          <HoldButton
+            id={item.id}
+            inputKey="pressed"
+            held={Boolean(input?.['pressed'])}
+            label={t('simulator.press')}
+            testId={`press-${item.id}`}
+            onInput={onInput}
+          />
+        </>
+      )}
       {visual && SLIDERS[visual.control] && (
         <Slider
           item={item}
@@ -382,6 +405,11 @@ const SLIDERS: Partial<Record<ControlKind, SliderConfig>> = {
   distance: { key: 'distance', min: 2, max: 400 },
   temperature: { key: 'temperature', min: -20, max: 80 },
 };
+
+const JOYSTICK_AXES: SliderConfig[] = [
+  { key: 'x', min: -100, max: 100 },
+  { key: 'y', min: -100, max: 100 },
+];
 
 interface HoldButtonProps {
   id: string;

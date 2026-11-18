@@ -1,7 +1,7 @@
 import type { ComponentInput, ComponentState } from '@ideblock/simulator';
 
 export type ControlKind =
-  'press' | 'slider' | 'distance' | 'temperature' | 'toggle' | 'motion' | 'none';
+  'press' | 'slider' | 'distance' | 'temperature' | 'toggle' | 'motion' | 'joystick' | 'none';
 
 interface VisualDefinition {
   tag: string;
@@ -112,6 +112,25 @@ export const VISUALS: Record<string, VisualDefinition> = {
     tag: 'wokwi-ntc-temperature-sensor',
     control: 'temperature',
     properties: () => ({}),
+  },
+  'seven-segment': {
+    tag: 'wokwi-7segment',
+    control: 'none',
+    properties: (state, _input, props) => ({
+      values: String(state?.['segments'] ?? '00000000')
+        .split('')
+        .map(Number),
+      color: typeof props?.['color'] === 'string' ? props['color'] : 'red',
+    }),
+  },
+  joystick: {
+    tag: 'wokwi-analog-joystick',
+    control: 'joystick',
+    properties: (state, input) => ({
+      xValue: Math.sign(Number(state?.['x'] ?? input?.['x'] ?? 0)),
+      yValue: Math.sign(Number(state?.['y'] ?? input?.['y'] ?? 0)),
+      pressed: Boolean(state?.['pressed'] ?? input?.['pressed']),
+    }),
   },
   'hc-sr04': {
     tag: 'wokwi-hc-sr04',

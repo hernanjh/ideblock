@@ -131,6 +131,8 @@ export function toManualWiring(circuit: CircuitDocument, board: BoardDefinition)
     const shape = SHAPES[item.type];
     if (!shape || !findComponent(item.type)) return item;
     const colour = WIRE_COLOURS[index % 3]!;
+    // Parts with several LEDs, such as a display, get a stack of resistors.
+    let stacked = 0;
     for (const [signal, leg] of Object.entries(shape.signals)) {
       const pin = item.pins[signal];
       if (!pin || !boardPins[pin]) continue;
@@ -147,7 +149,7 @@ export function toManualWiring(circuit: CircuitDocument, board: BoardDefinition)
         type: 'resistor',
         pins: {},
         x: Math.round((legAt.x + pinAt.x) / 2 - 29),
-        y: Math.round((legAt.y + pinAt.y) / 2 - 6),
+        y: Math.round((legAt.y + pinAt.y) / 2 - 6 + stacked++ * 16),
       });
       wire(`board:${pin}`, `${resistor}:1`, colour);
       wire(`${resistor}:2`, `${item.id}:${leg}`, colour);

@@ -128,6 +128,26 @@ export function ComponentIcon({ type, size = 34 }: { type: string; size?: number
           <rect x="15.5" y="12" width="3" height="12" fill="#e53935" />
         </svg>
       );
+    case 'seven-segment':
+      return (
+        <svg {...common}>
+          <rect x="6" y="2" width="22" height="30" rx="2" fill="#1d1d1d" />
+          <path
+            d="M11 6h12M10 8v8M24 8v8M11 17h12M10 19v8M24 19v8M11 28h12"
+            stroke="#ff3b30"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    case 'joystick':
+      return (
+        <svg {...common}>
+          <rect x="3" y="5" width="28" height="26" rx="3" fill="#1f6fe0" />
+          <circle cx="17" cy="17" r="9" fill="#2c2f35" />
+          <circle cx="17" cy="17" r="5" fill="#666" />
+        </svg>
+      );
     case 'breadboard':
       return (
         <svg {...common}>

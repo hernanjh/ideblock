@@ -36,6 +36,7 @@ import { CircuitScene } from './CircuitScene';
 import { ComponentIcon } from './ComponentIcon';
 import { SHAPES } from './geometry';
 import { supplyPin } from './layout';
+import { legName } from './legs';
 import {
   WIRE_COLOURS,
   circuitAnalysis,
@@ -389,8 +390,7 @@ function issueText(
       const leg = SHAPES[type]?.signals[issue.signal] ?? issue.signal;
       return t('circuit.issue.unconnected', {
         name: names[issue.id] ?? issue.id,
-        // Leg names such as "1.l" contain the key separator.
-        pin: t(`legs.${leg.replace('.', '_')}` as never, { defaultValue: leg }),
+        pin: legName(t, type, leg),
       });
     }
     case 'noSupply':

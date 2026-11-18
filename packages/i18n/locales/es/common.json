@@ -269,7 +269,9 @@
     "motion": "Moverse delante",
     "on": "Encendido",
     "off": "Apagado",
-    "temperature": "Temperatura: {{value}} °C"
+    "temperature": "Temperatura: {{value}} °C",
+    "x": "Izquierda/derecha: {{value}}",
+    "y": "Abajo/arriba: {{value}}"
   },
   "components": {
     "led": "LED",
@@ -287,7 +289,9 @@
     "slide-switch": "Interruptor",
     "tilt-switch": "Sensor de inclinación",
     "pir-sensor": "Sensor de movimiento (PIR)",
-    "temperature-sensor": "Sensor de temperatura"
+    "temperature-sensor": "Sensor de temperatura",
+    "seven-segment": "Display de 7 segmentos",
+    "joystick": "Joystick"
   },
   "componentPins": {
     "anode": "Pin",
@@ -299,7 +303,18 @@
     "blue": "Pin azul",
     "sda": "Pin SDA",
     "scl": "Pin SCL",
-    "din": "Pin de datos (DIN)"
+    "din": "Pin de datos (DIN)",
+    "a": "Segmento a",
+    "b": "Segmento b",
+    "c": "Segmento c",
+    "d": "Segmento d",
+    "e": "Segmento e",
+    "f": "Segmento f",
+    "g": "Segmento g",
+    "dp": "Punto",
+    "horz": "Eje X (HORZ)",
+    "vert": "Eje Y (VERT)",
+    "sel": "Botón (SEL)"
   },
   "menu": {
     "label": "Menú",
@@ -413,7 +428,9 @@
     "slide-switch": "Una palanca con dos posiciones. La pata del medio va al pin; las de los costados, a 5V y a GND. El programa lee ALTA o BAJA según la posición.",
     "tilt-switch": "Detecta si se inclina. Su salida (OUT) pasa a ALTA cuando está inclinado.",
     "pir-sensor": "Detecta el movimiento de personas o animales por el calor que emiten. Su salida (OUT) queda en ALTA unos segundos después de detectar algo.",
-    "temperature-sensor": "Mide la temperatura con un termistor: su resistencia cambia con el calor. Se conecta a un pin analógico de {{board}}."
+    "temperature-sensor": "Mide la temperatura con un termistor: su resistencia cambia con el calor. Se conecta a un pin analógico de {{board}}.",
+    "seven-segment": "Un dígito hecho con 7 barritas de luz (a a g) y un punto. Cada segmento va a un pin y la pata común a GND. Cada segmento es un LED, así que lleva su resistencia.",
+    "joystick": "Una palanca con dos potenciómetros, uno por eje, y un botón al apretarla. Los ejes van a pines analógicos de {{board}}."
   },
   "languageShort": {
     "system": "Auto",
@@ -451,6 +468,21 @@
     "2_l": "pata 2",
     "2_r": "pata 2",
     "OUT": "salida (OUT)",
-    "3": "pata 3"
+    "3": "pata 3",
+    "seven-segment": {
+      "A": "segmento a",
+      "B": "segmento b",
+      "C": "segmento c",
+      "D": "segmento d",
+      "E": "segmento e",
+      "F": "segmento f",
+      "G": "segmento g",
+      "DP": "punto",
+      "COM_1": "común (−)",
+      "COM_2": "común (−)"
+    },
+    "HORZ": "eje X (HORZ)",
+    "VERT": "eje Y (VERT)",
+    "SEL": "botón (SEL)"
   }
 }

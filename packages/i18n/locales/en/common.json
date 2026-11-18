@@ -269,7 +269,9 @@
     "motion": "Move in front",
     "on": "On",
     "off": "Off",
-    "temperature": "Temperature: {{value}} °C"
+    "temperature": "Temperature: {{value}} °C",
+    "x": "Left/right: {{value}}",
+    "y": "Down/up: {{value}}"
   },
   "components": {
     "led": "LED",
@@ -287,7 +289,9 @@
     "slide-switch": "Slide switch",
     "tilt-switch": "Tilt sensor",
     "pir-sensor": "Motion sensor (PIR)",
-    "temperature-sensor": "Temperature sensor"
+    "temperature-sensor": "Temperature sensor",
+    "seven-segment": "7-segment display",
+    "joystick": "Joystick"
   },
   "componentPins": {
     "anode": "Pin",
@@ -299,7 +303,18 @@
     "blue": "Blue pin",
     "sda": "SDA pin",
     "scl": "SCL pin",
-    "din": "Data pin (DIN)"
+    "din": "Data pin (DIN)",
+    "a": "Segment a",
+    "b": "Segment b",
+    "c": "Segment c",
+    "d": "Segment d",
+    "e": "Segment e",
+    "f": "Segment f",
+    "g": "Segment g",
+    "dp": "Dot",
+    "horz": "X axis (HORZ)",
+    "vert": "Y axis (VERT)",
+    "sel": "Button (SEL)"
   },
   "menu": {
     "label": "Menu",
@@ -413,7 +428,9 @@
     "slide-switch": "A lever with two positions. The middle leg goes to the pin and the outer ones to 5V and GND. The program reads HIGH or LOW depending on the position.",
     "tilt-switch": "Detects tilting. Its output (OUT) goes HIGH while tilted.",
     "pir-sensor": "Detects people or animals moving by the heat they give off. Its output (OUT) stays HIGH for a few seconds after it detects something.",
-    "temperature-sensor": "Measures temperature with a thermistor, whose resistance changes with heat. It connects to an analog pin of {{board}}."
+    "temperature-sensor": "Measures temperature with a thermistor, whose resistance changes with heat. It connects to an analog pin of {{board}}.",
+    "seven-segment": "A digit made of 7 light bars (a to g) and a dot. Each segment goes to a pin and the common leg to GND. Each segment is an LED, so it needs its resistor.",
+    "joystick": "A stick with two potentiometers, one per axis, and a button when pushed down. The axes go to analog pins of {{board}}."
   },
   "languageShort": {
     "system": "Auto",
@@ -451,6 +468,21 @@
     "2_l": "leg 2",
     "2_r": "leg 2",
     "OUT": "output (OUT)",
-    "3": "leg 3"
+    "3": "leg 3",
+    "seven-segment": {
+      "A": "segment a",
+      "B": "segment b",
+      "C": "segment c",
+      "D": "segment d",
+      "E": "segment e",
+      "F": "segment f",
+      "G": "segment g",
+      "DP": "dot",
+      "COM_1": "common (−)",
+      "COM_2": "common (−)"
+    },
+    "HORZ": "X axis (HORZ)",
+    "VERT": "Y axis (VERT)",
+    "SEL": "button (SEL)"
   }
 }
