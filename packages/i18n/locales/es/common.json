@@ -348,8 +348,8 @@
     "white": "Blanco"
   },
   "componentInfo": {
-    "led": "Una luz que se enciende cuando su pin está en ALTO (HIGH). La pata larga va al pin y la corta a GND, siempre con una resistencia.",
-    "pushbutton": "Conecta el pin a GND mientras está presionado. El programa lo lee como presionado cuando el pin está en BAJO (LOW).",
+    "led": "Una luz que se enciende cuando su pin está en ALTA (HIGH). La pata larga va al pin y la corta a GND, siempre con una resistencia.",
+    "pushbutton": "Conecta el pin a GND mientras está presionado. El programa lo lee como presionado cuando el pin está en BAJA (LOW).",
     "potentiometer": "Una perilla que cambia un voltaje. analogRead() devuelve de 0 a 1023 según su posición.",
     "photoresistor": "Mide la luz. analogRead() devuelve un valor más alto cuando hay más luz.",
     "servo": "Un motor que gira a un ángulo entre 0 y 180 grados. Necesita un pin PWM.",

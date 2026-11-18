@@ -34,6 +34,7 @@ const CATEGORIES: ToolboxCategory[] = [
     colour: COLOURS.outputs,
     contents: [
       { kind: 'block', type: 'led_set' },
+      { kind: 'block', type: 'io_digital_write' },
       { kind: 'block', type: 'led_brightness', inputs: { PERCENT: number(50) }, advanced: true },
       {
         kind: 'block',
