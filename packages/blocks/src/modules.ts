@@ -1,3 +1,4 @@
+import { displaysModule } from './definitions/displays';
 import { logicModule } from './definitions/logic';
 import { loopsModule } from './definitions/loops';
 import { mathModule } from './definitions/math';
@@ -16,6 +17,7 @@ export const BLOCK_MODULES: readonly BlockModule[] = [
   programModule,
   pinsModule,
   outputsModule,
+  displaysModule,
   sensorsModule,
   timeModule,
   serialModule,

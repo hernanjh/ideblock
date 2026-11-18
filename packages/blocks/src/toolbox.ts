@@ -42,6 +42,29 @@ const CATEGORIES: ToolboxCategory[] = [
       },
       { kind: 'block', type: 'buzzer_stop', advanced: true },
       { kind: 'block', type: 'servo_write', inputs: { ANGLE: number(90) } },
+      { kind: 'block', type: 'rgb_led_color' },
+      {
+        kind: 'block',
+        type: 'rgb_led_mix',
+        inputs: { R: number(255), G: number(0), B: number(128) },
+        advanced: true,
+      },
+    ],
+  },
+  {
+    kind: 'category',
+    toolboxitemid: 'display',
+    name: '%{BKY_IDEBLOCK_CATEGORY_DISPLAY}',
+    colour: COLOURS.display,
+    contents: [
+      {
+        kind: 'block',
+        type: 'lcd_print',
+        inputs: { TEXT: text('Hola'), ROW: number(1), COLUMN: number(1) },
+      },
+      { kind: 'block', type: 'lcd_clear' },
+      { kind: 'block', type: 'neopixel_set', inputs: { INDEX: number(1) } },
+      { kind: 'block', type: 'neopixel_clear' },
     ],
   },
   {

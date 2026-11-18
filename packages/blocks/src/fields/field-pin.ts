@@ -11,6 +11,8 @@ function defaultPin(kind: PinKind): string | undefined {
     pwm: ['9', '13', '5'],
     digital: ['2', '4', '5'],
     analog: [],
+    sda: [],
+    scl: [],
   };
   const choice = candidates[kind].find(
     (pin) => pins.includes(pin) && (kind === 'output' || pin !== board.builtinLedPin),

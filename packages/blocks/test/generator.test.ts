@@ -106,6 +106,61 @@ describe('sketch generator', () => {
     }
   });
 
+  it('mixes RGB LED colours with PWM', () => {
+    const { code } = generate(
+      program(
+        [],
+        [
+          {
+            type: 'rgb_led_color',
+            fields: { RED: '9', GREEN: '10', BLUE: '11', COLOR: '255,180,0' },
+          },
+        ],
+      ),
+    );
+    expect(code.match(/pinMode\(\d+, OUTPUT\);/g)).toHaveLength(3);
+    expect(code).toContain('analogWrite(9, 255);\n  analogWrite(10, 180);\n  analogWrite(11, 0);');
+  });
+
+  it('prints on the I2C LCD with rows and columns counted from 1', () => {
+    const { code, libraries } = generate(
+      program(
+        [],
+        [
+          { type: 'lcd_clear' },
+          { type: 'lcd_print', inputs: { TEXT: str('Hi'), ROW: num(2), COLUMN: num(1) } },
+        ],
+      ),
+    );
+    expect(code).toContain('#include <Wire.h>\n#include <LiquidCrystal_PCF8574.h>');
+    expect(code).toContain('LiquidCrystal_PCF8574 lcd(0x27);');
+    expect(code).toContain('lcd.begin(16, 2);\n  lcd.setBacklight(255);');
+    expect(code).toContain('lcd.clear();\n  lcd.setCursor(0, 1);\n  lcd.print("Hi");');
+    expect(code.match(/lcd\.begin/g)).toHaveLength(1);
+    expect(libraries).toEqual(['LiquidCrystal_PCF8574']);
+  });
+
+  it('declares one NeoPixel strip per pin and counts pixels from 1', () => {
+    const { code, libraries } = generate(
+      program(
+        [],
+        [
+          {
+            type: 'neopixel_set',
+            fields: { PIN: '6', COLOR: '0,0,255', COUNT: 8 },
+            inputs: { INDEX: num(3) },
+          },
+          { type: 'neopixel_clear', fields: { PIN: '6', COUNT: 8 } },
+        ],
+      ),
+    );
+    expect(code).toContain('Adafruit_NeoPixel pixels_6(8, 6, NEO_GRB + NEO_KHZ800);');
+    expect(code.match(/pixels_6\.begin\(\);/g)).toHaveLength(1);
+    expect(code).toContain('pixels_6.setPixelColor(2, pixels_6.Color(0, 0, 255));');
+    expect(code).toContain('pixels_6.clear();\n  pixels_6.show();');
+    expect(libraries).toEqual(['Adafruit NeoPixel']);
+  });
+
   it('ignores blocks that are not inside the program', () => {
     const { code } = generate(program([], []), { extraTopBlocks: [led('HIGH', '7')] });
     expect(code).not.toContain('7');

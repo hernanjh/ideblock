@@ -1,6 +1,6 @@
 import { getBoard, outputPins, type BoardDefinition } from '@ideblock/boards';
 
-export type PinKind = 'digital' | 'output' | 'analog' | 'pwm';
+export type PinKind = 'digital' | 'output' | 'analog' | 'pwm' | 'sda' | 'scl';
 
 let activeBoard: BoardDefinition = getBoard('uno');
 
@@ -23,5 +23,9 @@ export function pinsFor(board: BoardDefinition, kind: PinKind): readonly string[
       return outputPins(board);
     case 'digital':
       return board.digitalPins;
+    case 'sda':
+      return [board.i2c.sda];
+    case 'scl':
+      return [board.i2c.scl];
   }
 }

@@ -12,4 +12,5 @@ export const COLOURS = {
   text: '#5d4037',
   variables: '#d84315',
   functions: '#00838f',
+  display: '#5e35b1',
 } as const;
