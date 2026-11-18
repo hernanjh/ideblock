@@ -6,9 +6,25 @@ IdeBlock is a free and open source desktop IDE for programming Arduino-compatibl
 and ESP32 boards. It is designed for kids taking their first steps, and grows with
 teenagers and adults who want to move on to real code.
 
-> **Status:** early development. The application shell, language support and
-> accessibility settings are in place; the block editor, code editor, compiler
-> integration and simulator are being built. See the [roadmap](#roadmap).
+> **Status:** Phase 1 (first usable version). See the [roadmap](#roadmap).
+
+## What it can do today
+
+- **Blocks and code side by side.** Show the blocks, the code, or both, and
+  resize them. The code updates as you move blocks, and you can switch a project
+  to hand-written C++ at any time.
+- **Simulator.** Run the program on a simulated Arduino Uno or Nano with LEDs,
+  buttons, potentiometers, light sensors, servos, buzzers and ultrasonic
+  sensors. The block that is running lights up. The simulator can open in its
+  own window.
+- **Real boards.** Verify, upload and use the serial monitor and graph with
+  Arduino Uno, Nano, Mega and ESP32 compatible boards. Board tools are installed
+  the first time they are needed.
+- **Plain-language help.** Common compiler and upload errors are explained in
+  simple English or Spanish, with a link to the line.
+- **Projects.** Projects are saved automatically, open in the Arduino IDE, and
+  plain `.ino` sketches can be opened. Nine examples go from a blinking LED to a
+  parking sensor.
 
 ## Goals
 
@@ -42,19 +58,21 @@ Requirements: Node.js 22.12 or later and npm.
 
 ```bash
 npm install
+npm run fetch:toolchain
 npm run dev
 ```
 
-| Command                  | Description                                            |
-| ------------------------ | ------------------------------------------------------ |
-| `npm run dev`            | Start the app with hot reload                          |
-| `npm run lint`           | Run ESLint                                             |
-| `npm run format`         | Format the code with Prettier                          |
-| `npm run typecheck`      | Type-check all workspaces                              |
-| `npm test`               | Run unit tests                                         |
-| `npm run test:e2e`       | Build the app and run end-to-end tests                 |
-| `npm run package`        | Build an installer for the current platform            |
-| `npm run check:licenses` | Verify that dependency licenses are GPL-3.0 compatible |
+| Command                   | Description                                                |
+| ------------------------- | ---------------------------------------------------------- |
+| `npm run dev`             | Start the app with hot reload                              |
+| `npm run lint`            | Run ESLint                                                 |
+| `npm run format`          | Format the code with Prettier                              |
+| `npm run typecheck`       | Type-check all workspaces                                  |
+| `npm test`                | Run unit tests                                             |
+| `npm run test:e2e`        | Build the app and run end-to-end tests                     |
+| `npm run package`         | Build an installer for the current platform                |
+| `npm run check:licenses`  | Verify that dependency licenses are GPL-3.0 compatible     |
+| `npm run fetch:toolchain` | Download the pinned arduino-cli used to compile and upload |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the project structure and guidelines.
 

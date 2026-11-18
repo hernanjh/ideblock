@@ -29,14 +29,22 @@ apps/desktop/          Aplicación Electron
   e2e/                 Tests end-to-end (Playwright)
 packages/shared/       Contratos IPC, tipos y esquemas compartidos
 packages/i18n/         Archivos de traducción y utilidades de idioma
+packages/blocks/       Definiciones de bloques y generador de sketches C++
+packages/boards/       Definiciones de placas
+packages/compiler/     Mensajes del compilador y de subida explicados en lenguaje simple
+packages/project/      Formato de proyecto
+packages/simulator/    Emulación AVR y componentes simulados
+examples/              Proyectos de ejemplo incluidos en la aplicación
 docs/adr/              Registros de decisiones de arquitectura
+docs/guides/           Guías para extender IdeBlock
 scripts/               Scripts de build y mantenimiento
 ```
 
-A medida que se incorporen funcionalidades se sumarán paquetes (bloques, placas,
-simulador, componentes, proyectos). Las guías para agregar un bloque, un componente
-simulado y una placa se publicarán en `docs/guides/` junto con esos puntos de
-extensión.
+Guías:
+
+- [Cómo agregar un bloque](docs/guides/adding-a-block.es.md)
+- [Cómo agregar un componente simulado](docs/guides/adding-a-component.es.md)
+- [Cómo agregar una placa](docs/guides/adding-a-board.es.md)
 
 ## Primeros pasos
 
@@ -56,6 +64,25 @@ npm run test:e2e
 ```
 
 En Linux sin pantalla, ejecutá los tests end-to-end con `xvfb-run -a npm run test:e2e`.
+
+### Tests que compilan
+
+Los tests que compilan sketches reales se saltean por defecto, porque necesitan
+arduino-cli y la primera vez descargan el core AVR. Para ejecutarlos:
+
+```bash
+npm run fetch:toolchain
+IDEBLOCK_TOOLCHAIN_TESTS=1 IDEBLOCK_ARDUINO_DATA_DIR=/ruta/a/cache npm test
+IDEBLOCK_TOOLCHAIN_TESTS=1 IDEBLOCK_ARDUINO_DATA_DIR=/ruta/a/cache npm run test:e2e
+```
+
+`IDEBLOCK_ARDUINO_DATA_DIR` conserva los cores instalados entre ejecuciones.
+
+### Ejemplos
+
+El archivo `.ino` de cada ejemplo tiene que coincidir con lo que generan sus
+bloques; un test lo verifica. Después de cambiar bloques o generadores,
+actualizalos con `UPDATE_EXAMPLES=1 npx vitest run packages/blocks/test/examples.test.ts`.
 
 ## Estilo de código
 

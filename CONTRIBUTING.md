@@ -29,13 +29,22 @@ apps/desktop/          Electron application
   e2e/                 End-to-end tests (Playwright)
 packages/shared/       IPC contracts, shared types and schemas
 packages/i18n/         Translation files and language helpers
+packages/blocks/       Block definitions and the C++ sketch generator
+packages/boards/       Board definitions
+packages/compiler/     Compiler and upload messages explained in plain language
+packages/project/      Project file format
+packages/simulator/    AVR emulation and simulated components
+examples/              Example projects bundled with the application
 docs/adr/              Architecture decision records
+docs/guides/           Guides for extending IdeBlock
 scripts/               Build and maintenance scripts
 ```
 
-More packages (blocks, boards, simulator, components, projects) are added as each
-feature lands. Guides for adding a block, a simulated component and a board will be
-published in `docs/guides/` together with those extension points.
+Guides:
+
+- [Adding a block](docs/guides/adding-a-block.md)
+- [Adding a simulated component](docs/guides/adding-a-component.md)
+- [Adding a board](docs/guides/adding-a-board.md)
 
 ## Getting started
 
@@ -55,6 +64,25 @@ npm run test:e2e
 ```
 
 On Linux without a display, run end-to-end tests with `xvfb-run -a npm run test:e2e`.
+
+### Tests that compile
+
+Tests that compile real sketches are skipped by default because they need
+arduino-cli and download the AVR core the first time. To run them:
+
+```bash
+npm run fetch:toolchain
+IDEBLOCK_TOOLCHAIN_TESTS=1 IDEBLOCK_ARDUINO_DATA_DIR=/path/to/cache npm test
+IDEBLOCK_TOOLCHAIN_TESTS=1 IDEBLOCK_ARDUINO_DATA_DIR=/path/to/cache npm run test:e2e
+```
+
+`IDEBLOCK_ARDUINO_DATA_DIR` keeps installed cores between runs.
+
+### Examples
+
+The `.ino` file of each example must match what its blocks generate; a test
+checks it. After changing blocks or generators, update them with
+`UPDATE_EXAMPLES=1 npx vitest run packages/blocks/test/examples.test.ts`.
 
 ## Code style
 
