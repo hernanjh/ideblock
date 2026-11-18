@@ -12,4 +12,5 @@ export type {
 export { COMPONENTS, findComponent } from './components';
 export { loadHex } from './hex';
 export { atmega2560Pin, atmega328Pin, isSimulatedMcu, type McuName } from './mcu';
+export { rp2040Pin } from './rp2040-runner';
 export { Simulation, type SimulationFrame } from './simulation';

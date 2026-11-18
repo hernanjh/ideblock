@@ -1,4 +1,6 @@
 import { AvrRunner } from './avr-runner';
+import { Rp2040Runner } from './rp2040-runner';
+import type { Runner } from './runner';
 import type {
   ComponentInput,
   ComponentInstance,
@@ -31,7 +33,7 @@ const MAX_SLICE_MS = 50;
 const MAX_RAN_PER_FRAME = 256;
 
 export class Simulation {
-  private readonly runner: AvrRunner;
+  private readonly runner: Runner;
   private readonly models = new Map<string, ComponentModel>();
   private readonly pinListeners = new Map<string, ((high: boolean, cycles: number) => void)[]>();
   private serial: number[] = [];
@@ -39,8 +41,17 @@ export class Simulation {
   private ran = new Set<number>();
   private lastSpeed = 1;
 
-  constructor(hex: string, components: readonly ComponentInstance[], mcu: McuName = 'atmega328p') {
-    this.runner = new AvrRunner(hex, mcu);
+  /**
+   * `firmware` is Intel HEX text for AVR boards, and the flash image encoded in
+   * base64 for the RP2040, which arduino-pico builds as a .bin file.
+   */
+  constructor(
+    firmware: string,
+    components: readonly ComponentInstance[],
+    mcu: McuName = 'atmega328p',
+  ) {
+    this.runner =
+      mcu === 'rp2040' ? new Rp2040Runner(decodeBase64(firmware)) : new AvrRunner(firmware, mcu);
     this.runner.onPinChange((pin, high, cycles) => {
       for (const listener of this.pinListeners.get(pin) ?? []) listener(high, cycles);
     });
@@ -107,4 +118,11 @@ export class Simulation {
       speed: this.lastSpeed,
     };
   }
+}
+
+function decodeBase64(text: string): Uint8Array {
+  const binary = atob(text);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index++) bytes[index] = binary.charCodeAt(index);
+  return bytes;
 }

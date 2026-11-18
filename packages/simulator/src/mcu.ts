@@ -20,7 +20,8 @@ import {
   type AVRTimerConfig,
 } from 'avr8js';
 
-export type McuName = 'atmega328p' | 'atmega2560';
+export type AvrMcuName = 'atmega328p' | 'atmega2560';
+export type McuName = AvrMcuName | 'rp2040';
 
 export interface PinLocation {
   port: string;
@@ -319,10 +320,10 @@ const ATMEGA2560: McuProfile = {
   pinName: (port, bit) => MEGA_NAMES.get(`${port}${bit}`) ?? null,
 };
 
-export const MCUS: Record<McuName, McuProfile> = {
+export const MCUS: Record<AvrMcuName, McuProfile> = {
   atmega328p: ATMEGA328P,
   atmega2560: ATMEGA2560,
 };
 
 export const isSimulatedMcu = (name: string | undefined): name is McuName =>
-  name !== undefined && name in MCUS;
+  name !== undefined && (name in MCUS || name === 'rp2040');

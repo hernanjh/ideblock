@@ -27,3 +27,8 @@ LiquidCrystal_PCF8574 2.3.0, like `LcdCounter.ino.hex`.
 
 `MegaCheck.ino.hex` is `MegaCheck.ino` in this folder, compiled for the Arduino Mega
 (`arduino:avr:mega`). It uses only the Arduino AVR core.
+
+`PicoCheck.ino.bin` is `PicoCheck.ino` in this folder, built for the Raspberry Pi
+Pico (`rp2040:rp2040:rpipico`, arduino-pico 6.4.0). The image contains code from
+the arduino-pico core (LGPL-2.1) and the Raspberry Pi Pico SDK (BSD-3-Clause),
+available at <https://github.com/earlephilhower/arduino-pico>.

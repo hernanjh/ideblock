@@ -61,6 +61,12 @@ const TRACE_HELPER = `inline void ideblockTrace(uint16_t index) {
   GPIOR0 = index & 0xFF;
 }`;
 
+// The RP2040 has no spare I/O registers like GPIOR, so the index goes to a
+// watchdog scratch register, which the firmware itself never uses.
+const RP2040_TRACE_HELPER = `inline void ideblockTrace(uint16_t index) {
+  *(volatile uint32_t *)0x4005800C = index;
+}`;
+
 /** Keeps setup() in a predictable order regardless of block order. */
 function setupRank(key: string): number {
   if (key === 'serial') return 0;
@@ -169,7 +175,10 @@ export class SketchGenerator extends Blockly.CodeGenerator {
     const isStatement = Boolean(block.previousConnection) && !block.outputConnection;
     if (isStatement && this.options.trace && code) {
       const index = this.tracedBlocks.push(block.id) - 1;
-      this.addHelper('ideblockTrace', TRACE_HELPER);
+      this.addHelper(
+        'ideblockTrace',
+        this.board.architecture === 'rp2040' ? RP2040_TRACE_HELPER : TRACE_HELPER,
+      );
       prefix += `ideblockTrace(${index});\n`;
     }
     const next = block.nextConnection?.targetBlock();

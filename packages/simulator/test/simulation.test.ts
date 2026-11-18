@@ -273,4 +273,27 @@ describe('new components', () => {
     expect(text.slice(0, 16).trim()).toBe('Temperatura:');
     expect(text.slice(16)).toMatch(/^3[01]\.\d\d C/);
   });
+
+  it('runs Raspberry Pi Pico firmware', () => {
+    const firmware = readFileSync(join(import.meta.dirname, 'fixtures', 'PicoCheck.ino.bin'));
+    const simulation = new Simulation(
+      firmware.toString('base64'),
+      [
+        { id: 'board-led', type: 'led', pins: { anode: '25' } },
+        { id: 'gp15', type: 'led', pins: { anode: '15' } },
+        { id: 'pwm', type: 'led', pins: { anode: '16' } },
+        { id: 'knob', type: 'potentiometer', pins: { signal: 'A0' } },
+      ],
+      'rp2040',
+    );
+    simulation.input('knob', { value: 256 });
+    const frames = run(simulation, 1100, 50);
+    expect(frames[5]!.components['board-led']).toEqual({ brightness: 1 });
+    expect(frames[5]!.components['gp15']).toEqual({ brightness: 1 });
+    expect(frames[15]!.components['board-led']).toEqual({ brightness: 0 });
+    expect(frames[15]!.components['pwm']?.['brightness']).toBeCloseTo(64 / 255, 1);
+    // USB serial; analogRead gives 10 bits by default, a quarter of the range here.
+    const serial = frames.map((frame) => frame.serial).join('');
+    expect(Number(serial.split('\r\n')[0])).toBeCloseTo(256, -1);
+  });
 });
