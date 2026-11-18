@@ -17,7 +17,11 @@
   },
   "blocks": {
     "allBlocks": "Todos los bloques",
-    "allBlocksHint": "Mostrar también los bloques avanzados"
+    "allBlocksHint": "Mostrar también los bloques avanzados",
+    "codeModeTitle": "Estás programando con código",
+    "codeModeBody": "Los bloques ya no cambian el programa. Quedan guardados como estaban.",
+    "backToBlocks": "Volver a los bloques",
+    "backToBlocksUnavailable": "Cambiaste el código, así que volver a los bloques perdería esos cambios."
   },
   "panels": {
     "blocks": "Bloques",
@@ -58,5 +62,28 @@
   },
   "status": {
     "version": "Versión {{version}}"
+  },
+  "code": {
+    "lockedTitle": "Este código lo escriben los bloques",
+    "lockedBody": "Para cambiarlo, mové los bloques. Si preferís escribir el código vos, pasá el proyecto a código.",
+    "keepBlocks": "Seguir con bloques",
+    "switchToCode": "Escribir el código yo"
+  },
+  "codeApi": {
+    "pinMode": "Configura un pin como entrada o salida.",
+    "digitalWrite": "Enciende (HIGH) o apaga (LOW) un pin.",
+    "digitalRead": "Lee si un pin está en HIGH o en LOW.",
+    "analogRead": "Lee un voltaje como un número de 0 a 1023.",
+    "analogWrite": "Fija un nivel PWM de 0 a 255.",
+    "delay": "Pausa el programa algunos milisegundos.",
+    "millis": "Milisegundos desde que se encendió la placa.",
+    "tone": "Hace sonar una nota en un buzzer.",
+    "noTone": "Apaga la nota de un pin.",
+    "map": "Pasa un número de un rango a otro.",
+    "constrain": "Mantiene un número entre un mínimo y un máximo.",
+    "random": "Un número al azar desde min hasta max menos uno.",
+    "Serial_begin": "Inicia la comunicación serie a una velocidad en baudios.",
+    "Serial_print": "Envía un valor al monitor serie.",
+    "Serial_println": "Envía un valor y pasa a otra línea."
   }
 }

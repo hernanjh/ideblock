@@ -17,7 +17,11 @@
   },
   "blocks": {
     "allBlocks": "All blocks",
-    "allBlocksHint": "Also show advanced blocks"
+    "allBlocksHint": "Also show advanced blocks",
+    "codeModeTitle": "You are programming with code",
+    "codeModeBody": "The blocks no longer change the program. They are kept as they were.",
+    "backToBlocks": "Go back to blocks",
+    "backToBlocksUnavailable": "The code was edited, so going back to blocks would lose those changes."
   },
   "panels": {
     "blocks": "Blocks",
@@ -58,5 +62,28 @@
   },
   "status": {
     "version": "Version {{version}}"
+  },
+  "code": {
+    "lockedTitle": "The blocks write this code",
+    "lockedBody": "To change it, move the blocks. If you prefer to write the code yourself, switch the project to code.",
+    "keepBlocks": "Keep using blocks",
+    "switchToCode": "Write the code myself"
+  },
+  "codeApi": {
+    "pinMode": "Sets a pin as input or output.",
+    "digitalWrite": "Turns a pin on (HIGH) or off (LOW).",
+    "digitalRead": "Reads whether a pin is HIGH or LOW.",
+    "analogRead": "Reads a voltage as a number from 0 to 1023.",
+    "analogWrite": "Sets a PWM level from 0 to 255.",
+    "delay": "Pauses the program for some milliseconds.",
+    "millis": "Milliseconds since the board started.",
+    "tone": "Plays a note on a buzzer.",
+    "noTone": "Stops the note on a pin.",
+    "map": "Converts a number from one range to another.",
+    "constrain": "Keeps a number between a minimum and a maximum.",
+    "random": "A random number from min up to max minus one.",
+    "Serial_begin": "Starts serial communication at a speed in bauds.",
+    "Serial_print": "Sends a value to the serial monitor.",
+    "Serial_println": "Sends a value and starts a new line."
   }
 }

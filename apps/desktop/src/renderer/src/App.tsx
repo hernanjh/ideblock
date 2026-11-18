@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { applyAppearance } from './appearance';
 import { BlockEditor } from './blocks/BlockEditor';
 import { BlockLevelToggle } from './blocks/BlockLevelToggle';
-import { GeneratedCode } from './blocks/GeneratedCode';
+import { CodeModeOverlay } from './blocks/CodeModeOverlay';
+import { CodeEditor } from './code/CodeEditor';
 import { Toolbar } from './components/Toolbar';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { PanelPlaceholder } from './layout/Panel';
@@ -35,9 +36,14 @@ export function App() {
     <div className="app">
       <Toolbar />
       <Workspace
-        blocks={<BlockEditor language={language} />}
+        blocks={
+          <>
+            <BlockEditor language={language} />
+            <CodeModeOverlay />
+          </>
+        }
         blocksActions={<BlockLevelToggle />}
-        code={<GeneratedCode />}
+        code={<CodeEditor />}
         simulator={<PanelPlaceholder />}
         console={<PanelPlaceholder />}
       />
