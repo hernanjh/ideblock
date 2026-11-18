@@ -107,6 +107,13 @@ describe('block tracing', () => {
     expect(traces[9]).toBe(1);
     expect(traces[29]).toBe(3);
   });
+
+  it('lists every block that ran between frames, not only the last one', () => {
+    const simulation = new Simulation(hex('Traced'), []);
+    const ran = run(simulation, 2100, 50).flatMap((frame) => frame.ran);
+    // The blocks before each wait run in microseconds, yet they are reported.
+    expect(new Set(ran)).toEqual(new Set([0, 1, 300, 3]));
+  });
 });
 
 describe('new components', () => {

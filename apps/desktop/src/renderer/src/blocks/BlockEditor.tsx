@@ -64,7 +64,7 @@ export function BlockEditor({ language }: BlockEditorProps) {
   const fontScale = useSettingsStore((state) => state.settings.fontScale);
   const blockLevel = useSettingsStore((state) => state.settings.blockLevel);
   const boardId = useProjectStore((state) => state.boardId);
-  const activeBlockId = useSimulationStore((state) => state.activeBlockId);
+  const activeBlockIds = useSimulationStore((state) => state.activeBlockIds);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -179,9 +179,11 @@ export function BlockEditor({ language }: BlockEditorProps) {
 
   useEffect(() => {
     const workspace = workspaceRef.current;
-    // Shows which block the simulated board is running right now.
-    workspace?.highlightBlock(activeBlockId);
-  }, [activeBlockId]);
+    if (!workspace) return;
+    // Shows which blocks the simulated board ran in the last moments.
+    workspace.highlightBlock(null);
+    for (const id of activeBlockIds) workspace.highlightBlock(id, true);
+  }, [activeBlockIds]);
 
   return (
     <>

@@ -21,7 +21,8 @@ interface SimulationState {
   inputs: Record<string, ComponentInput>;
   timeMs: number;
   speed: number;
-  activeBlockId: string | null;
+  /** Blocks that ran in the last moments, lit in the editor so the program can be followed. */
+  activeBlockIds: string[];
   /** Code that is running, to tell the user when it no longer matches. */
   runningCode: string | null;
   error: string | null;
@@ -38,6 +39,25 @@ interface SimulationState {
 let worker: Worker | null = null;
 let hex: string | null = null;
 let tracedBlocks: string[] = [];
+
+/** How long a block stays lit after it ran, long enough for the eye to follow. */
+const BLOCK_GLOW_MS = 350;
+const lastRan = new Map<string, number>();
+
+/** Blocks that ran within the glow time, keeping the previous array when nothing changed. */
+function recentBlocks(indices: number[]): string[] {
+  const now = performance.now();
+  for (const index of indices) {
+    const id = tracedBlocks[index];
+    if (id) lastRan.set(id, now);
+  }
+  for (const [id, at] of lastRan) if (now - at > BLOCK_GLOW_MS) lastRan.delete(id);
+  const ids = [...lastRan.keys()].sort();
+  const previous = useSimulationStore.getState().activeBlockIds;
+  return ids.length === previous.length && ids.every((id, i) => id === previous[i])
+    ? previous
+    : ids;
+}
 
 function post(message: WorkerRequest): void {
   worker?.postMessage(message);
@@ -60,7 +80,7 @@ function launch(firmware: string): void {
       components: frame.components,
       timeMs: frame.timeMs,
       speed: frame.speed,
-      activeBlockId: frame.trace === null ? null : (tracedBlocks[frame.trace] ?? null),
+      activeBlockIds: recentBlocks([...frame.ran, ...(frame.trace === null ? [] : [frame.trace])]),
     });
   };
   const { circuit, boardId } = useProjectStore.getState();
@@ -80,7 +100,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
   inputs: {},
   timeMs: 0,
   speed: 1,
-  activeBlockId: null,
+  activeBlockIds: [],
   runningCode: null,
   error: null,
 
@@ -139,7 +159,8 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
     if (useSerialStore.getState().source === 'simulator') {
       useSerialStore.getState().setSource('board');
     }
-    set({ status: 'stopped', activeBlockId: null, components: {}, timeMs: 0, runningCode: null });
+    lastRan.clear();
+    set({ status: 'stopped', activeBlockIds: [], components: {}, timeMs: 0, runningCode: null });
   },
 
   restart: () => {

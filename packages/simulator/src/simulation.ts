@@ -16,12 +16,18 @@ export interface SimulationFrame {
   serial: string;
   /** Index of the block that ran last, when the firmware was built with tracing. */
   trace: number | null;
+  /**
+   * Every block that ran since the previous frame. Most blocks take microseconds,
+   * so sampling only the last one would mostly show the waits.
+   */
+  ran: number[];
   /** Simulated time divided by real time over the last frame. */
   speed: number;
 }
 
 /** Real time slices longer than this are not caught up, so a busy computer slows the simulation down instead of freezing. */
 const MAX_SLICE_MS = 50;
+const MAX_RAN_PER_FRAME = 256;
 
 export class Simulation {
   private readonly runner: AvrRunner;
@@ -29,6 +35,7 @@ export class Simulation {
   private readonly pinListeners = new Map<string, ((high: boolean, cycles: number) => void)[]>();
   private serial: number[] = [];
   private trace: number | null = null;
+  private ran = new Set<number>();
   private lastSpeed = 1;
 
   constructor(hex: string, components: readonly ComponentInstance[]) {
@@ -39,6 +46,8 @@ export class Simulation {
     this.runner.onSerialByte = (byte) => this.serial.push(byte);
     this.runner.onTrace = (index) => {
       this.trace = index;
+      // A tight loop can run thousands of blocks per frame; a cap keeps frames small.
+      if (this.ran.size < MAX_RAN_PER_FRAME) this.ran.add(index);
     };
 
     const runner = this.runner;
@@ -86,6 +95,15 @@ export class Simulation {
     for (const [id, model] of this.models) components[id] = model.snapshot();
     const serial = new TextDecoder().decode(new Uint8Array(this.serial));
     this.serial = [];
-    return { timeMs: this.timeMs, components, serial, trace: this.trace, speed: this.lastSpeed };
+    const ran = [...this.ran];
+    this.ran.clear();
+    return {
+      timeMs: this.timeMs,
+      components,
+      serial,
+      trace: this.trace,
+      ran,
+      speed: this.lastSpeed,
+    };
   }
 }
