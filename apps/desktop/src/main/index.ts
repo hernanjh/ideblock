@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import { z } from 'zod';
 import { broadcast, registerInvokeHandlers } from './ipc';
 import { installApplicationMenu } from './menu';
@@ -7,6 +7,9 @@ import { examplesDirectory, projectHandlers } from './project-ipc';
 import { ProjectService } from './project-service';
 import { SettingsStore } from './settings-store';
 import { ArduinoCli } from './toolchain/arduino-cli';
+import { findMissingDrivers } from './toolchain/drivers';
+import { PortWatcher } from './toolchain/port-watcher';
+import { SerialMonitor } from './toolchain/serial-monitor';
 import { ToolchainService } from './toolchain/toolchain-service';
 import { createMainWindow } from './window';
 
@@ -15,6 +18,11 @@ const compileRequestSchema = z.object({
   boardId: z.string(),
   sketchName: z.string(),
   libraries: z.array(z.string()),
+});
+const uploadRequestSchema = z.object({ compile: compileRequestSchema, port: z.string().min(1) });
+const serialOpenSchema = z.object({
+  port: z.string().min(1),
+  baudRate: z.number().int().positive(),
 });
 
 function arduinoCliBinary(): string {
@@ -60,6 +68,16 @@ if (!app.requestSingleInstanceLock()) {
       join(app.getPath('userData'), 'build'),
       (progress) => broadcast('toolchain:progress', progress),
     );
+    const ports = new PortWatcher(cli, (list) => broadcast('ports:changed', list));
+    const serial = new SerialMonitor(cli, {
+      onData: (text) => broadcast('serial:data', text),
+      onStatus: (status) => broadcast('serial:status', status),
+    });
+    void ports.start();
+    app.on('before-quit', () => {
+      ports.stop();
+      serial.close();
+    });
 
     registerInvokeHandlers({
       'app:get-info': () => ({
@@ -78,6 +96,24 @@ if (!app.requestSingleInstanceLock()) {
       ...projectHandlers(projects),
       'toolchain:compile': (_event, request) =>
         toolchain.compile(compileRequestSchema.parse(request)),
+      'toolchain:upload': async (_event, request) => {
+        const parsed = uploadRequestSchema.parse(request);
+        // The upload needs the port, so an open monitor on it is paused meanwhile.
+        const monitor = serial.session;
+        if (monitor?.port === parsed.port) serial.close();
+        const result = await toolchain.upload(parsed);
+        if (monitor?.port === parsed.port) await serial.open(monitor);
+        return result;
+      },
+      'ports:list': () => ports.list(),
+      'ports:missing-drivers': () => findMissingDrivers(),
+      'serial:open': (_event, request) => serial.open(serialOpenSchema.parse(request)),
+      'serial:close': () => serial.close(),
+      'serial:write': (_event, text) => serial.write(z.string().max(4096).parse(text)),
+      'app:open-external': async (_event, url) => {
+        const parsed = new URL(z.string().parse(url));
+        if (parsed.protocol === 'https:') await shell.openExternal(parsed.toString());
+      },
     });
 
     installApplicationMenu();

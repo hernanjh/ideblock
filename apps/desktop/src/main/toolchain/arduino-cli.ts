@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
@@ -77,8 +77,14 @@ export class ArduinoCli {
     );
   }
 
+  /** Starts a long-running command, such as the port watcher or serial monitor. */
+  async spawn(args: string[]): Promise<ChildProcessWithoutNullStreams> {
+    const config = await this.configFile();
+    return spawn(this.paths.binary, ['--config-file', config, ...args], { windowsHide: true });
+  }
+
   async json<T>(args: string[]): Promise<T> {
-    const result = await this.run([...args, '--format', 'json']);
+    const result = await this.run([...args, '--json']);
     try {
       return JSON.parse(result.stdout) as T;
     } catch {

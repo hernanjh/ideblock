@@ -8,6 +8,8 @@ import type {
   CompileResult,
   MemoryUsage,
   ToolchainProgress,
+  UploadRequest,
+  UploadResult,
 } from '@ideblock/shared';
 import type { ArduinoCli } from './arduino-cli';
 
@@ -71,6 +73,42 @@ export class ToolchainService {
 
   compile(request: CompileRequest): Promise<CompileResult> {
     return this.enqueue(() => this.compileNow(request));
+  }
+
+  /** Compiles and uploads in one step, so the board always gets the current code. */
+  upload(request: UploadRequest): Promise<UploadResult> {
+    return this.enqueue(async () => {
+      const compile = await this.compileNow(request.compile);
+      if (!compile.ok || !compile.buildPath) {
+        return {
+          ok: false,
+          failure: compile.failure ?? 'compile',
+          compile,
+          output: '',
+        };
+      }
+      const board = getBoard(request.compile.boardId);
+      this.onProgress({ stage: 'upload', subject: request.port, detail: '' });
+      const report = throttle(this.onProgress);
+      const result = await this.cli.run(
+        [
+          'upload',
+          '--port',
+          request.port,
+          '--fqbn',
+          board.fqbn,
+          '--input-dir',
+          compile.buildPath,
+          '--discovery-timeout',
+          '5s',
+        ],
+        (detail) => report({ stage: 'upload', subject: request.port, detail }),
+      );
+      const output = [result.stdout, result.stderr].filter(Boolean).join('\n');
+      return result.code === 0
+        ? { ok: true, compile, output }
+        : { ok: false, failure: 'upload', compile, output };
+    });
   }
 
   private enqueue<T>(task: () => Promise<T>): Promise<T> {
