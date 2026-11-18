@@ -40,6 +40,24 @@ export const outputsModule: BlockModule = {
       tooltip: '%{BKY_IDEBLOCK_LED_SET_TOOLTIP}',
     },
     {
+      type: 'builtin_led_set',
+      message0: '%{BKY_IDEBLOCK_BUILTIN_LED}',
+      args0: [
+        {
+          type: 'field_dropdown',
+          name: 'STATE',
+          options: [
+            ['%{BKY_IDEBLOCK_LED_ON}', 'HIGH'],
+            ['%{BKY_IDEBLOCK_LED_OFF}', 'LOW'],
+          ],
+        },
+      ],
+      previousStatement: null,
+      nextStatement: null,
+      colour: COLOURS.outputs,
+      tooltip: '%{BKY_IDEBLOCK_BUILTIN_LED_TOOLTIP}',
+    },
+    {
       type: 'led_on_for',
       message0: '%{BKY_IDEBLOCK_LED_ON_FOR}',
       args0: [
@@ -103,6 +121,12 @@ export const outputsModule: BlockModule = {
     },
   ],
   generators: {
+    // Each board says which pin its own LED is on, so the block works on all of them.
+    builtin_led_set: (block, generator) => {
+      const pin = generator.board.builtinLedPin;
+      generator.pinMode(pin, 'OUTPUT');
+      return `digitalWrite(${pin}, ${block.getFieldValue('STATE') as string});\n`;
+    },
     led_on_for: (block, generator) => {
       const pin = block.getFieldValue('PIN') as string;
       generator.pinMode(pin, 'OUTPUT');

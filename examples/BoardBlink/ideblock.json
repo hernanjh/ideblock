@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Board LED",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "The board's LED",
+      "es": "El LED de la placa"
+    },
+    "description": {
+      "en": "Blinks the LED that comes on the board. Nothing needs to be wired.",
+      "es": "Hace parpadear el LED que trae la placa. No hace falta conectar nada."
+    },
+    "level": 1,
+    "order": 0
+  }
+}

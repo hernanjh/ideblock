@@ -33,6 +33,7 @@ const CATEGORIES: ToolboxCategory[] = [
     name: '%{BKY_IDEBLOCK_CATEGORY_OUTPUTS}',
     colour: COLOURS.outputs,
     contents: [
+      { kind: 'block', type: 'builtin_led_set' },
       { kind: 'block', type: 'led_set' },
       { kind: 'block', type: 'led_on_for', inputs: { SECONDS: number(1) } },
       { kind: 'block', type: 'io_digital_write' },

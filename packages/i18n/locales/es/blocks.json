@@ -102,5 +102,7 @@
   "JOYSTICK_Y": "abajo/arriba (Y)",
   "JOYSTICK_AXIS_TOOLTIP": "Un número de −100 a 100: 0 es el centro.",
   "JOYSTICK_PRESSED": "el botón del joystick del pin %1 está presionado",
-  "JOYSTICK_PRESSED_TOOLTIP": "Verdadero mientras se aprieta la palanca del joystick."
+  "JOYSTICK_PRESSED_TOOLTIP": "Verdadero mientras se aprieta la palanca del joystick.",
+  "BUILTIN_LED": "%1 el LED de la placa",
+  "BUILTIN_LED_TOOLTIP": "La placa trae su propio LED, marcado con L. No hace falta conectar nada."
 }

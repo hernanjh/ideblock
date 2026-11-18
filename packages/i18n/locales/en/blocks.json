@@ -102,5 +102,7 @@
   "JOYSTICK_Y": "down/up (Y)",
   "JOYSTICK_AXIS_TOOLTIP": "A number from −100 to 100: 0 is the centre.",
   "JOYSTICK_PRESSED": "joystick button on pin %1 is pressed",
-  "JOYSTICK_PRESSED_TOOLTIP": "True while the joystick stick is pushed down."
+  "JOYSTICK_PRESSED_TOOLTIP": "True while the joystick stick is pushed down.",
+  "BUILTIN_LED": "%1 the board LED",
+  "BUILTIN_LED_TOOLTIP": "The board has its own LED, marked L. Nothing needs to be wired."
 }

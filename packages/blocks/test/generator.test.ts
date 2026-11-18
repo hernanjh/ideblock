@@ -161,6 +161,13 @@ describe('sketch generator', () => {
     expect(libraries).toEqual(['Adafruit NeoPixel']);
   });
 
+  it('drives the board LED on whatever pin each board uses', () => {
+    const blink = program([], [{ type: 'builtin_led_set', fields: { STATE: 'HIGH' } }]);
+    expect(generate(blink).code).toContain('pinMode(13, OUTPUT);');
+    expect(generate(blink).code).toContain('digitalWrite(13, HIGH);');
+    expect(generate(blink, { board: 'esp32-devkit' }).code).toContain('digitalWrite(2, HIGH);');
+  });
+
   it('turns an LED on for a while', () => {
     const { code } = generate(
       program([], [{ type: 'led_on_for', fields: { PIN: '13' }, inputs: { SECONDS: num(1.5) } }]),
