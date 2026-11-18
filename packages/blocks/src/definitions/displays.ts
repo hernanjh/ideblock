@@ -1,20 +1,8 @@
 import { COLOURS } from '../colours';
+import { colourChannels } from '../fields/field-led-colour';
 import { Order } from '../generator/order';
 import type { SketchGenerator } from '../generator/sketch-generator';
 import type { BlockModule } from '../types';
-
-/** Named colours offered in dropdowns, as "red,green,blue" from 0 to 255. */
-const COLOUR_OPTIONS = [
-  ['%{BKY_IDEBLOCK_COLOR_RED}', '255,0,0'],
-  ['%{BKY_IDEBLOCK_COLOR_GREEN}', '0,255,0'],
-  ['%{BKY_IDEBLOCK_COLOR_BLUE}', '0,0,255'],
-  ['%{BKY_IDEBLOCK_COLOR_YELLOW}', '255,180,0'],
-  ['%{BKY_IDEBLOCK_COLOR_ORANGE}', '255,80,0'],
-  ['%{BKY_IDEBLOCK_COLOR_PURPLE}', '160,0,255'],
-  ['%{BKY_IDEBLOCK_COLOR_CYAN}', '0,255,255'],
-  ['%{BKY_IDEBLOCK_COLOR_WHITE}', '255,255,255'],
-  ['%{BKY_IDEBLOCK_COLOR_OFF}', '0,0,0'],
-];
 
 const LCD_ADDRESS = '0x27';
 
@@ -76,7 +64,7 @@ export const displaysModule: BlockModule = {
     {
       type: 'rgb_led_color',
       message0: '%{BKY_IDEBLOCK_RGB_COLOR}',
-      args0: [...rgbPins, { type: 'field_dropdown', name: 'COLOR', options: COLOUR_OPTIONS }],
+      args0: [...rgbPins, { type: 'field_led_colour', name: 'COLOR', colour: '255,0,0' }],
       previousStatement: null,
       nextStatement: null,
       colour: COLOURS.outputs,
@@ -140,7 +128,7 @@ export const displaysModule: BlockModule = {
       args0: [
         { type: 'input_value', name: 'INDEX', check: 'Number' },
         { type: 'field_pin', name: 'PIN', pinKind: 'output', value: '6' },
-        { type: 'field_dropdown', name: 'COLOR', options: COLOUR_OPTIONS },
+        { type: 'field_led_colour', name: 'COLOR', colour: '255,0,0' },
         { type: 'field_number', name: 'COUNT', value: 8, min: 1, max: 300, precision: 1 },
       ],
       inputsInline: true,
@@ -165,7 +153,7 @@ export const displaysModule: BlockModule = {
   generators: {
     rgb_led_color: (block, generator) => {
       const pins = ['RED', 'GREEN', 'BLUE'].map((name) => block.getFieldValue(name) as string);
-      const values = (block.getFieldValue('COLOR') as string).split(',');
+      const values = colourChannels(block.getFieldValue('COLOR') as string).map(String);
       return rgbWrite(generator, pins, values);
     },
     rgb_led_mix: (block, generator) => {
@@ -196,7 +184,7 @@ export const displaysModule: BlockModule = {
       const strip = useStrip(generator, pin, Number(block.getFieldValue('COUNT')));
       const index = generator.valueOrDefault(block, 'INDEX', Order.ADDITIVE, '1');
       const pixel = /^\d+$/.test(index) ? String(Math.max(0, Number(index) - 1)) : `${index} - 1`;
-      const [r, g, b] = (block.getFieldValue('COLOR') as string).split(',');
+      const [r, g, b] = colourChannels(block.getFieldValue('COLOR') as string);
       return `${strip}.setPixelColor(${pixel}, ${strip}.Color(${r}, ${g}, ${b}));\n${strip}.show();\n`;
     },
     neopixel_clear: (block, generator) => {

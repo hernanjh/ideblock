@@ -2,6 +2,7 @@ import type { BoardDefinition } from '@ideblock/boards';
 import * as Blockly from 'blockly/core';
 import 'blockly/blocks';
 import { registerBusPinsField } from './fields/field-bus-pins';
+import { registerLedColourField } from './fields/field-led-colour';
 import { registerPinField } from './fields/field-pin';
 import { SketchGenerator } from './generator/sketch-generator';
 import { BLOCK_MODULES } from './modules';
@@ -13,6 +14,7 @@ const registeredModules = new Set<string>();
 export function registerBlocks(modules: readonly BlockModule[] = BLOCK_MODULES): void {
   registerPinField();
   registerBusPinsField();
+  registerLedColourField();
   for (const module of modules) {
     if (registeredModules.has(module.id)) continue;
     Blockly.common.defineBlocksWithJsonArray(module.blocks);

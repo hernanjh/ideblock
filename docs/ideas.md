@@ -20,9 +20,8 @@ simulation moved to Phase 4 (see Risks).
 
 New notes from user tests and from comparing with Tinkercad and mBlock:
 
-- **Colour picker in blocks (medium).** mBlock lets children pick a colour from
-  swatches inside the block. `@blockly/field-colour` (Apache-2.0) would do it;
-  the named colours stay for reading aloud.
+- **Colour picker in blocks (done).** RGB LED and NeoPixel blocks use colour
+  swatches from `@blockly/field-colour` (Apache-2.0), named in each tooltip.
 - **Electrical simulation (low).** Capacitors, diodes, transistors, batteries
   and a multimeter, as in Tinkercad, need currents and voltages computed, which
   the connection-level analysis does not do.

@@ -21,9 +21,9 @@ los bloques de la LCD, un display de 7 segmentos y un joystick. La simulación d
 
 Notas nuevas de pruebas de uso y de la comparación con Tinkercad y mBlock:
 
-- **Selector de color en los bloques (media).** mBlock deja elegir un color con
-  muestras dentro del bloque. `@blockly/field-colour` (Apache-2.0) lo resolvería;
-  los colores con nombre quedan para leerlos en voz alta.
+- **Selector de color en los bloques (hecho).** Los bloques de LED RGB y NeoPixel
+  usan muestras de color de `@blockly/field-colour` (Apache-2.0), con el nombre de
+  cada color al pasar el mouse.
 - **Simulación eléctrica (baja).** Condensadores, diodos, transistores, pilas y
   un multímetro, como en Tinkercad, necesitan calcular corrientes y tensiones,
   cosa que el análisis de conexiones no hace.
