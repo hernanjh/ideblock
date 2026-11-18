@@ -29,8 +29,9 @@ El campo `mode` define la fuente de verdad:
 
 Si se edita el código generado en modo `blocks`, la app ofrece pasar el proyecto a
 modo `code` o descartar la edición; nunca se descarta nada en silencio. Hasta que
-exista la conversión de código a bloques (Fase 3), no se ofrece volver de `code` a
-`blocks`.
+exista la conversión de código a bloques (Fase 3), volver de `code` a `blocks` solo
+se ofrece mientras el código coincida con lo que generan los bloques, para que no
+se pierda ninguna edición.
 
 `formatVersion` permite migraciones futuras. Más adelante se puede sumar un archivo
 único `.ideblock` (un zip de la carpeta) para compartir proyectos y entregar tareas.

@@ -31,7 +31,8 @@ The `mode` field defines the source of truth:
 
 Editing generated code in `blocks` mode prompts the user to switch the project to
 `code` mode or discard the edit; nothing is discarded silently. Until code to blocks
-conversion exists (Phase 3), switching from `code` back to `blocks` is not offered.
+conversion exists (Phase 3), switching from `code` back to `blocks` is only offered
+while the code still matches what the blocks generate, so no edit can be lost.
 
 `formatVersion` enables forward migrations. A single-file `.ideblock` archive (a zip
 of the folder) may be added later for sharing and homework submission.
