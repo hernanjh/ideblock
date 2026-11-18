@@ -327,3 +327,12 @@ export const MCUS: Record<AvrMcuName, McuProfile> = {
 
 export const isSimulatedMcu = (name: string | undefined): name is McuName =>
   name !== undefined && (name in MCUS || name === 'rp2040');
+
+/**
+ * Parts whose signals a chip produces in ways the emulator cannot time yet. On
+ * the RP2040, arduino-pico drives servos, tones and NeoPixels from PIO state
+ * machines, which rp2040js runs apart from the simulated clock.
+ */
+export const UNSIMULATED_PARTS: Partial<Record<McuName, readonly string[]>> = {
+  rp2040: ['servo', 'buzzer', 'neopixel-ring'],
+};
