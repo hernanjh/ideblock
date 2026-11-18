@@ -169,6 +169,50 @@
       "core-install": "No se pudieron instalar las herramientas de esta placa. La primera vez que usás una placa hace falta conexión a internet.",
       "library-install": "No se pudo instalar una librería que necesita el programa. La primera vez hace falta conexión a internet.",
       "compile": "No se pudo compilar el programa."
+    },
+    "upload": "Subir",
+    "uploadHint": "Enviar el programa a la placa",
+    "uploaded": "¡Listo! El programa ya está en la placa.",
+    "uploadFailed": "No se pudo subir el programa.",
+    "uploadFailedGeneric": "Revisá el cable, el puerto y que esté elegida la placa correcta."
+  },
+  "uploadHelp": {
+    "linuxPermission": "Tu usuario no tiene permiso para usar el puerto USB. En Linux, agregá tu usuario al grupo \"dialout\" y volvé a iniciar sesión.",
+    "portBusy": "Otro programa está usando el puerto, por ejemplo otro monitor serie o el Arduino IDE. Cerralo y probá de nuevo.",
+    "portMissing": "No se encontró la placa en ese puerto. Revisá el cable USB y elegí el puerto de nuevo.",
+    "espBootMode": "El ESP32 no entró en modo de carga. Mantené apretado el botón BOOT de la placa mientras se sube el programa.",
+    "notInSync": "La placa no respondió. Revisá que esté elegida la placa correcta. Muchos Nano genéricos necesitan \"Arduino Nano (old bootloader)\"."
+  },
+  "ports": {
+    "label": "Puerto de la placa",
+    "none": "No hay placa conectada",
+    "choose": "Elegí un puerto",
+    "useBoard": "Usar {{board}}",
+    "showAll": "Mostrar todos los puertos serie",
+    "help": {
+      "title": "No se encontró ninguna placa. Probá estos pasos:",
+      "cable": "Conectá la placa a la computadora con un cable USB.",
+      "dataCable": "Algunos cables solo cargan. Si la placa sigue sin aparecer, probá con otro cable.",
+      "otherPort": "Probá con otro puerto USB de la computadora.",
+      "drivers": "Las placas económicas pueden necesitar un driver (CH340 o CP210x).",
+      "driver": "Hay una placa con chip {{chip}} conectada, pero le falta el driver.",
+      "downloadDriver": "Descargar el driver {{chip}}"
     }
+  },
+  "serial": {
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "noPort": "Primero conectá una placa",
+    "speed": "Velocidad",
+    "view": "Vista",
+    "text": "Texto",
+    "plot": "Gráfico",
+    "clear": "Borrar",
+    "message": "Mensaje para enviar",
+    "messagePlaceholder": "Escribí un mensaje para la placa",
+    "send": "Enviar",
+    "error": "Se cerró el puerto serie:",
+    "fromSimulator": "Desde el simulador",
+    "plotHint": "Mostrá números, uno por línea, para verlos en el gráfico. Por ejemplo: 12 34 o temp:21.5"
   }
 }

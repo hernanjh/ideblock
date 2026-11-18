@@ -9,7 +9,8 @@ export type ShortcutId =
   | 'newProject'
   | 'openProject'
   | 'saveProject'
-  | 'verify';
+  | 'verify'
+  | 'upload';
 
 interface ShortcutDefinition {
   keys: readonly string[];
@@ -30,6 +31,7 @@ export const SHORTCUTS: Record<ShortcutId, ShortcutDefinition> = {
   openProject: { keys: ['o', 'O'], display: 'O' },
   saveProject: { keys: ['s', 'S'], display: 'S' },
   verify: { keys: ['r', 'R'], display: 'R' },
+  upload: { keys: ['u', 'U'], display: 'U' },
 };
 
 export function matchShortcut(event: KeyboardEvent): ShortcutId | null {

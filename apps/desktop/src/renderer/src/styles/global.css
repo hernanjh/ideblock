@@ -686,3 +686,96 @@ button:disabled {
   white-space: pre-wrap;
   margin: var(--space-2) 0 0;
 }
+
+.action-button--secondary {
+  background: var(--color-surface);
+  color: var(--color-accent);
+}
+
+.chip {
+  min-height: 1.75rem;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent);
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+}
+
+.notice--inline {
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-2);
+}
+
+.steps {
+  margin: 0 0 var(--space-2);
+  padding-left: 1.5rem;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.serial {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--space-2);
+}
+
+.serial__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.serial__output {
+  flex: 1 1 0;
+  min-height: 3rem;
+  margin: 0;
+  padding: var(--space-2);
+  overflow: auto;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius);
+  font-family: 'Cascadia Mono', 'Consolas', 'DejaVu Sans Mono', monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.serial__error {
+  margin: 0;
+  color: #b3261e;
+}
+
+.serial__input {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.serial__input input {
+  flex: 1;
+  font: inherit;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.plotter {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.plotter__chart {
+  flex: 1 1 0;
+  min-height: 0;
+}

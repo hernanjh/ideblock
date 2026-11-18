@@ -1,6 +1,7 @@
-import { explain } from '@ideblock/compiler';
+import { explain, explainUploadError } from '@ideblock/compiler';
 import { getBoard } from '@ideblock/boards';
 import { CircleCheck, CircleX, LoaderCircle, TriangleAlert } from 'lucide-react';
+import { NoBoardHelp } from '../ports/NoBoardHelp';
 import { useTranslation } from 'react-i18next';
 import { useBuildStore } from '../state/build';
 import { useProjectStore } from '../state/project';
@@ -15,9 +16,14 @@ export function BuildMessages() {
   const status = useBuildStore((state) => state.status);
   const progress = useBuildStore((state) => state.progress);
   const result = useBuildStore((state) => state.result);
+  const action = useBuildStore((state) => state.action);
+  const upload = useBuildStore((state) => state.upload);
+  const noBoard = useBuildStore((state) => state.noBoard);
   const boardId = useProjectStore((state) => state.boardId);
   const revealLine = useProjectStore((state) => state.revealLine);
   const update = useSettingsStore((state) => state.update);
+
+  if (noBoard && status !== 'working') return <NoBoardHelp />;
 
   if (status === 'idle' || (!result && status !== 'working')) {
     return <p className="console__empty">{t('build.idle')}</p>;
@@ -44,6 +50,31 @@ export function BuildMessages() {
   }
 
   if (!result) return null;
+
+  if (action === 'upload' && upload && result.ok) {
+    if (upload.ok) {
+      return (
+        <div className="build-result" data-testid="upload-success">
+          <p className="build-result__title build-result__title--ok">
+            <CircleCheck aria-hidden="true" size="1.2em" />
+            {t('build.uploaded')}
+          </p>
+          <RawOutput output={upload.output} />
+        </div>
+      );
+    }
+    const help = explainUploadError(upload.output);
+    return (
+      <div className="build-result" data-testid="upload-failure">
+        <p className="build-result__title build-result__title--error">
+          <CircleX aria-hidden="true" size="1.2em" />
+          {t('build.uploadFailed')}
+        </p>
+        <p>{help ? t(`uploadHelp.${help}` as never) : t('build.uploadFailedGeneric')}</p>
+        <RawOutput output={upload.output} />
+      </div>
+    );
+  }
 
   if (result.ok) {
     const warnings = result.diagnostics.filter((item) => item.severity === 'warning');

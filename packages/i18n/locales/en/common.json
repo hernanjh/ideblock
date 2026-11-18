@@ -169,6 +169,50 @@
       "core-install": "The tools for this board could not be installed. An internet connection is needed the first time you use a board.",
       "library-install": "A library the program needs could not be installed. An internet connection is needed the first time.",
       "compile": "The program could not be compiled."
+    },
+    "upload": "Upload",
+    "uploadHint": "Send the program to the board",
+    "uploaded": "Done! The program is on the board.",
+    "uploadFailed": "The program could not be uploaded.",
+    "uploadFailedGeneric": "Check the cable, the port and that the right board is selected."
+  },
+  "uploadHelp": {
+    "linuxPermission": "Your user is not allowed to use the USB port. On Linux, add your user to the \"dialout\" group and sign in again.",
+    "portBusy": "The port is being used by another program, such as another serial monitor or the Arduino IDE. Close it and try again.",
+    "portMissing": "The board was not found on that port. Check the USB cable and choose the port again.",
+    "espBootMode": "The ESP32 did not enter upload mode. Hold down the BOOT button on the board while uploading.",
+    "notInSync": "The board did not answer. Check that the right board is selected. Many Nano clones need \"Arduino Nano (old bootloader)\"."
+  },
+  "ports": {
+    "label": "Board port",
+    "none": "No board connected",
+    "choose": "Choose a port",
+    "useBoard": "Use {{board}}",
+    "showAll": "Show all serial ports",
+    "help": {
+      "title": "No board was found. Try these steps:",
+      "cable": "Connect the board to the computer with a USB cable.",
+      "dataCable": "Some cables only charge. Try another cable if the board still does not appear.",
+      "otherPort": "Try a different USB port on the computer.",
+      "drivers": "Low-cost boards may need a driver (CH340 or CP210x).",
+      "driver": "A board with a {{chip}} chip is connected but its driver is missing.",
+      "downloadDriver": "Download the {{chip}} driver"
     }
+  },
+  "serial": {
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "noPort": "Connect a board first",
+    "speed": "Speed",
+    "view": "View",
+    "text": "Text",
+    "plot": "Graph",
+    "clear": "Clear",
+    "message": "Message to send",
+    "messagePlaceholder": "Write a message for the board",
+    "send": "Send",
+    "error": "The serial port closed:",
+    "fromSimulator": "From the simulator",
+    "plotHint": "Print numbers, one line at a time, to see them in the graph. For example: 12 34 or temp:21.5"
   }
 }

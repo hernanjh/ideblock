@@ -9,6 +9,8 @@ import { App } from './App';
 import { applyAppearance } from './appearance';
 import { initI18n } from './i18n';
 import { useBuildStore } from './state/build';
+import { usePortsStore } from './state/ports';
+import { useSerialStore } from './state/serial';
 import { useProjectStore } from './state/project';
 import { useSettingsStore } from './state/settings';
 
@@ -33,6 +35,16 @@ async function bootstrap(): Promise<void> {
   window.ideblock.on('settings:changed', (updated) => {
     useSettingsStore.getState().receive(updated);
   });
+  usePortsStore.getState().setPorts(await window.ideblock.invoke('ports:list'));
+  window.ideblock.on('ports:changed', (ports) => usePortsStore.getState().setPorts(ports));
+  window.ideblock.on('serial:data', (text) => useSerialStore.getState().receive(text));
+  window.ideblock.on('serial:status', (status) =>
+    useSerialStore.getState().setStatus({
+      open: status.state === 'open',
+      port: status.port ?? null,
+      error: status.state === 'error' ? (status.message ?? '') : null,
+    }),
+  );
   window.ideblock.on('toolchain:progress', (progress) => {
     useBuildStore.getState().setProgress(progress);
     // First-time downloads take a while, so the console shows what is happening.
