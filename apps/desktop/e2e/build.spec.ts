@@ -17,6 +17,15 @@ test.describe('compiling', () => {
     await expect(window.getByTestId('build-success')).toContainText('memoria de programa');
   });
 
+  test('verifies a blocks program while the blocks panel is hidden', async ({ launchApp }) => {
+    const { window } = await launchApp('es-AR');
+    await window.getByTestId('toggle-blocks').click();
+    await window.getByTestId('file-examples').click();
+    await window.getByTestId('example-Blink').click();
+    await window.getByTestId('build-verify').click();
+    await expect(window.getByTestId('build-success')).toBeVisible({ timeout: 240_000 });
+  });
+
   test('explains errors in hand-written code and jumps to the line', async ({ launchApp }) => {
     const { window } = await launchApp('es-AR');
     const editor = window.locator('[data-testid="code-editor"] .view-lines');

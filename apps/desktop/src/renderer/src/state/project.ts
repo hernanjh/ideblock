@@ -10,6 +10,7 @@ import {
   type WorkspaceState,
 } from '@ideblock/project';
 import { create } from 'zustand';
+import { generateSketch } from '../blocks/simulation-sketch';
 import { withBoardBus } from '../simulator/circuit';
 
 export type { ProjectMode, WorkspaceState };
@@ -78,6 +79,15 @@ interface ProjectState {
   setCircuit: (circuit: CircuitDocument, mergeKey?: string) => void;
 }
 
+/** Code for saved blocks; a corrupt workspace gives no code rather than a crash. */
+function safeSketch(state: WorkspaceState | null, boardId: string): SketchResult | null {
+  try {
+    return generateSketch(state, getBoard(boardId));
+  } catch {
+    return null;
+  }
+}
+
 const HISTORY_LIMIT = 100;
 const MERGE_MS = 1500;
 let lastCircuitChange = 0;
@@ -115,12 +125,14 @@ export const useProjectStore = create<ProjectState>((set, get) => {
         mode,
         workspaceState: project.blocks,
         code: mode === 'code' ? project.code : '',
+        // The blocks editor may not be on screen (hidden panel, circuit view),
+        // so the code is generated here; the editor regenerates it on changes.
+        sketch: mode === 'blocks' ? safeSketch(project.blocks, board) : null,
         circuit: project.circuit,
         circuitPast: [],
         circuitFuture: [],
         extraManifest: extra,
         path,
-        sketch: null,
         diagnostics: [],
         revision: 0,
         savedRevision: 0,
@@ -131,8 +143,14 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     },
     newProject: (name) => get().load(createProject(name, get().boardId), null),
     setName: (name) => change({ name }),
-    setBoard: (boardId) =>
-      change({ boardId, circuit: withBoardBus(get().circuit, getBoard(boardId)) }),
+    setBoard: (boardId) => {
+      const { circuit, mode, workspaceState } = get();
+      change({
+        boardId,
+        circuit: withBoardBus(circuit, getBoard(boardId)),
+        ...(mode === 'blocks' ? { sketch: safeSketch(workspaceState, boardId) } : {}),
+      });
+    },
     setWorkspaceState: (workspaceState) => change({ workspaceState }),
     syncWorkspaceState: (workspaceState) => set({ workspaceState }),
     setSketch: (sketch) => set({ sketch }),
