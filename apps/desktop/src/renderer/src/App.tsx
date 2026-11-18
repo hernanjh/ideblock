@@ -6,6 +6,7 @@ import { BlockEditor } from './blocks/BlockEditor';
 import { BlockLevelToggle } from './blocks/BlockLevelToggle';
 import { CodeModeOverlay } from './blocks/CodeModeOverlay';
 import { CodeEditor } from './code/CodeEditor';
+import { ConsolePanel } from './console/ConsolePanel';
 import { Toolbar } from './components/Toolbar';
 import { SaveStatus } from './files/SaveStatus';
 import { useAutosave } from './hooks/useAutosave';
@@ -50,7 +51,7 @@ export function App() {
         blocksActions={<BlockLevelToggle />}
         code={<CodeEditor />}
         simulator={<PanelPlaceholder />}
-        console={<PanelPlaceholder />}
+        console={<ConsolePanel />}
       />
       <footer className="status-bar">
         <SaveStatus />

@@ -8,7 +8,8 @@ export type ShortcutId =
   | 'fontReset'
   | 'newProject'
   | 'openProject'
-  | 'saveProject';
+  | 'saveProject'
+  | 'verify';
 
 interface ShortcutDefinition {
   keys: readonly string[];
@@ -28,6 +29,7 @@ export const SHORTCUTS: Record<ShortcutId, ShortcutDefinition> = {
   newProject: { keys: ['n', 'N'], display: 'N' },
   openProject: { keys: ['o', 'O'], display: 'O' },
   saveProject: { keys: ['s', 'S'], display: 'S' },
+  verify: { keys: ['r', 'R'], display: 'R' },
 };
 
 export function matchShortcut(event: KeyboardEvent): ShortcutId | null {

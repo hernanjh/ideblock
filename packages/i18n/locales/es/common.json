@@ -120,5 +120,55 @@
       "not-found": "No se encontró el proyecto.",
       "write-failed": "No se pudo guardar el proyecto. Revisá que la carpeta exista y que tengas permiso para escribir."
     }
+  },
+  "compilerHelp": {
+    "notDeclared": "Se usa el nombre \"{{name}}\" pero nunca se creó. Revisá que esté escrito igual en todos lados, incluidas las mayúsculas, o declaralo antes.",
+    "missingSemicolon": "Falta un punto y coma (;) al final de la instrucción anterior.",
+    "missingClosingBrace": "Falta una llave de cierre }. Cada { necesita su }.",
+    "missingParenthesis": "Falta un paréntesis de cierre ). Contá los ( y los ) de esa línea.",
+    "notAType": "\"{{name}}\" no es un tipo conocido. Puede faltar un #include arriba de todo, o el nombre está mal escrito.",
+    "missingLibrary": "La librería {{name}} no está instalada. Instalala o revisá el nombre en el #include.",
+    "redefinition": "\"{{name}}\" está definido dos veces. Cada nombre se puede crear una sola vez.",
+    "wrongArguments": "Se llamó a una función con una cantidad equivocada de valores entre los paréntesis.",
+    "strayCharacter": "Hay un carácter raro en el código, muchas veces comillas curvas o símbolos copiados de una página web. Volvé a escribir esa línea a mano.",
+    "unterminatedText": "A un texto le falta la comilla \" de cierre.",
+    "assignInsteadOfCompare": "Para comparar dos valores se usa == (dos signos igual). Un solo = cambia un valor.",
+    "elseWithoutIf": "Hay un else sin su if. Revisá las llaves { } del if anterior.",
+    "typeMismatch": "Se usó un valor de un tipo donde hacía falta otro tipo distinto.",
+    "incompleteExpression": "Hay una operación incompleta: falta un valor antes de un símbolo.",
+    "unexpectedText": "Hay algo inesperado fuera de una función. Revisá si sobra una llave o hay texto fuera de lugar.",
+    "missingSetupOrLoop": "Todo programa necesita la función {{name}}(). Revisá que exista y esté bien escrita.",
+    "programTooBig": "El programa no entra en la memoria de la placa. Probá quitar textos o partes que no uses, o usá una placa con más memoria."
+  },
+  "console": {
+    "messages": "Mensajes",
+    "serial": "Monitor serie"
+  },
+  "build": {
+    "group": "Programa",
+    "verify": "Verificar",
+    "verifyHint": "Revisar que el programa esté bien",
+    "idle": "Tocá Verificar para revisar tu programa. Los resultados aparecen acá.",
+    "stage": {
+      "index": "Buscando la lista de placas…",
+      "core": "Instalando las herramientas para {{board}}. Pasa solo la primera vez y necesita internet.",
+      "library": "Instalando la librería {{subject}}…",
+      "compile": "Revisando el programa para {{board}}…",
+      "upload": "Subiendo a la placa…"
+    },
+    "success": "El programa está bien.",
+    "memory": "Usa {{used}} de {{max}} bytes de memoria de programa ({{percent}}%).",
+    "warnings_one": "Hay {{count}} advertencia en los detalles.",
+    "warnings_other": "Hay {{count}} advertencias en los detalles.",
+    "errors_one": "El programa tiene {{count}} error.",
+    "errors_other": "El programa tiene {{count}} errores.",
+    "line": "Línea {{line}}:",
+    "details": "Ver la salida completa del compilador",
+    "failure": {
+      "tool-missing": "Falta el compilador. Reinstalá IdeBlock.",
+      "core-install": "No se pudieron instalar las herramientas de esta placa. La primera vez que usás una placa hace falta conexión a internet.",
+      "library-install": "No se pudo instalar una librería que necesita el programa. La primera vez hace falta conexión a internet.",
+      "compile": "No se pudo compilar el programa."
+    }
   }
 }

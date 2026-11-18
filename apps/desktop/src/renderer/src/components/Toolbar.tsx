@@ -1,6 +1,7 @@
 import { Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BuildActions } from '../build/BuildActions';
 import { FileActions } from '../files/FileActions';
 import { ProjectName } from '../files/ProjectName';
 import { BoardSelect } from './BoardSelect';
@@ -21,6 +22,8 @@ export function Toolbar() {
       <div className="toolbar__group">
         <BoardSelect />
       </div>
+
+      <BuildActions />
 
       <PanelToggles />
 

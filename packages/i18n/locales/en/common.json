@@ -120,5 +120,55 @@
       "not-found": "The project could not be found.",
       "write-failed": "The project could not be saved. Check that the folder exists and you can write to it."
     }
+  },
+  "compilerHelp": {
+    "notDeclared": "The name \"{{name}}\" is used but was never created. Check that it is spelled exactly the same everywhere, including capital letters, or declare it first.",
+    "missingSemicolon": "A semicolon (;) is missing at the end of the previous instruction.",
+    "missingClosingBrace": "A closing brace } is missing. Every { needs its own }.",
+    "missingParenthesis": "A closing parenthesis ) is missing. Count the ( and the ) on that line.",
+    "notAType": "\"{{name}}\" is not a known type. You may be missing an #include at the top, or the name is misspelled.",
+    "missingLibrary": "The library {{name}} is not installed. Install it or check the name in the #include.",
+    "redefinition": "\"{{name}}\" is defined twice. Each name can only be created once.",
+    "wrongArguments": "A function was called with the wrong number of values between the parentheses.",
+    "strayCharacter": "There is a strange character in the code, often curly quotes or symbols copied from a web page. Retype that line by hand.",
+    "unterminatedText": "A text is missing its closing quote \".",
+    "assignInsteadOfCompare": "To compare two values use == (two equal signs). A single = changes a value.",
+    "elseWithoutIf": "There is an else without its if. Check the braces { } of the if before it.",
+    "typeMismatch": "A value of one type was used where a different type is needed.",
+    "incompleteExpression": "An operation is incomplete: a value is missing before a symbol.",
+    "unexpectedText": "There is something unexpected outside a function. Check for an extra brace or text out of place.",
+    "missingSetupOrLoop": "Every program needs the function {{name}}(). Make sure it exists and is spelled correctly.",
+    "programTooBig": "The program does not fit in the board's memory. Try removing text or unused parts, or use a board with more memory."
+  },
+  "console": {
+    "messages": "Messages",
+    "serial": "Serial monitor"
+  },
+  "build": {
+    "group": "Program",
+    "verify": "Verify",
+    "verifyHint": "Check that the program is correct",
+    "idle": "Press Verify to check your program. Results appear here.",
+    "stage": {
+      "index": "Getting the list of boards…",
+      "core": "Installing the tools for {{board}}. This happens only the first time and needs internet.",
+      "library": "Installing the {{subject}} library…",
+      "compile": "Checking the program for {{board}}…",
+      "upload": "Uploading to the board…"
+    },
+    "success": "The program is correct.",
+    "memory": "It uses {{used}} of {{max}} bytes of program memory ({{percent}}%).",
+    "warnings_one": "There is {{count}} warning in the details.",
+    "warnings_other": "There are {{count}} warnings in the details.",
+    "errors_one": "The program has {{count}} error.",
+    "errors_other": "The program has {{count}} errors.",
+    "line": "Line {{line}}:",
+    "details": "Show the full compiler output",
+    "failure": {
+      "tool-missing": "The compiler is missing. Reinstall IdeBlock.",
+      "core-install": "The tools for this board could not be installed. An internet connection is needed the first time you use a board.",
+      "library-install": "A library the program needs could not be installed. An internet connection is needed the first time.",
+      "compile": "The program could not be compiled."
+    }
   }
 }

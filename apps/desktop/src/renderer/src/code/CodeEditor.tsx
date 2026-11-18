@@ -18,6 +18,7 @@ export function CodeEditor() {
   const mode = useProjectStore((state) => state.mode);
   const code = useProjectStore(currentCode);
   const diagnostics = useProjectStore((state) => state.diagnostics);
+  const reveal = useProjectStore((state) => state.reveal);
   const switchToCode = useProjectStore((state) => state.switchToCode);
   const theme = useSettingsStore((state) => state.settings.theme);
   const fontScale = useSettingsStore((state) => state.settings.fontScale);
@@ -104,6 +105,15 @@ export function CodeEditor() {
       })),
     );
   }, [diagnostics, code]);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor || !reveal) return;
+    editor.setScrollLeft(0);
+    editor.revealLineInCenter(reveal.line);
+    editor.setPosition({ lineNumber: reveal.line, column: Math.max(1, reveal.column) });
+    editor.focus();
+  }, [reveal]);
 
   return (
     <div className="code-editor">

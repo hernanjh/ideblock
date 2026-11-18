@@ -432,7 +432,8 @@ button:disabled {
   justify-content: center;
   padding: var(--space-4);
   background: rgb(0 0 0 / 35%);
-  z-index: 10;
+  /* Above Blockly's toolbox and flyout. */
+  z-index: 100;
 }
 
 .overlay__card {
@@ -534,4 +535,154 @@ button:disabled {
 .example-card span {
   color: var(--color-text-muted);
   font-size: 0.875rem;
+}
+
+.action-button {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-weight: 700;
+}
+
+.action-button:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.console {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tabs__tab {
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: transparent;
+}
+
+.tabs__tab[aria-selected='true'] {
+  background: var(--color-surface-muted);
+  font-weight: 700;
+}
+
+.console__body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-2) var(--space-4);
+}
+
+.console__empty {
+  color: var(--color-text-muted);
+}
+
+.build-status {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.build-status p {
+  margin: 0;
+}
+
+.build-status__detail {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.build-result p {
+  margin: 0 0 var(--space-2);
+}
+
+.build-result__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+}
+
+.build-result__title--ok {
+  color: #1b7a34;
+}
+
+.build-result__title--error {
+  color: #b3261e;
+}
+
+:root[data-theme='dark'] .build-result__title--ok,
+:root[data-theme='high-contrast'] .build-result__title--ok {
+  color: #7fdc95;
+}
+
+:root[data-theme='dark'] .build-result__title--error,
+:root[data-theme='high-contrast'] .build-result__title--error {
+  color: #ff9c94;
+}
+
+.diagnostics {
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.diagnostic {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.diagnostic__icon {
+  flex: none;
+  margin-top: 0.2em;
+  color: #b3261e;
+}
+
+.diagnostic__help {
+  font-weight: 700;
+}
+
+.diagnostic__message code,
+.raw-output pre {
+  font-family: 'Cascadia Mono', 'Consolas', 'DejaVu Sans Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.link-button {
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-accent);
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.raw-output summary {
+  cursor: pointer;
+  color: var(--color-text-muted);
+}
+
+.raw-output pre {
+  white-space: pre-wrap;
+  margin: var(--space-2) 0 0;
 }

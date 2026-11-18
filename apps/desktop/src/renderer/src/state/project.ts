@@ -49,6 +49,8 @@ interface ProjectState {
   /** Increments when a different project is loaded, so editors reload. */
   loadId: number;
   saveStatus: SaveStatus;
+  /** Asks the code editor to show a line; the id makes repeated requests distinct. */
+  reveal: { line: number; column: number; id: number } | null;
 
   load: (project: ProjectDocument, path: string | null) => void;
   newProject: (name: string) => void;
@@ -63,6 +65,7 @@ interface ProjectState {
   setDiagnostics: (diagnostics: Diagnostic[]) => void;
   markSaved: (revision: number, path: string | null) => void;
   setSaveStatus: (status: SaveStatus) => void;
+  revealLine: (line: number, column: number) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => {
@@ -85,6 +88,7 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     edited: false,
     loadId: 0,
     saveStatus: 'idle',
+    reveal: null,
 
     load: (project, path) => {
       const { formatVersion: _version, name, board, mode, ...extra } = project.manifest;
@@ -123,6 +127,8 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     markSaved: (revision, path) =>
       set({ savedRevision: revision, path, saveStatus: path ? 'saved' : 'idle' }),
     setSaveStatus: (saveStatus) => set({ saveStatus }),
+    revealLine: (line, column) =>
+      set((state) => ({ reveal: { line, column, id: (state.reveal?.id ?? 0) + 1 } })),
   };
 });
 

@@ -8,6 +8,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { applyAppearance } from './appearance';
 import { initI18n } from './i18n';
+import { useBuildStore } from './state/build';
 import { useProjectStore } from './state/project';
 import { useSettingsStore } from './state/settings';
 
@@ -31,6 +32,14 @@ async function bootstrap(): Promise<void> {
 
   window.ideblock.on('settings:changed', (updated) => {
     useSettingsStore.getState().receive(updated);
+  });
+  window.ideblock.on('toolchain:progress', (progress) => {
+    useBuildStore.getState().setProgress(progress);
+    // First-time downloads take a while, so the console shows what is happening.
+    const { settings, update } = useSettingsStore.getState();
+    if (progress.stage !== 'compile' && !settings.consoleVisible) {
+      void update({ consoleVisible: true });
+    }
   });
 
   const container = document.getElementById('root');
