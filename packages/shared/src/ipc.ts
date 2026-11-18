@@ -126,6 +126,13 @@ export interface SerialStatus {
 }
 
 /**
+ * Simulator state mirrored to the detached simulator window. Typed loosely here
+ * because the renderer owns the exact shape.
+ */
+export type SimulatorSnapshot = Record<string, unknown>;
+export type SimulatorAction = { type: string } & Record<string, unknown>;
+
+/**
  * Request/response channels handled by the main process. Adding a channel here
  * makes it type-checked end to end: main handler, preload bridge and renderer.
  */
@@ -157,6 +164,10 @@ export interface InvokeContract {
   'serial:close': { args: []; result: void };
   'serial:write': { args: [text: string]; result: void };
   'app:open-external': { args: [url: string]; result: void };
+  'simulator:detach': { args: []; result: void };
+  'simulator:attach': { args: []; result: void };
+  'simulator:sync': { args: [snapshot: SimulatorSnapshot]; result: void };
+  'simulator:action': { args: [action: SimulatorAction]; result: void };
 }
 
 /** Events pushed from the main process to the renderer. */
@@ -166,6 +177,9 @@ export interface EventContract {
   'ports:changed': PortInfo[];
   'serial:data': string;
   'serial:status': SerialStatus;
+  'simulator:detached': boolean;
+  'simulator:snapshot': SimulatorSnapshot;
+  'simulator:action': SimulatorAction;
 }
 
 export type InvokeChannel = keyof InvokeContract;
@@ -196,6 +210,10 @@ const invokeChannelSet: Record<InvokeChannel, true> = {
   'serial:close': true,
   'serial:write': true,
   'app:open-external': true,
+  'simulator:detach': true,
+  'simulator:attach': true,
+  'simulator:sync': true,
+  'simulator:action': true,
 };
 const eventChannelSet: Record<EventChannel, true> = {
   'settings:changed': true,
@@ -203,6 +221,9 @@ const eventChannelSet: Record<EventChannel, true> = {
   'ports:changed': true,
   'serial:data': true,
   'serial:status': true,
+  'simulator:detached': true,
+  'simulator:snapshot': true,
+  'simulator:action': true,
 };
 
 export const INVOKE_CHANNELS = Object.keys(invokeChannelSet) as InvokeChannel[];
