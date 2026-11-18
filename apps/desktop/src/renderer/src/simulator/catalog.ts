@@ -28,6 +28,11 @@ export const VISUALS: Record<string, VisualDefinition> = {
       return { value: brightness > 0, brightness, color: props?.['color'] ?? 'red' };
     },
   },
+  resistor: {
+    tag: 'wokwi-resistor',
+    control: 'none',
+    properties: () => ({ value: '220' }),
+  },
   pushbutton: {
     tag: 'wokwi-pushbutton',
     control: 'press',

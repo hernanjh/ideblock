@@ -273,7 +273,9 @@
     "hc-sr04": "Ultrasonic sensor",
     "rgb-led": "RGB LED",
     "lcd1602": "LCD 16x2 screen (I2C)",
-    "neopixel-ring": "NeoPixel ring"
+    "neopixel-ring": "NeoPixel ring",
+    "breadboard": "Breadboard",
+    "resistor": "Resistor"
   },
   "componentPins": {
     "anode": "Pin",
@@ -338,14 +340,50 @@
     "sharedPin": "Another component uses the same pin. Check that this is what you want.",
     "ledResistor": "Wired with a resistor, so the LED does not burn out.",
     "about": "What is it?",
-    "remove": "Remove {{name}}"
+    "remove": "Remove {{name}}",
+    "boardPin": "Board pin {{pin}}",
+    "hole": "Column {{column}}, row {{row}}",
+    "railPlus": "+ power rail",
+    "railMinus": "− ground rail",
+    "leg": "{{name}}: {{leg}}",
+    "burned": "Burnt out!",
+    "wiring": "Wiring",
+    "wiringAuto": "Automatic",
+    "wiringManual": "By hand",
+    "wiringAutoHint": "Wires are drawn from the pin you choose for each component.",
+    "wiringManualHint": "You lay the wires and build the circuit on the breadboard, like in real life.",
+    "wireColor": "Colour of new wires",
+    "deleteWire": "Delete the selected wire",
+    "wireHint": "Drag from a pin or a hole to another to lay a wire. Delete removes the selected wire.",
+    "assembly": "Building",
+    "check": "Circuit check",
+    "allGood": "Everything is wired correctly.",
+    "emptyCircuit": "Add a breadboard and some components to start building.",
+    "connectedTo": "pin {{pin}}",
+    "notConnected": "not connected",
+    "wiresIn": "Wires",
+    "wireFrom": "From",
+    "wireTo": "To",
+    "manualConnectionsHint": "With hand wiring, connections come from the wires you lay.",
+    "resistorValue": "Value",
+    "issue": {
+      "unconnected": "{{name}} needs a wire from \"{{pin}}\" to a board pin.",
+      "noGround": "{{name}} is not connected to GND (ground).",
+      "noSupply": "{{name}} needs power: connect it to {{supply}}.",
+      "noResistor": "{{name}} has no resistor: it will burn out when it lights up. Put a resistor between the LED and the pin or GND.",
+      "short": "Short circuit! {{pins}} are joined directly."
+    },
+    "ohms": "{{value}} Ω"
   },
   "colors": {
     "red": "Red",
     "green": "Green",
     "yellow": "Yellow",
     "blue": "Blue",
-    "white": "White"
+    "white": "White",
+    "black": "Black",
+    "orange": "Orange",
+    "purple": "Purple"
   },
   "componentInfo": {
     "led": "A light that turns on when its pin is HIGH. The long leg goes to the pin and the short one to GND, always through a resistor.",
@@ -357,7 +395,9 @@
     "hc-sr04": "Measures distance with ultrasound, from 2 to 400 cm. It uses one pin to send the pulse (trig) and another to hear the echo.",
     "rgb-led": "Three LEDs in one: red, green and blue. Mixing their brightness with analogWrite() makes any colour.",
     "lcd1602": "A screen with 2 rows of 16 characters. It uses the I2C bus, so it only needs the SDA and SCL pins plus power.",
-    "neopixel-ring": "A ring of colour LEDs controlled through a single data pin. Each LED can have its own colour."
+    "neopixel-ring": "A ring of colour LEDs controlled through a single data pin. Each LED can have its own colour.",
+    "breadboard": "A board with holes for building circuits without soldering. Each column of 5 holes (a–e and f–j) is joined inside, and the + and − rails along the edges run the whole length.",
+    "resistor": "Limits the current to protect LEDs. This one is 220 Ω, the usual value for an LED on {{board}}."
   },
   "languageShort": {
     "system": "Auto",
@@ -369,5 +409,30 @@
     "esp32": "ESP32",
     "esp8266": "ESP8266",
     "raspberry-pi": "Raspberry Pi"
+  },
+  "legs": {
+    "A": "long leg (+)",
+    "C": "short leg (−)",
+    "COM": "common leg (−)",
+    "R": "red leg",
+    "G": "green leg",
+    "B": "blue leg",
+    "SIG": "signal leg",
+    "AO": "signal leg",
+    "VCC": "VCC (+)",
+    "V+": "V+ (+)",
+    "GND": "GND (−)",
+    "PWM": "signal leg",
+    "TRIG": "TRIG",
+    "ECHO": "ECHO",
+    "SDA": "SDA",
+    "SCL": "SCL",
+    "DIN": "DIN (data)",
+    "1": "leg 1",
+    "2": "leg 2",
+    "1_l": "leg 1",
+    "1_r": "leg 1",
+    "2_l": "leg 2",
+    "2_r": "leg 2"
   }
 }

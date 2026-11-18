@@ -2,6 +2,7 @@ import { getBoard } from '@ideblock/boards';
 import { pinsFor, type PinKind } from '@ideblock/blocks';
 import { COMPONENTS, findComponent } from '@ideblock/simulator';
 import {
+  CircleCheck,
   Maximize,
   Search,
   Trash2,
@@ -11,7 +12,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { simulate } from '../build/actions';
 import {
@@ -20,7 +21,9 @@ import {
   sharedPins,
   updateComponent,
   withComponents,
+  wiringMode,
   type CircuitItem,
+  type WiringMode,
 } from '../simulator/circuit';
 import { componentNames } from '../simulator/names';
 import { SimulationBar } from '../simulator/SimulatorPanel';
@@ -32,9 +35,24 @@ import { boardLayout } from './boards';
 import { CircuitScene } from './CircuitScene';
 import { ComponentIcon } from './ComponentIcon';
 import { SHAPES } from './geometry';
+import { supplyPin } from './layout';
+import {
+  WIRE_COLOURS,
+  circuitAnalysis,
+  circuitWires,
+  nextWireId,
+  removePart,
+  toAutoWiring,
+  toManualWiring,
+  withWires,
+} from './model';
+import type { CircuitAnalysis, CircuitIssue } from './netlist';
 
 const ZOOM_STEPS = [0.5, 0.67, 0.8, 1, 1.25, 1.5, 2];
 const LED_COLOURS = ['red', 'green', 'yellow', 'blue', 'white'] as const;
+const WIRE_COLOUR_NAMES = ['blue', 'green', 'orange', 'red', 'black', 'purple'] as const;
+const ASSEMBLY_PARTS = ['breadboard', 'resistor'];
+const WIRING_MODES: readonly WiringMode[] = ['auto', 'manual'];
 
 /** Circuit screen: component palette, a large drawing and the selected component's properties. */
 export function CircuitView({ console }: { console: ReactNode }) {
@@ -47,12 +65,17 @@ export function CircuitView({ console }: { console: ReactNode }) {
   const consoleVisible = useSettingsStore((state) => state.settings.consoleVisible);
   const simulation = useSimulationStore();
   const [zoom, setZoom] = useState<number | 'fit'>('fit');
+  const [selectedWire, setSelectedWire] = useState<string | null>(null);
+  const [wireColour, setWireColour] = useState(WIRE_COLOURS[0]!);
 
   const board = getBoard(boardId);
   const items = useMemo(() => circuitComponents(circuit), [circuit]);
   const names = useMemo(() => componentNames(items, t), [items, t]);
   const selectedItem = items.find((item) => item.id === selected) ?? null;
   const running = simulation.status === 'running' || simulation.status === 'paused';
+  const mode = wiringMode(circuit);
+  const wires = useMemo(() => circuitWires(circuit), [circuit]);
+  const analysis = useMemo(() => circuitAnalysis(circuit, board), [circuit, board]);
 
   const add = (type: string): void => {
     const component = newComponent(type, circuit, board);
@@ -62,14 +85,37 @@ export function CircuitView({ console }: { console: ReactNode }) {
   };
 
   const remove = (id: string): void => {
-    setCircuit(
-      withComponents(
-        circuit,
-        items.filter((item) => item.id !== id),
-      ),
-    );
+    setCircuit(removePart(circuit, id));
     select(null);
   };
+
+  const removeWire = (id: string): void => {
+    setCircuit(
+      withWires(
+        circuit,
+        wires.filter((wire) => wire.id !== id),
+      ),
+    );
+    setSelectedWire(null);
+  };
+
+  const setMode = (next: WiringMode): void => {
+    if (next === mode) return;
+    setSelectedWire(null);
+    setCircuit(next === 'manual' ? toManualWiring(circuit, board) : toAutoWiring(circuit, board));
+  };
+
+  useEffect(() => {
+    if (!selectedWire) return;
+    const onKey = (event: KeyboardEvent): void => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+      if (event.key === 'Delete' || event.key === 'Backspace') removeWire(selectedWire);
+      if (event.key === 'Escape') setSelectedWire(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
 
   const stepZoom = (direction: 1 | -1): void => {
     const current = zoom === 'fit' ? 1 : zoom;
@@ -80,7 +126,7 @@ export function CircuitView({ console }: { console: ReactNode }) {
 
   return (
     <div className="circuit-view" data-testid="circuit-view">
-      <Palette onAdd={add} />
+      <Palette onAdd={add} mode={mode} />
 
       <section className="card circuit-canvas" aria-label={t('rail.circuit')}>
         <div className="card__header">
@@ -89,14 +135,63 @@ export function CircuitView({ console }: { console: ReactNode }) {
             {t('circuit.title', { board: board.name })}
           </h2>
           <div className="card__end">
+            <span className="wiring-label">{t('circuit.wiring')}</span>
+            <div className="segmented" role="group" aria-label={t('circuit.wiring')}>
+              {WIRING_MODES.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  aria-pressed={mode === option}
+                  title={t(
+                    option === 'auto' ? 'circuit.wiringAutoHint' : 'circuit.wiringManualHint',
+                  )}
+                  data-testid={`wiring-${option}`}
+                  disabled={running}
+                  onClick={() => setMode(option)}
+                >
+                  {t(option === 'auto' ? 'circuit.wiringAuto' : 'circuit.wiringManual')}
+                </button>
+              ))}
+            </div>
+            {mode === 'manual' && (
+              <div className="swatches" role="radiogroup" aria-label={t('circuit.wireColor')}>
+                {WIRE_COLOURS.map((colour, index) => (
+                  <button
+                    key={colour}
+                    type="button"
+                    role="radio"
+                    className="swatch"
+                    style={{ background: colour }}
+                    aria-checked={wireColour === colour}
+                    aria-label={t(`colors.${WIRE_COLOUR_NAMES[index]!}`)}
+                    title={t(`colors.${WIRE_COLOUR_NAMES[index]!}`)}
+                    onClick={() => {
+                      setWireColour(colour);
+                      if (selectedWire) {
+                        setCircuit(
+                          withWires(
+                            circuit,
+                            wires.map((wire) =>
+                              wire.id === selectedWire ? { ...wire, color: colour } : wire,
+                            ),
+                          ),
+                        );
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            )}
             <button
               type="button"
               className="icon-button icon-button--framed"
-              aria-label={t('circuit.delete')}
-              title={t('circuit.delete')}
-              disabled={!selectedItem}
+              aria-label={selectedWire ? t('circuit.deleteWire') : t('circuit.delete')}
+              title={selectedWire ? t('circuit.deleteWire') : t('circuit.delete')}
+              disabled={!selectedItem && !selectedWire}
               data-testid="circuit-delete"
-              onClick={() => selectedItem && remove(selectedItem.id)}
+              onClick={() =>
+                selectedWire ? removeWire(selectedWire) : selectedItem && remove(selectedItem.id)
+              }
             >
               <Trash2 aria-hidden="true" size="1.1em" />
             </button>
@@ -147,11 +242,30 @@ export function CircuitView({ console }: { console: ReactNode }) {
             editable
             names={names}
             onSelect={select}
+            mode={mode}
+            wires={wires}
+            selectedWireId={selectedWire}
+            wireColour={wireColour}
+            onSelectWire={setSelectedWire}
+            onAddWire={(from, to) =>
+              setCircuit(
+                withWires(circuit, [
+                  ...wires,
+                  { id: nextWireId(wires), from, to, color: wireColour },
+                ]),
+              )
+            }
             onInput={(id, input) => simulation.input(id, input)}
-            onMove={(id, position) =>
-              setCircuit(updateComponent(circuit, id, (item) => ({ ...item, ...position })))
+            onMove={(moves) =>
+              setCircuit(
+                withComponents(
+                  circuit,
+                  items.map((item) => (moves[item.id] ? { ...item, ...moves[item.id] } : item)),
+                ),
+              )
             }
           />
+          {mode === 'manual' && <p className="circuit-hint">{t('circuit.wireHint')}</p>}
           <SimulationBar
             status={simulation.status}
             timeMs={simulation.timeMs}
@@ -176,6 +290,9 @@ export function CircuitView({ console }: { console: ReactNode }) {
         boardName={board.name}
         pinOptions={(kind) => [...pinsFor(board, kind)]}
         supplyLabel={boardLayout(board).supplyLabel}
+        analysis={analysis}
+        names={names}
+        supply={supplyPin(board)}
       />
 
       {consoleVisible && <div className="circuit-view__console">{console}</div>}
@@ -183,15 +300,23 @@ export function CircuitView({ console }: { console: ReactNode }) {
   );
 }
 
-function Palette({ onAdd }: { onAdd: (type: string) => void }) {
+function Palette({ onAdd, mode }: { onAdd: (type: string) => void; mode: WiringMode }) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const normalized = query.trim().toLowerCase();
-  const matches = COMPONENTS.filter((definition) =>
-    String(t(`components.${definition.type}` as never))
+  const matching = (type: string): boolean =>
+    String(t(`components.${type}` as never))
       .toLowerCase()
-      .includes(normalized),
-  );
+      .includes(normalized);
+  const groups = [
+    ...(mode === 'manual'
+      ? [{ heading: t('circuit.assembly'), types: ASSEMBLY_PARTS.filter(matching) }]
+      : []),
+    {
+      heading: t('circuit.basic'),
+      types: COMPONENTS.map((definition) => definition.type).filter(matching),
+    },
+  ];
 
   return (
     <section className="card palette" aria-label={t('circuit.palette')}>
@@ -205,23 +330,29 @@ function Palette({ onAdd }: { onAdd: (type: string) => void }) {
           onChange={(event) => setQuery(event.target.value)}
         />
       </label>
-      <h3 className="palette__heading">{t('circuit.basic')}</h3>
-      <ul className="palette__grid">
-        {matches.map((definition) => (
-          <li key={definition.type}>
-            <button
-              type="button"
-              className="palette__item"
-              title={t('circuit.addHint')}
-              data-testid={`add-${definition.type}`}
-              onClick={() => onAdd(definition.type)}
-            >
-              <ComponentIcon type={definition.type} />
-              <span>{t(`components.${definition.type}` as never)}</span>
-            </button>
-          </li>
+      {groups
+        .filter((group) => group.types.length > 0)
+        .map((group) => (
+          <div key={group.heading}>
+            <h3 className="palette__heading">{group.heading}</h3>
+            <ul className="palette__grid">
+              {group.types.map((type) => (
+                <li key={type}>
+                  <button
+                    type="button"
+                    className="palette__item"
+                    title={t('circuit.addHint')}
+                    data-testid={`add-${type}`}
+                    onClick={() => onAdd(type)}
+                  >
+                    <ComponentIcon type={type} />
+                    <span>{t(`components.${type}` as never)}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
       <p className="palette__hint">{t('circuit.paletteHint')}</p>
     </section>
   );
@@ -237,6 +368,78 @@ interface PropertiesProps {
   onChange: (change: (item: CircuitItem) => CircuitItem) => void;
   onRemove: (id: string) => void;
   onClose: () => void;
+  /** Wiring analysis with hand wiring, null with automatic wiring. */
+  analysis: CircuitAnalysis | null;
+  names: Record<string, string>;
+  supply: string;
+}
+
+function issueText(
+  issue: CircuitIssue,
+  items: CircuitItem[],
+  names: Record<string, string>,
+  supply: string,
+  t: ReturnType<typeof useTranslation>['t'],
+): string {
+  switch (issue.kind) {
+    case 'short':
+      return t('circuit.issue.short', { pins: issue.pins.join(' + ') });
+    case 'unconnected': {
+      const type = items.find((item) => item.id === issue.id)?.type ?? '';
+      const leg = SHAPES[type]?.signals[issue.signal] ?? issue.signal;
+      return t('circuit.issue.unconnected', {
+        name: names[issue.id] ?? issue.id,
+        // Leg names such as "1.l" contain the key separator.
+        pin: t(`legs.${leg.replace('.', '_')}` as never, { defaultValue: leg }),
+      });
+    }
+    case 'noSupply':
+      return t('circuit.issue.noSupply', { name: names[issue.id] ?? issue.id, supply });
+    default:
+      return t(`circuit.issue.${issue.kind}`, { name: names[issue.id] ?? issue.id });
+  }
+}
+
+/** With hand wiring and nothing selected: what is wrong with the circuit, if anything. */
+function CircuitCheck({
+  analysis,
+  items,
+  names,
+  supply,
+}: {
+  analysis: CircuitAnalysis;
+  items: CircuitItem[];
+  names: Record<string, string>;
+  supply: string;
+}) {
+  const { t } = useTranslation();
+  return (
+    <aside className="card properties" aria-label={t('circuit.check')} data-testid="circuit-check">
+      <div className="card__header">
+        <h2 className="card__title">{t('circuit.check')}</h2>
+      </div>
+      <div className="properties__body">
+        {items.length === 0 ? (
+          <p className="properties__info">{t('circuit.emptyCircuit')}</p>
+        ) : analysis.issues.length === 0 ? (
+          <p className="property-ok" data-testid="circuit-ok">
+            <CircleCheck aria-hidden="true" size="1em" />
+            {t('circuit.allGood')}
+          </p>
+        ) : (
+          <ul className="issues">
+            {analysis.issues.map((issue, index) => (
+              <li key={index} className="property-warning" data-testid={`issue-${issue.kind}`}>
+                <TriangleAlert aria-hidden="true" size="1em" />
+                {issueText(issue, items, names, supply, t)}
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="palette__hint">{t('circuit.selectHint')}</p>
+      </div>
+    </aside>
+  );
 }
 
 function Properties({
@@ -249,8 +452,14 @@ function Properties({
   onChange,
   onRemove,
   onClose,
+  analysis,
+  names,
+  supply,
 }: PropertiesProps) {
   const { t } = useTranslation();
+  if (!item && analysis) {
+    return <CircuitCheck analysis={analysis} items={items} names={names} supply={supply} />;
+  }
   if (!item) {
     return (
       <aside className="card properties" aria-label={t('circuit.properties')}>
@@ -321,52 +530,90 @@ function Properties({
           </label>
         )}
 
-        <h3 className="properties__section">{t('circuit.connections')}</h3>
-        {definition?.pins.map((spec) => {
-          const value = item.pins[spec.name] ?? '';
-          const options = pinOptions(spec.kind);
-          if (value && !options.includes(value)) options.push(value);
-          return (
-            <label key={spec.name} className="property">
-              <span>{t(`componentPins.${spec.name}` as never)}</span>
-              <select
-                value={value}
-                data-testid={`pin-${item.id}-${spec.name}`}
-                onChange={(event) =>
-                  onChange((current) => ({
-                    ...current,
-                    pins: { ...current.pins, [spec.name]: event.target.value },
-                  }))
-                }
+        {item.type === 'resistor' && (
+          <p className="property property--fixed">
+            <span>{t('circuit.resistorValue')}</span>
+            <span>{t('circuit.ohms', { value: 220 })}</span>
+          </p>
+        )}
+
+        {definition && <h3 className="properties__section">{t('circuit.connections')}</h3>}
+        {analysis &&
+          definition?.pins.map((spec) => {
+            const pin = analysis.reached[item.id]?.[spec.name] ?? null;
+            return (
+              <p
+                key={spec.name}
+                className="property property--fixed"
+                data-testid={`reached-${item.id}-${spec.name}`}
               >
-                {options.map((pin) => (
-                  <option key={pin} value={pin}>
-                    {pin}
-                  </option>
-                ))}
-              </select>
-            </label>
-          );
-        })}
-        {shape && shape.ground.length > 0 && (
+                <span>{t(`componentPins.${spec.name}` as never)}</span>
+                <span className={pin ? 'reached' : 'reached reached--missing'}>
+                  {pin ? t('circuit.connectedTo', { pin }) : t('circuit.notConnected')}
+                </span>
+              </p>
+            );
+          })}
+        {analysis && definition && (
+          <p className="palette__hint">{t('circuit.manualConnectionsHint')}</p>
+        )}
+        {analysis &&
+          analysis.issues
+            .filter((issue) => 'id' in issue && issue.id === item.id)
+            .map((issue, index) => (
+              <p key={index} className="property-warning" role="alert">
+                <TriangleAlert aria-hidden="true" size="1em" />
+                {issueText(issue, items, names, supply, t)}
+              </p>
+            ))}
+        {!analysis &&
+          definition?.pins.map((spec) => {
+            const value = item.pins[spec.name] ?? '';
+            const options = pinOptions(spec.kind);
+            if (value && !options.includes(value)) options.push(value);
+            return (
+              <label key={spec.name} className="property">
+                <span>{t(`componentPins.${spec.name}` as never)}</span>
+                <select
+                  value={value}
+                  data-testid={`pin-${item.id}-${spec.name}`}
+                  onChange={(event) =>
+                    onChange((current) => ({
+                      ...current,
+                      pins: { ...current.pins, [spec.name]: event.target.value },
+                    }))
+                  }
+                >
+                  {options.map((pin) => (
+                    <option key={pin} value={pin}>
+                      {pin}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            );
+          })}
+        {!analysis && shape && shape.ground.length > 0 && (
           <p className="property property--fixed">
             <span>{t('circuit.ground')}</span>
             <span>GND</span>
           </p>
         )}
-        {shape && shape.supply.length > 0 && (
+        {!analysis && shape && shape.supply.length > 0 && (
           <p className="property property--fixed">
             <span>{t('circuit.supply')}</span>
             <span>{supplyLabel}</span>
           </p>
         )}
-        {Object.values(item.pins).some((pin) => conflicts.has(pin)) && (
+        {!analysis && Object.values(item.pins).some((pin) => conflicts.has(pin)) && (
           <p className="property-warning" role="alert" data-testid="pin-conflict">
             <TriangleAlert aria-hidden="true" size="1em" />
             {t('circuit.sharedPin')}
           </p>
         )}
-        {item.type === 'led' && <p className="property-ok">{t('circuit.ledResistor')}</p>}
+        {!analysis && item.type === 'led' && (
+          <p className="property-ok">{t('circuit.ledResistor')}</p>
+        )}
 
         <h3 className="properties__section">{t('circuit.about')}</h3>
         <p className="properties__info">

@@ -273,7 +273,9 @@
     "hc-sr04": "Sensor ultrasónico",
     "rgb-led": "LED RGB",
     "lcd1602": "Pantalla LCD 16x2 (I2C)",
-    "neopixel-ring": "Anillo NeoPixel"
+    "neopixel-ring": "Anillo NeoPixel",
+    "breadboard": "Protoboard",
+    "resistor": "Resistencia"
   },
   "componentPins": {
     "anode": "Pin",
@@ -338,14 +340,50 @@
     "sharedPin": "Otro componente usa el mismo pin. Revisá que sea lo que querés.",
     "ledResistor": "Conectado con una resistencia, así el LED no se quema.",
     "about": "¿Qué es?",
-    "remove": "Quitar {{name}}"
+    "remove": "Quitar {{name}}",
+    "boardPin": "Pin {{pin}} de la placa",
+    "hole": "Columna {{column}}, fila {{row}}",
+    "railPlus": "Fila + de alimentación",
+    "railMinus": "Fila − de tierra",
+    "leg": "{{name}}: {{leg}}",
+    "burned": "¡Se quemó!",
+    "wiring": "Cableado",
+    "wiringAuto": "Automático",
+    "wiringManual": "A mano",
+    "wiringAutoHint": "El programa dibuja los cables según el pin que elegís en cada componente.",
+    "wiringManualHint": "Vos tendés los cables y armás el circuito en la protoboard, como en la vida real.",
+    "wireColor": "Color de los cables nuevos",
+    "deleteWire": "Borrar el cable elegido",
+    "wireHint": "Arrastrá desde un pin o un agujero hasta otro para tender un cable. Supr borra el cable elegido.",
+    "assembly": "Armado",
+    "check": "Revisión del circuito",
+    "allGood": "Todo está bien conectado.",
+    "emptyCircuit": "Agregá una protoboard y componentes para empezar a armar.",
+    "connectedTo": "pin {{pin}}",
+    "notConnected": "sin conectar",
+    "wiresIn": "Cables",
+    "wireFrom": "Desde",
+    "wireTo": "Hasta",
+    "manualConnectionsHint": "En el cableado a mano, las conexiones salen de los cables que tendés.",
+    "resistorValue": "Valor",
+    "issue": {
+      "unconnected": "A {{name}} le falta un cable desde «{{pin}}» hasta un pin de la placa.",
+      "noGround": "{{name}} no está conectado a GND (tierra).",
+      "noSupply": "{{name}} necesita alimentación: conectalo a {{supply}}.",
+      "noResistor": "{{name}} no tiene resistencia: cuando se encienda se va a quemar. Poné una resistencia entre el LED y el pin o GND.",
+      "short": "¡Cortocircuito! {{pins}} están unidos directamente."
+    },
+    "ohms": "{{value}} Ω"
   },
   "colors": {
     "red": "Rojo",
     "green": "Verde",
     "yellow": "Amarillo",
     "blue": "Azul",
-    "white": "Blanco"
+    "white": "Blanco",
+    "black": "Negro",
+    "orange": "Naranja",
+    "purple": "Violeta"
   },
   "componentInfo": {
     "led": "Una luz que se enciende cuando su pin está en ALTA (HIGH). La pata larga va al pin y la corta a GND, siempre con una resistencia.",
@@ -357,7 +395,9 @@
     "hc-sr04": "Mide distancias con ultrasonido, de 2 a 400 cm. Usa un pin para enviar el pulso (trig) y otro para escuchar el eco (echo).",
     "rgb-led": "Tres LED en uno: rojo, verde y azul. Mezclando su brillo con analogWrite() se forma cualquier color.",
     "lcd1602": "Una pantalla de 2 filas de 16 caracteres. Usa el bus I2C, así que solo necesita los pines SDA y SCL y la alimentación.",
-    "neopixel-ring": "Un anillo de LED de colores controlado con un solo pin de datos. Cada LED puede tener su propio color."
+    "neopixel-ring": "Un anillo de LED de colores controlado con un solo pin de datos. Cada LED puede tener su propio color.",
+    "breadboard": "Una placa con agujeros para armar circuitos sin soldar. Cada columna de 5 agujeros (a–e y f–j) está unida por dentro, y las filas + y − de los costados recorren toda la protoboard.",
+    "resistor": "Limita la corriente para cuidar a los LED. Esta es de 220 Ω, el valor típico para un LED con {{board}}."
   },
   "languageShort": {
     "system": "Auto",
@@ -369,5 +409,30 @@
     "esp32": "ESP32",
     "esp8266": "ESP8266",
     "raspberry-pi": "Raspberry Pi"
+  },
+  "legs": {
+    "A": "pata larga (+)",
+    "C": "pata corta (−)",
+    "COM": "pata común (−)",
+    "R": "pata roja",
+    "G": "pata verde",
+    "B": "pata azul",
+    "SIG": "pata de señal",
+    "AO": "pata de señal",
+    "VCC": "VCC (+)",
+    "V+": "V+ (+)",
+    "GND": "GND (−)",
+    "PWM": "pata de señal",
+    "TRIG": "TRIG",
+    "ECHO": "ECHO",
+    "SDA": "SDA",
+    "SCL": "SCL",
+    "DIN": "DIN (datos)",
+    "1": "pata 1",
+    "2": "pata 2",
+    "1_l": "pata 1",
+    "1_r": "pata 1",
+    "2_l": "pata 2",
+    "2_r": "pata 2"
   }
 }

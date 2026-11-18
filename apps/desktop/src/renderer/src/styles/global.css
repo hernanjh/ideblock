@@ -1476,6 +1476,7 @@ button:disabled {
 .scene {
   position: relative;
   overflow: auto;
+  user-select: none;
   background-color: #f6f7fb;
   background-image: radial-gradient(#d5dae5 1.2px, transparent 1.2px);
   background-size: 20px 20px;
@@ -1539,6 +1540,155 @@ button:disabled {
   top: 0;
   pointer-events: none;
   z-index: 1;
+}
+
+.wiring-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.segmented button {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--color-text);
+  color: var(--color-surface);
+}
+
+.swatches {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.swatch {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 2px solid var(--color-surface);
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--color-border);
+  cursor: pointer;
+}
+
+.swatch[aria-checked='true'] {
+  box-shadow: 0 0 0 2px var(--color-text);
+}
+
+.circuit-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.scene__item--flat {
+  display: block;
+  z-index: 1;
+}
+
+.scene__turned {
+  flex: none;
+  align-self: flex-start;
+  transform-origin: 0 0;
+}
+
+.scene__overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.scene__wires--manual path,
+.scene__wires--manual circle:not(.scene__terminal) {
+  pointer-events: none;
+}
+
+.scene__wires--manual .scene__wire-hit {
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
+.scene__terminal {
+  pointer-events: all;
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.scene__terminal:hover,
+.scene__terminal--lit {
+  fill: rgb(47 168 79 / 55%);
+  stroke: #1b7a36;
+  stroke-width: 1.5;
+}
+
+.scene__tooltip {
+  position: absolute;
+  z-index: 4;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #1f2430;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.scene__burned {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #fff1e6;
+  border: 1px solid #f08c3c;
+  color: #b4470a;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.scene__item[data-burned] .wokwi-host {
+  filter: grayscale(1) brightness(0.55);
+}
+
+.reached {
+  font-weight: 700;
+  color: #1b7a40;
+}
+
+.reached--missing {
+  color: #9a4b00;
+}
+
+.issues {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

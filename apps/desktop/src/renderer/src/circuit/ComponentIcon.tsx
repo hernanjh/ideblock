@@ -90,6 +90,29 @@ export function ComponentIcon({ type, size = 34 }: { type: string; size?: number
           <circle cx="5" cy="17" r="2.5" fill="#fc0" />
         </svg>
       );
+    case 'breadboard':
+      return (
+        <svg {...common}>
+          <rect x="1" y="6" width="32" height="22" rx="3" fill="#f4f1ea" stroke="#cfc7b6" />
+          <line x1="3" y1="10" x2="31" y2="10" stroke="#e53935" />
+          <line x1="3" y1="24" x2="31" y2="24" stroke="#1e88e5" />
+          <path
+            d="M6 14h2M11 14h2M16 14h2M21 14h2M26 14h2M6 20h2M11 20h2M16 20h2M21 20h2M26 20h2"
+            stroke="#555"
+            strokeWidth="2"
+          />
+        </svg>
+      );
+    case 'resistor':
+      return (
+        <svg {...common}>
+          <line x1="1" y1="17" x2="33" y2="17" stroke="#999" strokeWidth="2" />
+          <rect x="8" y="11" width="18" height="12" rx="5" fill="#d9b48a" stroke="#a5835c" />
+          <rect x="12" y="11" width="2.5" height="12" fill="#8b4513" />
+          <rect x="16" y="11" width="2.5" height="12" fill="#222" />
+          <rect x="20" y="11" width="2.5" height="12" fill="#8b4513" />
+        </svg>
+      );
     default:
       return <svg {...common} />;
   }

@@ -7,7 +7,8 @@ import { CircuitScene } from '../circuit/CircuitScene';
 import { ComponentIcon } from '../circuit/ComponentIcon';
 import { BuzzerAudio } from './buzzer-audio';
 import { VISUALS } from './catalog';
-import { circuitComponents, newComponent, type CircuitItem } from './circuit';
+import { circuitWires, visibleParts } from '../circuit/model';
+import { circuitComponents, newComponent, wiringMode, type CircuitItem } from './circuit';
 import { useSimulatorModel } from './model';
 import { componentNames } from './names';
 
@@ -33,6 +34,8 @@ export function SimulatorPanel() {
   } = snapshot;
   const board = getBoard(boardId);
   const items = useMemo(() => circuitComponents(circuit), [circuit]);
+  const wires = useMemo(() => circuitWires(circuit), [circuit]);
+  const simulated = useMemo(() => visibleParts(items, 'auto'), [items]);
   const names = useMemo(() => componentNames(items, t), [items, t]);
   const running = status === 'running' || status === 'paused';
   const sendInput = (id: string, input: ComponentInput): void =>
@@ -47,6 +50,8 @@ export function SimulatorPanel() {
         inputs={inputs}
         running={running}
         fit
+        mode={wiringMode(circuit)}
+        wires={wires}
         names={names}
         onInput={sendInput}
         onSelect={(id) => id && dispatch({ type: 'openCircuit', componentId: id })}
@@ -74,7 +79,7 @@ export function SimulatorPanel() {
       )}
 
       <ComponentStrip
-        items={items}
+        items={simulated}
         names={names}
         states={states}
         inputs={inputs}
