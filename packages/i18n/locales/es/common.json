@@ -403,7 +403,9 @@
     "ohms": "{{value}} Ω",
     "fixedBus": "SDA y SCL forman el bus I2C: en {{board}} siempre van a los mismos pines, por eso no se pueden elegir.",
     "undo": "Deshacer (Ctrl+Z)",
-    "redo": "Rehacer (Ctrl+Y)"
+    "redo": "Rehacer (Ctrl+Y)",
+    "rotate": "Girar",
+    "rotateHint": "Gira el componente un cuarto de vuelta. También podés apretar la tecla R."
   },
   "colors": {
     "red": "Rojo",

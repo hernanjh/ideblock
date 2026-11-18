@@ -5,6 +5,7 @@ import {
   CircleCheck,
   Maximize,
   Redo2,
+  RotateCw,
   Search,
   Trash2,
   TriangleAlert,
@@ -36,7 +37,7 @@ import { useUiStore } from '../state/ui';
 import { boardLayout } from './boards';
 import { CircuitScene } from './CircuitScene';
 import { ComponentIcon } from './ComponentIcon';
-import { SHAPES } from './geometry';
+import { SHAPES, partTurns } from './geometry';
 import { supplyPin } from './layout';
 import { legName } from './legs';
 import {
@@ -110,10 +111,33 @@ export function CircuitView({ console }: { console: ReactNode }) {
     setCircuit(next === 'manual' ? toManualWiring(circuit, board) : toAutoWiring(circuit, board));
   };
 
+  const rotate = (id: string): void =>
+    setCircuit(
+      updateComponent(circuit, id, (item) => ({
+        ...item,
+        props: { ...item.props, rotation: (partTurns(item) + 1) % 4 },
+      })),
+    );
+
   useEffect(() => {
     const onKey = (event: KeyboardEvent): void => {
       const target = event.target as HTMLElement | null;
       if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+      const selectedNow = useUiStore.getState().selectedComponent;
+      if (event.key.toLowerCase() === 'r' && !event.ctrlKey && !event.metaKey && selectedNow) {
+        const project = useProjectStore.getState();
+        const item = circuitComponents(project.circuit).find((part) => part.id === selectedNow);
+        if (item && SHAPES[item.type]) {
+          project.setCircuit(
+            updateComponent(project.circuit, item.id, (part) => ({
+              ...part,
+              props: { ...part.props, rotation: (partTurns(part) + 1) % 4 },
+            })),
+          );
+          event.preventDefault();
+        }
+        return;
+      }
       if (!(event.ctrlKey || event.metaKey)) return;
       const key = event.key.toLowerCase();
       const project = useProjectStore.getState();
@@ -328,6 +352,7 @@ export function CircuitView({ console }: { console: ReactNode }) {
         name={selectedItem ? (names[selectedItem.id] ?? '') : ''}
         onClose={() => select(null)}
         onRemove={remove}
+        onRotate={rotate}
         onChange={(change, mergeKey) =>
           selectedItem && setCircuit(updateComponent(circuit, selectedItem.id, change), mergeKey)
         }
@@ -411,6 +436,7 @@ interface PropertiesProps {
   pinOptions: (kind: PinKind) => string[];
   onChange: (change: (item: CircuitItem) => CircuitItem, mergeKey?: string) => void;
   onRemove: (id: string) => void;
+  onRotate: (id: string) => void;
   onClose: () => void;
   /** Wiring analysis with hand wiring, null with automatic wiring. */
   analysis: CircuitAnalysis | null;
@@ -494,6 +520,7 @@ function Properties({
   pinOptions,
   onChange,
   onRemove,
+  onRotate,
   onClose,
   analysis,
   names,
@@ -537,6 +564,18 @@ function Properties({
       </div>
       <div className="properties__body">
         <h3 className="properties__section">{t('circuit.propertiesTitle')}</h3>
+        {shape && (
+          <button
+            type="button"
+            className="button--small rotate-button"
+            title={t('circuit.rotateHint')}
+            data-testid="property-rotate"
+            onClick={() => onRotate(item.id)}
+          >
+            <RotateCw aria-hidden="true" size="1em" />
+            {t('circuit.rotate')}
+          </button>
+        )}
         <label className="property">
           <span>{t('circuit.name')}</span>
           <input

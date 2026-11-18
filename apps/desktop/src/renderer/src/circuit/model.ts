@@ -8,7 +8,7 @@ import {
   type CircuitItem,
   type WiringMode,
 } from '../simulator/circuit';
-import { SHAPES, type Point } from './geometry';
+import { shapeOf, type Point } from './geometry';
 import { boardPinPositions, defaultPositions, supplyPin } from './layout';
 import { analyseCircuit, type CircuitAnalysis, type CircuitWire } from './netlist';
 
@@ -128,7 +128,7 @@ export function toManualWiring(circuit: CircuitDocument, board: BoardDefinition)
 
   const placed = items.map((item, index) => {
     const position = positions.get(item.id) ?? { x: 0, y: 0 };
-    const shape = SHAPES[item.type];
+    const shape = shapeOf(item);
     if (!shape || !findComponent(item.type)) return item;
     const colour = WIRE_COLOURS[index % 3]!;
     // Parts with several LEDs, such as a display, get a stack of resistors.

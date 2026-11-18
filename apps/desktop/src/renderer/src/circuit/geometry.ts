@@ -31,7 +31,7 @@ export interface ComponentShape {
    * Quarter turns applied to the element. `width`, `height` and `pins` already
    * describe the turned part; `element` keeps the element's own size.
    */
-  rotation?: { turns: 1; element: { width: number; height: number } };
+  rotation?: { turns: number; element: { width: number; height: number } };
 }
 
 const MM = 3.7795;
@@ -246,6 +246,59 @@ export const SHAPES: Record<string, ComponentShape> = {
     supply: ['VCC'],
   },
 };
+
+/** Quarter turns the user gave a part, from 0 to 3. */
+export function partTurns(item: { props?: Record<string, unknown> }): number {
+  const turns = Math.round(Number(item.props?.['rotation'] ?? 0));
+  return Number.isFinite(turns) ? ((turns % 4) + 4) % 4 : 0;
+}
+
+/** Turns a shape clockwise by quarter turns, legs included. */
+function turnShape(shape: ComponentShape, turns: number): ComponentShape {
+  let { width, height } = shape;
+  let pins = shape.pins;
+  for (let i = 0; i < turns; i++) {
+    const h = height;
+    pins = Object.fromEntries(
+      Object.entries(pins).map(([name, pin]) => [name, { x: h - pin.y, y: pin.x }]),
+    );
+    [width, height] = [height, width];
+  }
+  const element = shape.rotation?.element ?? { width: shape.width, height: shape.height };
+  const total = ((shape.rotation?.turns ?? 0) + turns) % 4;
+  const { rotation: _base, ...rest } = shape;
+  return {
+    ...rest,
+    width,
+    height,
+    pins,
+    ...(total > 0 ? { rotation: { turns: total, element } } : {}),
+  };
+}
+
+/** The shape of a placed part, with the rotation the user gave it. */
+export function shapeOf(item: {
+  type: string;
+  props?: Record<string, unknown>;
+}): ComponentShape | undefined {
+  const shape = SHAPES[item.type];
+  const turns = partTurns(item);
+  return shape && turns > 0 ? turnShape(shape, turns) : shape;
+}
+
+/** CSS transform that turns an element by quarter turns and keeps it in its box. */
+export function turnTransform(turns: number, element: { width: number; height: number }): string {
+  switch (turns) {
+    case 1:
+      return `translate(${element.height}px, 0) rotate(90deg)`;
+    case 2:
+      return `translate(${element.width}px, ${element.height}px) rotate(180deg)`;
+    case 3:
+      return `translate(0, ${element.width}px) rotate(270deg)`;
+    default:
+      return '';
+  }
+}
 
 /** The side of the element a pin sits on, so its wire leaves outwards. */
 export function pinSide(shape: ComponentShape, pin: Point): Side {

@@ -1732,6 +1732,10 @@ button:disabled {
   flex: 1 1 12rem;
 }
 
+.rotate-button {
+  align-self: flex-start;
+}
+
 .button--small {
   padding: 3px 10px;
   font-size: 0.82rem;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { columnX, findHole } from '../src/renderer/src/circuit/breadboard';
-import { SHAPES, type Point } from '../src/renderer/src/circuit/geometry';
+import { SHAPES, shapeOf, type Point } from '../src/renderer/src/circuit/geometry';
 import {
   analyseCircuit,
   snapToHoles,
@@ -27,7 +27,7 @@ const breadboard: PlacedPart = {
 /** Places a part so that one of its legs sits exactly in a hole. */
 function plug(item: CircuitItem, leg: string, hole: string): PlacedPart {
   const target = findHole(hole)!;
-  const offset = SHAPES[item.type]!.pins[leg]!;
+  const offset = shapeOf(item)!.pins[leg]!;
   return { item, position: { x: target.x - offset.x, y: target.y - offset.y } };
 }
 
@@ -130,6 +130,28 @@ describe('analyseCircuit', () => {
     expect(analysis.netOf('bb:a4').sort()).toEqual(
       ['bb:a4', 'bb:b4', 'bb:c4', 'bb:d4', 'bb:e4', 'board:13'].sort(),
     );
+  });
+});
+
+describe('rotated parts', () => {
+  it('turns the legs with the part', () => {
+    const led = SHAPES['led']!;
+    const turned = shapeOf({ type: 'led', props: { rotation: 1 } })!;
+    expect(turned.width).toBe(led.height);
+    expect(turned.pins['A']).toEqual({ x: led.height - led.pins['A']!.y, y: led.pins['A']!.x });
+    expect(shapeOf({ type: 'led', props: { rotation: 4 } })).toBe(led);
+  });
+
+  it('plugs an upright resistor into one breadboard column', () => {
+    const upright: CircuitItem = { id: 'r1', type: 'resistor', pins: {}, props: { rotation: 1 } };
+    const analysis = analyseCircuit({
+      boardPins,
+      parts: [breadboard, plug(upright, '1', 'tp3')],
+      wires: [],
+    });
+    expect(analysis.seated.get('r1:1')).toBe('bb:tp3');
+    // About six holes further down the same column, past the rail gap.
+    expect(analysis.seated.get('r1:2')).toBe('bb:d3');
   });
 });
 

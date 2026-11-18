@@ -1,7 +1,7 @@
 import { findComponent } from '@ideblock/simulator';
 import type { CircuitItem } from '../simulator/circuit';
 import { BREADBOARD_HOLES, PITCH } from './breadboard';
-import { SHAPES, type Point } from './geometry';
+import { shapeOf, type Point } from './geometry';
 
 /** A wire drawn by hand between two terminals, stored in circuit.json `connections`. */
 export interface CircuitWire {
@@ -122,7 +122,7 @@ export function analyseCircuit({ boardPins, parts, wires }: NetlistInput): Circu
   }
 
   for (const { item, position } of parts) {
-    const shape = SHAPES[item.type];
+    const shape = shapeOf(item);
     if (!shape) continue;
     for (const [leg, offset] of Object.entries(shape.pins)) {
       const id = `${item.id}:${leg}`;
@@ -155,7 +155,7 @@ export function analyseCircuit({ boardPins, parts, wires }: NetlistInput): Circu
   const issues: CircuitIssue[] = [];
 
   for (const { item } of parts) {
-    const shape = SHAPES[item.type];
+    const shape = shapeOf(item);
     if (!shape || !findComponent(item.type)) continue;
     const signalLeg = (leg: string): string | null => {
       const terminal = `${item.id}:${leg}`;
@@ -220,7 +220,7 @@ export function analyseCircuit({ boardPins, parts, wires }: NetlistInput): Circu
 
 /** Moves a part so its nearest leg drops into a breadboard hole, if one is close. */
 export function snapToHoles(item: CircuitItem, position: Point, holes: readonly Point[]): Point {
-  const shape = SHAPES[item.type];
+  const shape = shapeOf(item);
   if (!shape) return position;
   let best: { dx: number; dy: number; distance: number } | null = null;
   for (const offset of Object.values(shape.pins)) {

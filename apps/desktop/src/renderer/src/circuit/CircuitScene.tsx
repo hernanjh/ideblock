@@ -12,8 +12,9 @@ import { BREADBOARD_HOLES, BREADBOARD_SIZE, describeHole } from './breadboard';
 import { BreadboardDrawing } from './BreadboardDrawing';
 import { legName } from './legs';
 import {
-  SHAPES,
   pinSide,
+  shapeOf,
+  turnTransform,
   wireMidpoint,
   wirePath,
   type Anchor,
@@ -216,7 +217,7 @@ export function CircuitScene({
       items.map((item) => ({
         item,
         position: positions.get(item.id) ?? { x: 0, y: 0 },
-        shape: SHAPES[item.type],
+        shape: shapeOf(item),
       })),
     [items, positions],
   );
@@ -515,7 +516,7 @@ export function CircuitScene({
                   style={{
                     width: shape.rotation.element.width,
                     height: shape.rotation.element.height,
-                    transform: `translateX(${shape.width}px) rotate(90deg)`,
+                    transform: turnTransform(shape.rotation.turns, shape.rotation.element),
                   }}
                 >
                   {element}
