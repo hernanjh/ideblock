@@ -38,6 +38,7 @@ export const uno: BoardDefinition = {
   analogInputPins: UNO_ANALOG,
   pwmPins: ATMEGA328_PWM,
   builtinLedPin: '13',
+  i2c: { sda: 'A4', scl: 'A5' },
   usbIds: [
     { vid: '2341', pid: '0043' },
     { vid: '2341', pid: '0001' },
@@ -58,6 +59,7 @@ export const nano: BoardDefinition = {
   analogInputPins: NANO_ANALOG,
   pwmPins: ATMEGA328_PWM,
   builtinLedPin: '13',
+  i2c: { sda: 'A4', scl: 'A5' },
   simulation: { mcu: 'atmega328p', clockHz: 16_000_000 },
 };
 
@@ -82,6 +84,7 @@ export const mega: BoardDefinition = {
   analogInputPins: MEGA_ANALOG,
   pwmPins: [...range(2, 13), '44', '45', '46'],
   builtinLedPin: '13',
+  i2c: { sda: '20', scl: '21' },
   usbIds: [
     { vid: '2341', pid: '0042' },
     { vid: '2341', pid: '0010' },
@@ -125,6 +128,7 @@ export const esp32DevKit: BoardDefinition = {
   analogInputPins: ['32', '33', '34', '35', '36', '39'],
   pwmPins: ESP32_OUTPUTS,
   builtinLedPin: '2',
+  i2c: { sda: '21', scl: '22' },
 };
 
 export const leonardo: BoardDefinition = {
@@ -138,6 +142,7 @@ export const leonardo: BoardDefinition = {
   analogInputPins: UNO_ANALOG,
   pwmPins: ['3', '5', '6', '9', '10', '11', '13'],
   builtinLedPin: '13',
+  i2c: { sda: '2', scl: '3' },
   usbIds: [
     { vid: '2341', pid: '8036' },
     { vid: '2341', pid: '0036' },
@@ -166,6 +171,7 @@ export const nanoEvery: BoardDefinition = {
   analogInputPins: NANO_ANALOG,
   pwmPins: ['3', '5', '6', '9', '10'],
   builtinLedPin: '13',
+  i2c: { sda: 'A4', scl: 'A5' },
   usbIds: [{ vid: '2341', pid: '0058' }],
 };
 
@@ -181,6 +187,7 @@ export const esp32C3: BoardDefinition = {
   analogInputPins: ['0', '1', '2', '3', '4'],
   pwmPins: ESP32_C3_PINS,
   builtinLedPin: '8',
+  i2c: { sda: '8', scl: '9' },
 };
 
 const ESP32_S3_PINS = [...range(1, 21), ...range(35, 48)];
@@ -195,6 +202,7 @@ export const esp32S3: BoardDefinition = {
   analogInputPins: range(1, 10),
   pwmPins: ESP32_S3_PINS,
   builtinLedPin: '2',
+  i2c: { sda: '8', scl: '9' },
 };
 
 const ESP8266_CORE = {
@@ -219,6 +227,7 @@ export const nodeMcu: BoardDefinition = {
   analogInputPins: ['A0'],
   pwmPins: ESP8266_PINS.filter((pin) => pin !== '16'),
   builtinLedPin: '2',
+  i2c: { sda: '4', scl: '5' },
 };
 
 export const wemosD1Mini: BoardDefinition = {
@@ -249,6 +258,7 @@ export const pico: BoardDefinition = {
   analogInputPins: ['26', '27', '28'],
   pwmPins: PICO_PINS,
   builtinLedPin: '25',
+  i2c: { sda: '4', scl: '5' },
   usbIds: [{ vid: '2E8A', pid: '000A' }],
 };
 

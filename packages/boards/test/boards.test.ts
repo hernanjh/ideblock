@@ -15,7 +15,13 @@ describe('board definitions', () => {
 
       it('lists PWM, analog and LED pins that exist on the board', () => {
         const known = new Set([...board.digitalPins, ...board.analogInputPins]);
-        for (const pin of [...board.pwmPins, ...board.analogInputPins, board.builtinLedPin]) {
+        for (const pin of [
+          ...board.pwmPins,
+          ...board.analogInputPins,
+          board.builtinLedPin,
+          board.i2c.sda,
+          board.i2c.scl,
+        ]) {
           expect(known.has(pin), pin).toBe(true);
         }
       });

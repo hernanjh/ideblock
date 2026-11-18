@@ -41,6 +41,8 @@ export interface BoardDefinition {
   /** Pins usable with analogWrite. */
   pwmPins: readonly string[];
   builtinLedPin: string;
+  /** Default I2C pins used by the Wire library. */
+  i2c: { sda: string; scl: string };
   /** USB vendor/product ids that identify the board when it is plugged in. */
   usbIds?: readonly { vid: string; pid: string }[];
   /** Present when the board can run in the built-in simulator. */
