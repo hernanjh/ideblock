@@ -80,5 +80,13 @@
   "NEOPIXEL_SET": "encender la luz %1 en %3 del anillo NeoPixel de %4 luces del pin %2",
   "NEOPIXEL_SET_TOOLTIP": "Para tiras y anillos NeoPixel (WS2812). Le da un color a una de sus luces, contando desde 1. Para un LED común usá los bloques de Salidas.",
   "NEOPIXEL_CLEAR": "apagar el anillo NeoPixel de %2 luces del pin %1",
-  "NEOPIXEL_CLEAR_TOOLTIP": "Apaga todos los LED de la tira o del anillo."
+  "NEOPIXEL_CLEAR_TOOLTIP": "Apaga todos los LED de la tira o del anillo.",
+  "SWITCH_ON": "el interruptor del pin %1 está encendido",
+  "SWITCH_ON_TOOLTIP": "Interruptor deslizante: la pata del medio va al pin y las de los costados a 5V y a GND.",
+  "MOTION": "el sensor de movimiento del pin %1 detecta movimiento",
+  "MOTION_TOOLTIP": "Sensor PIR: se activa cuando alguien se mueve delante y se queda activo unos segundos.",
+  "TILT": "el sensor de inclinación del pin %1 está inclinado",
+  "TILT_TOOLTIP": "Se activa cuando el sensor se inclina.",
+  "TEMPERATURE": "temperatura en °C del sensor del pin %1",
+  "TEMPERATURE_TOOLTIP": "Lee un módulo de temperatura con termistor NTC de 10 kΩ. Necesita un pin analógico."
 }

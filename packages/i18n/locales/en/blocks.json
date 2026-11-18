@@ -80,5 +80,13 @@
   "NEOPIXEL_SET": "turn on light %1 in %3 of the NeoPixel ring with %4 lights on pin %2",
   "NEOPIXEL_SET_TOOLTIP": "For NeoPixel (WS2812) strips and rings. Gives a colour to one of its lights, counting from 1. For a plain LED use the Outputs blocks.",
   "NEOPIXEL_CLEAR": "turn off the NeoPixel ring with %2 lights on pin %1",
-  "NEOPIXEL_CLEAR_TOOLTIP": "Turns off every LED of the strip or ring."
+  "NEOPIXEL_CLEAR_TOOLTIP": "Turns off every LED of the strip or ring.",
+  "SWITCH_ON": "switch on pin %1 is on",
+  "SWITCH_ON_TOOLTIP": "Slide switch: the middle leg goes to the pin and the outer legs to 5V and GND.",
+  "MOTION": "motion sensor on pin %1 detects movement",
+  "MOTION_TOOLTIP": "PIR sensor: turns on when someone moves in front of it and stays on for a few seconds.",
+  "TILT": "tilt sensor on pin %1 is tilted",
+  "TILT_TOOLTIP": "Turns on when the sensor is tilted.",
+  "TEMPERATURE": "temperature in °C from the sensor on pin %1",
+  "TEMPERATURE_TOOLTIP": "Reads a temperature module with a 10 kΩ NTC thermistor. Needs an analog pin."
 }
