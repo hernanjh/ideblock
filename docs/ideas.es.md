@@ -16,7 +16,8 @@ LED RGB, anillos NeoPixel, interruptores, sensores de movimiento, inclinación y
 temperatura, cableado a mano en una protoboard con resistencias y revisión del
 circuito ([ADR 0008](adr/0008-hand-wiring.es.md)), un aviso cuando el programa y
 el circuito no coinciden, el LED de la placa y cada bloque que se ejecuta
-iluminado por turno. La simulación del ESP32 pasó a la Fase 4 (ver Riesgos).
+iluminado por turno, la simulación del Arduino Mega, los pines I2C a la vista en
+los bloques de la LCD, un display de 7 segmentos y un joystick. La simulación del ESP32 pasó a la Fase 4 (ver Riesgos).
 
 Notas nuevas de pruebas de uso y de la comparación con Tinkercad y mBlock:
 

@@ -13,7 +13,7 @@ teenagers and adults who want to move on to real code.
 - **Blocks and code side by side.** Show the blocks, the code, or both, and
   resize them. The code updates as you move blocks, and you can switch a project
   to hand-written C++ at any time.
-- **Simulator.** Run the program on a simulated Arduino Uno or Nano with LEDs,
+- **Simulator.** Run the program on a simulated Arduino Uno, Nano or Mega with LEDs,
   RGB LEDs, buttons, switches, potentiometers, light, temperature, motion, tilt
   and ultrasonic sensors, servos, buzzers, an I2C LCD screen and NeoPixel rings.
   The blocks light up as they run, and the board's own LED blinks too. The
@@ -49,7 +49,7 @@ teenagers and adults who want to move on to real code.
 
 Boards compatible with Arduino Uno, Nano, Mega, Leonardo, Micro and Nano Every, ESP32
 DevKit, ESP32-C3 and ESP32-S3, NodeMCU and Wemos D1 mini (ESP8266), and Raspberry Pi
-Pico. The simulator runs Uno and Nano programs.
+Pico. The simulator runs Uno, Nano and Mega programs.
 
 ## Roadmap
 

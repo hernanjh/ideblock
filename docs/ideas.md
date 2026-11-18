@@ -14,7 +14,8 @@ and S3, ESP8266 and Pico), an I2C bus in the simulator with an LCD screen, RGB
 LEDs, NeoPixel rings, switches, motion, tilt and temperature sensors, hand
 wiring on a breadboard with resistors and a circuit check
 ([ADR 0008](adr/0008-hand-wiring.md)), a notice when the program and the circuit
-do not match, the board's own LED, and every running block lit in turn. ESP32
+do not match, the board's own LED, every running block lit in turn, Arduino Mega simulation, the I2C pins shown on
+the LCD blocks, a 7-segment display and a joystick. ESP32
 simulation moved to Phase 4 (see Risks).
 
 New notes from user tests and from comparing with Tinkercad and mBlock:

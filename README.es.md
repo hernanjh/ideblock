@@ -13,7 +13,7 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
 - **Bloques y código lado a lado.** Mostrá los bloques, el código o ambos, y
   cambiá su tamaño. El código se actualiza mientras movés los bloques, y en
   cualquier momento podés pasar un proyecto a C++ escrito a mano.
-- **Simulador.** Ejecutá el programa en un Arduino Uno o Nano simulado con LED,
+- **Simulador.** Ejecutá el programa en un Arduino Uno, Nano o Mega simulado con LED,
   LED RGB, botones, interruptores, potenciómetros, sensores de luz, temperatura,
   movimiento, inclinación y distancia, servos, buzzers, una pantalla LCD I2C y
   anillos NeoPixel. Los bloques se iluminan a medida que se ejecutan y el LED de
@@ -50,7 +50,7 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
 
 Placas compatibles con Arduino Uno, Nano, Mega, Leonardo, Micro y Nano Every, ESP32
 DevKit, ESP32-C3 y ESP32-S3, NodeMCU y Wemos D1 mini (ESP8266), y Raspberry Pi Pico. El
-simulador corre programas de Uno y Nano.
+simulador corre programas de Uno, Nano y Mega.
 
 ## Hoja de ruta
 
