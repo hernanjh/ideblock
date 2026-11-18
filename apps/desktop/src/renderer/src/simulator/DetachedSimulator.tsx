@@ -16,6 +16,7 @@ const INITIAL: SimulatorSnapshot = {
   outdated: false,
   circuit: EMPTY_CIRCUIT,
   boardId: 'uno',
+  programParts: [],
 };
 
 const dispatch = (action: SimulatorAction): void =>

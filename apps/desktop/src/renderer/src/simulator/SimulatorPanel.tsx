@@ -1,15 +1,23 @@
-import { getBoard } from '@ideblock/boards';
+import { getBoard, type BoardDefinition } from '@ideblock/boards';
+import type { CircuitDocument } from '@ideblock/project';
 import { COMPONENTS, findComponent, type ComponentInput } from '@ideblock/simulator';
-import { Pause, Play, Plus, RotateCcw, Square } from 'lucide-react';
+import { ArrowRightLeft, Pause, Play, Plus, RotateCcw, Square, TriangleAlert } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CircuitScene } from '../circuit/CircuitScene';
 import { ComponentIcon } from '../circuit/ComponentIcon';
 import { BuzzerAudio } from './buzzer-audio';
 import { VISUALS } from './catalog';
+import { programMismatches } from '../circuit/mismatch';
 import { circuitWires, visibleParts } from '../circuit/model';
-import { circuitComponents, newComponent, wiringMode, type CircuitItem } from './circuit';
-import { useSimulatorModel } from './model';
+import {
+  circuitComponents,
+  newComponent,
+  updateComponent,
+  wiringMode,
+  type CircuitItem,
+} from './circuit';
+import { useSimulatorModel, type SimulatorSnapshot } from './model';
 import { componentNames } from './names';
 
 const formatTime = (ms: number): string => {
@@ -65,6 +73,34 @@ export function SimulatorPanel() {
         onStart={() => dispatch({ type: 'start' })}
         onStop={() => dispatch({ type: 'stop' })}
         onPause={() => dispatch({ type: status === 'paused' ? 'resume' : 'pause' })}
+      />
+
+      <MismatchNotice
+        circuit={circuit}
+        board={board}
+        names={names}
+        uses={snapshot.programParts}
+        onMove={(id, pins) =>
+          dispatch({
+            type: 'setCircuit',
+            circuit: updateComponent(circuit, id, (item) => ({
+              ...item,
+              pins: { ...item.pins, ...pins },
+            })),
+          })
+        }
+        onAdd={(component) =>
+          dispatch({
+            type: 'setCircuit',
+            circuit: {
+              ...circuit,
+              components: [
+                ...circuit.components,
+                component as unknown as (typeof circuit.components)[number],
+              ],
+            },
+          })
+        }
       />
 
       {status === 'unsupported' && (
@@ -384,4 +420,74 @@ function BuzzerSound() {
 
   useEffect(() => () => audio.current?.dispose(), []);
   return null;
+}
+
+interface MismatchNoticeProps {
+  circuit: CircuitDocument;
+  board: BoardDefinition;
+  names: Record<string, string>;
+  uses: SimulatorSnapshot['programParts'];
+  onAdd: (component: CircuitItem) => void;
+  onMove: (id: string, pins: Record<string, string>) => void;
+}
+
+/** Tells when the blocks drive a part the circuit does not have on that pin. */
+function MismatchNotice({ circuit, board, names, uses, onAdd, onMove }: MismatchNoticeProps) {
+  const { t } = useTranslation();
+  const mismatches = useMemo(() => programMismatches(uses, circuit, board), [uses, circuit, board]);
+  if (mismatches.length === 0) return null;
+  const manual = wiringMode(circuit) === 'manual';
+  const items = circuitComponents(circuit);
+  return (
+    <ul className="mismatches" data-testid="mismatches">
+      {mismatches.map(({ use, occupant }) => {
+        const part = t(`components.${use.type}` as never);
+        // A part of the same kind wired elsewhere is moved rather than duplicated.
+        const sameType = items.find((item) => item.type === use.type);
+        // Pins are written as the blocks show them.
+        const pins = [...new Set(Object.values(use.pins))].join(', ');
+        return (
+          <li key={`${use.type}:${pins}`} className="notice mismatch" role="status">
+            <TriangleAlert aria-hidden="true" size="1.1em" />
+            <span>
+              {occupant
+                ? t('simulator.mismatchOccupied', {
+                    part,
+                    pins,
+                    other: names[occupant.id] ?? occupant.type,
+                  })
+                : t('simulator.mismatchMissing', { part, pins })}
+            </span>
+            {!manual && sameType && (
+              <button
+                type="button"
+                className="button--small"
+                data-testid={`mismatch-move-${use.type}`}
+                onClick={() => onMove(sameType.id, use.pins)}
+              >
+                <ArrowRightLeft aria-hidden="true" size="1em" />
+                {t('simulator.mismatchMove', { part, pins })}
+              </button>
+            )}
+            {!manual && !sameType && (
+              <button
+                type="button"
+                className="button--small"
+                data-testid={`mismatch-add-${use.type}`}
+                onClick={() => {
+                  let index = 1;
+                  const ids = new Set(circuit.components.map((item) => item.id));
+                  while (ids.has(`${use.type}${index}`)) index++;
+                  onAdd({ id: `${use.type}${index}`, type: use.type, pins: { ...use.pins } });
+                }}
+              >
+                <Plus aria-hidden="true" size="1em" />
+                {t('simulator.mismatchAdd', { part })}
+              </button>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
 }

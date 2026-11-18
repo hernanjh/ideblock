@@ -261,7 +261,11 @@
     "components": "Circuit components",
     "componentsHint": "Choose one to change its pins",
     "pinList": "pin {{pins}}",
-    "startHint": "Try the program on the simulated board"
+    "startHint": "Try the program on the simulated board",
+    "mismatchMissing": "Your program uses {{part}} on pin {{pins}}, but the circuit does not have it.",
+    "mismatchOccupied": "Your program uses {{part}} on pin {{pins}}, but in the circuit that pin is wired to {{other}}.",
+    "mismatchAdd": "Add {{part}}",
+    "mismatchMove": "Move {{part}} to pin {{pins}}"
   },
   "components": {
     "led": "LED",

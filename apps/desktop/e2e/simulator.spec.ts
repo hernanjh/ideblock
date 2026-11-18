@@ -30,6 +30,16 @@ test.describe('circuit', () => {
 
     await window.getByTestId('rail-program').click();
     await expect(window.getByTestId('component-led1')).toBeVisible();
+
+    // A part wired to another pin is moved instead of added twice.
+    await window.getByTestId('file-examples').click();
+    await window.getByTestId('example-NeoPixelChase').click();
+    await window.getByTestId('rail-circuit').click();
+    await window.getByTestId('scene-item-ring1').click();
+    await window.getByTestId('pin-ring1-din').selectOption('7');
+    await window.getByTestId('rail-program').click();
+    await window.getByTestId('mismatch-move-neopixel-ring').click();
+    await expect(window.getByTestId('mismatches')).toHaveCount(0);
   });
 
   test('moves components by dragging them', async ({ launchApp }) => {
@@ -43,6 +53,23 @@ test.describe('circuit', () => {
     await window.mouse.move(before.x + 90, before.y + 70, { steps: 6 });
     await window.mouse.up();
     await expect.poll(async () => (await item.boundingBox())!.x).toBeGreaterThan(before.x + 30);
+  });
+
+  test('warns when the blocks drive a part the circuit does not have', async ({ launchApp }) => {
+    const { window } = await launchApp('es-AR');
+    await window.getByTestId('file-examples').click();
+    await window.getByTestId('example-Blink').click();
+    await expect(window.getByTestId('mismatches')).toHaveCount(0);
+
+    await window.getByTestId('rail-circuit').click();
+    await window.getByTestId('scene-item-led1').click();
+    await window.getByTestId('property-remove').click();
+    await window.getByTestId('rail-program').click();
+    await expect(window.getByTestId('mismatches')).toContainText('LED en el pin 13');
+
+    await window.getByTestId('mismatch-add-led').click();
+    await expect(window.getByTestId('mismatches')).toHaveCount(0);
+    await expect(window.getByTestId('component-led1')).toBeVisible();
   });
 
   test('explains boards that cannot be simulated yet', async ({ launchApp }) => {

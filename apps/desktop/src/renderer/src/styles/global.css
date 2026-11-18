@@ -1705,6 +1705,35 @@ button:disabled {
   list-style: none;
 }
 
+.mismatches {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mismatch {
+  justify-content: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid #f5c26b;
+  border-radius: var(--radius);
+  background: #fff6e0;
+  color: #6b3d00;
+  font-size: 0.85rem;
+}
+
+.mismatch > span {
+  flex: 1 1 12rem;
+}
+
+.button--small {
+  padding: 3px 10px;
+  font-size: 0.82rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;

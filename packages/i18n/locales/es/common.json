@@ -261,7 +261,11 @@
     "components": "Componentes del circuito",
     "componentsHint": "Elegí uno para cambiar sus pines",
     "pinList": "pin {{pins}}",
-    "startHint": "Probar el programa en la placa simulada"
+    "startHint": "Probar el programa en la placa simulada",
+    "mismatchMissing": "Tu programa usa {{part}} en el pin {{pins}}, pero el circuito no lo tiene.",
+    "mismatchOccupied": "Tu programa usa {{part}} en el pin {{pins}}, pero en el circuito ese pin está conectado a {{other}}.",
+    "mismatchAdd": "Agregar {{part}}",
+    "mismatchMove": "Pasar {{part}} al pin {{pins}}"
   },
   "components": {
     "led": "LED",

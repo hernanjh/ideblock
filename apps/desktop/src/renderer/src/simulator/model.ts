@@ -1,3 +1,4 @@
+import type { PartUse } from '@ideblock/blocks';
 import type { CircuitDocument } from '@ideblock/project';
 import type { ComponentInput, ComponentState } from '@ideblock/simulator';
 import { createContext, useContext } from 'react';
@@ -15,6 +16,8 @@ export interface SimulatorSnapshot {
   outdated: boolean;
   circuit: CircuitDocument;
   boardId: string;
+  /** Parts the blocks program drives; empty when programming in code. */
+  programParts: PartUse[];
 }
 
 export type SimulatorAction =
