@@ -108,6 +108,10 @@ export class AvrRunner implements Runner {
       });
     }
 
+    for (const [address, value] of Object.entries(this.mcu.fixedRegisters ?? {})) {
+      this.cpu.readHooks[Number(address)] = () => value;
+    }
+
     this.cpu.writeHooks[GPIOR1] = (value) => {
       this.traceHigh = value;
       return false;

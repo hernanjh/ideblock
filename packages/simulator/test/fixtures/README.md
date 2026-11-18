@@ -32,3 +32,7 @@ LiquidCrystal_PCF8574 2.3.0, like `LcdCounter.ino.hex`.
 Pico (`rp2040:rp2040:rpipico`, arduino-pico 6.4.0). The image contains code from
 the arduino-pico core (LGPL-2.1) and the Raspberry Pi Pico SDK (BSD-3-Clause),
 available at <https://github.com/earlephilhower/arduino-pico>.
+
+`LeoCheck.ino.hex` is `LeoCheck.ino` in this folder, compiled for the Arduino
+Leonardo (`arduino:avr:leonardo`). Its first lines send `Serial` to USART1, as
+the application does for Leonardo and Micro simulation builds.

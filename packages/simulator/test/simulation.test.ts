@@ -296,4 +296,25 @@ describe('new components', () => {
     const serial = frames.map((frame) => frame.serial).join('');
     expect(Number(serial.split('\r\n')[0])).toBeCloseTo(256, -1);
   });
+
+  it('runs Arduino Leonardo firmware, with Serial sent to USART1', () => {
+    const simulation = new Simulation(
+      hex('LeoCheck'),
+      [
+        led('13'),
+        { id: 'pwm1', type: 'led', pins: { anode: '9' } },
+        { id: 'pwm3', type: 'led', pins: { anode: '5' } },
+        { id: 'knob', type: 'potentiometer', pins: { signal: 'A0' } },
+      ],
+      'atmega32u4',
+    );
+    simulation.input('knob', { value: 700 });
+    const frames = run(simulation, 1100, 50);
+    expect(frames[5]!.components['led']).toEqual({ brightness: 1 });
+    expect(frames[15]!.components['led']).toEqual({ brightness: 0 });
+    expect(frames[15]!.components['pwm1']?.['brightness']).toBeCloseTo(192 / 255, 1);
+    expect(frames[15]!.components['pwm3']?.['brightness']).toBeCloseTo(64 / 255, 1);
+    const serial = frames.map((frame) => frame.serial).join('');
+    expect(Number(serial.split('\r\n')[0])).toBeCloseTo(700, -1);
+  });
 });

@@ -20,7 +20,7 @@ import {
   type AVRTimerConfig,
 } from 'avr8js';
 
-export type AvrMcuName = 'atmega328p' | 'atmega2560';
+export type AvrMcuName = 'atmega328p' | 'atmega2560' | 'atmega32u4';
 export type McuName = AvrMcuName | 'rp2040';
 
 export interface PinLocation {
@@ -45,6 +45,8 @@ export interface McuProfile {
   pin(name: string): PinLocation | null;
   /** The sketch name of a port bit, for reporting pin changes. */
   pinName(port: string, bit: number): string | null;
+  /** Registers the emulator lacks but the startup code waits on, with the value to read. */
+  fixedRegisters?: Record<number, number>;
 }
 
 /** Pin names used in sketches mapped to ATmega328P ports, as on the Uno and Nano. */
@@ -320,9 +322,147 @@ const ATMEGA2560: McuProfile = {
   pinName: (port, bit) => MEGA_NAMES.get(`${port}${bit}`) ?? null,
 };
 
+// Arduino Leonardo and Micro pins 0 to 17, from the core's "leonardo" variant.
+const LEONARDO_DIGITAL: [string, number][] = [
+  ['D', 2],
+  ['D', 3],
+  ['D', 1],
+  ['D', 0],
+  ['D', 4],
+  ['C', 6],
+  ['D', 7],
+  ['E', 6],
+  ['B', 4],
+  ['B', 5],
+  ['B', 6],
+  ['B', 7],
+  ['D', 6],
+  ['C', 7],
+  ['B', 3],
+  ['B', 1],
+  ['B', 2],
+  ['B', 0],
+];
+// A0 to A5 sit on port F, wired to ADC channels 7, 6, 5, 4, 1 and 0.
+const LEONARDO_ANALOG: [number, number][] = [
+  [7, 7],
+  [6, 6],
+  [5, 5],
+  [4, 4],
+  [1, 1],
+  [0, 0],
+];
+
+/** Pin names used in sketches mapped to ATmega32u4 ports, as on the Leonardo and Micro. */
+export function atmega32u4Pin(name: string): PinLocation | null {
+  const analog = /^A([0-5])$/.exec(name);
+  const number = /^\d+$/.test(name) ? Number(name) : null;
+  const channel = analog ? Number(analog[1]) : number !== null && number >= 18 ? number - 18 : null;
+  if (channel !== null) {
+    const location = LEONARDO_ANALOG[channel];
+    return location ? { port: 'F', bit: location[0], adc: location[1] } : null;
+  }
+  const location = number !== null ? LEONARDO_DIGITAL[number] : undefined;
+  return location ? { port: location[0], bit: location[1] } : null;
+}
+
+const LEONARDO_NAMES = new Map<string, string>([
+  ...LEONARDO_DIGITAL.map(([port, bit], pin): [string, string] => [`${port}${bit}`, String(pin)]),
+  ...LEONARDO_ANALOG.map(([bit], index): [string, string] => [`F${bit}`, `A${index}`]),
+]);
+
+// PLLCSR: the USB code waits for the PLL to lock (PLOCK, bit 0) before going on.
+const PLLCSR = 0x49;
+
+/**
+ * The ATmega32u4 of the Leonardo and Micro. Its vectors match the ATmega2560
+ * for timers 0, 1 and 3, the ADC and USART1. Timer 4, which drives PWM on
+ * pins 6 and 13, and USB are not emulated: simulation builds send Serial to
+ * USART1 instead.
+ */
+const ATMEGA32U4: McuProfile = {
+  flashBytes: 0x8000,
+  // RAMEND is 0x0AFF: 2.5 KB of SRAM after 256 bytes of registers and I/O.
+  sramBytes: 0xa00,
+  ports: { B: portBConfig, C: portCConfig, D: portDConfig, E: portEConfig, F: portFConfig },
+  timers: [
+    {
+      ...timer0Config,
+      compAInterrupt: 0x2a,
+      compBInterrupt: 0x2c,
+      ovfInterrupt: 0x2e,
+      compPortA: portBConfig.PORT,
+      compPinA: 7,
+      compPortB: portDConfig.PORT,
+      compPinB: 0,
+      externalClockPort: portDConfig.PORT,
+      externalClockPin: 7,
+    },
+    sixteenBit(
+      {
+        TIFR: 0x36,
+        OCRA: 0x88,
+        OCRB: 0x8a,
+        OCRC: 0x8c,
+        ICR: 0x86,
+        TCNT: 0x84,
+        TCCRA: 0x80,
+        TCCRB: 0x81,
+        TCCRC: 0x82,
+        TIMSK: 0x6f,
+      },
+      16,
+      portBConfig,
+      [5, 6, 7],
+      6,
+    ),
+    {
+      ...sixteenBit(
+        {
+          TIFR: 0x38,
+          OCRA: 0x98,
+          OCRB: 0x9a,
+          OCRC: 0x9c,
+          ICR: 0x96,
+          TCNT: 0x94,
+          TCCRA: 0x90,
+          TCCRB: 0x91,
+          TCCRC: 0x92,
+          TIMSK: 0x71,
+        },
+        31,
+        portCConfig,
+        [6, 6, 6],
+        6,
+      ),
+      // Only channel A of timer 3 reaches a pin on this chip.
+      compPortB: 0,
+      compPortC: 0,
+    },
+  ],
+  usart: {
+    ...usart0Config,
+    rxCompleteInterrupt: 0x32,
+    dataRegisterEmptyInterrupt: 0x34,
+    txCompleteInterrupt: 0x36,
+    UCSRA: 0xc8,
+    UCSRB: 0xc9,
+    UCSRC: 0xca,
+    UBRRL: 0xcc,
+    UBRRH: 0xcd,
+    UDR: 0xce,
+  },
+  adc: { ...adcConfig, adcInterrupt: 0x3a },
+  twi: { ...twiConfig, twiInterrupt: 0x48 },
+  pin: atmega32u4Pin,
+  pinName: (port, bit) => LEONARDO_NAMES.get(`${port}${bit}`) ?? null,
+  fixedRegisters: { [PLLCSR]: 0x01 },
+};
+
 export const MCUS: Record<AvrMcuName, McuProfile> = {
   atmega328p: ATMEGA328P,
   atmega2560: ATMEGA2560,
+  atmega32u4: ATMEGA32U4,
 };
 
 export const isSimulatedMcu = (name: string | undefined): name is McuName =>
