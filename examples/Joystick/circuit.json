@@ -1,0 +1,22 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "joystick1",
+      "type": "joystick",
+      "pins": {
+        "horz": "A0",
+        "vert": "A1",
+        "sel": "2"
+      }
+    },
+    {
+      "id": "led1",
+      "type": "led",
+      "pins": {
+        "anode": "13"
+      }
+    }
+  ],
+  "connections": []
+}

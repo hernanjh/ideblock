@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Joystick",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "Joystick",
+      "es": "Joystick"
+    },
+    "description": {
+      "en": "Draws the joystick position on the serial graph and lights the LED when the stick is pressed.",
+      "es": "Dibuja la posición del joystick en el gráfico serie y enciende el LED al apretar la palanca."
+    },
+    "level": 2,
+    "order": 16
+  }
+}

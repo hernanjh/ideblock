@@ -1,0 +1,79 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ideblock_program",
+        "id": "program",
+        "x": 40,
+        "y": 40,
+        "deletable": false,
+        "inputs": {
+          "LOOP": {
+            "block": {
+              "type": "controls_if",
+              "inputs": {
+                "IF0": {
+                  "block": {
+                    "type": "button_pressed",
+                    "fields": {
+                      "PIN": "12"
+                    }
+                  }
+                },
+                "DO0": {
+                  "block": {
+                    "type": "seven_segment_show",
+                    "fields": {
+                      "FIRST": "2"
+                    },
+                    "inputs": {
+                      "NUMBER": {
+                        "block": {
+                          "type": "math_random_int",
+                          "inputs": {
+                            "FROM": {
+                              "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 1
+                                }
+                              }
+                            },
+                            "TO": {
+                              "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 6
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "time_delay",
+                        "inputs": {
+                          "MS": {
+                            "shadow": {
+                              "type": "math_number",
+                              "fields": {
+                                "NUM": 300
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

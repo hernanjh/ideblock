@@ -1,0 +1,113 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ideblock_program",
+        "id": "program",
+        "x": 40,
+        "y": 40,
+        "deletable": false,
+        "inputs": {
+          "LOOP": {
+            "block": {
+              "type": "serial_print",
+              "fields": {
+                "NEWLINE": "TRUE"
+              },
+              "inputs": {
+                "TEXT": {
+                  "block": {
+                    "type": "text_join",
+                    "extraState": {
+                      "itemCount": 3
+                    },
+                    "inputs": {
+                      "ADD0": {
+                        "block": {
+                          "type": "joystick_axis",
+                          "fields": {
+                            "AXIS": "X",
+                            "PIN": "A0"
+                          }
+                        }
+                      },
+                      "ADD1": {
+                        "block": {
+                          "type": "text",
+                          "fields": {
+                            "TEXT": " "
+                          }
+                        }
+                      },
+                      "ADD2": {
+                        "block": {
+                          "type": "joystick_axis",
+                          "fields": {
+                            "AXIS": "Y",
+                            "PIN": "A1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "controls_if",
+                  "extraState": {
+                    "hasElse": true
+                  },
+                  "inputs": {
+                    "IF0": {
+                      "block": {
+                        "type": "joystick_pressed",
+                        "fields": {
+                          "PIN": "2"
+                        }
+                      }
+                    },
+                    "DO0": {
+                      "block": {
+                        "type": "led_set",
+                        "fields": {
+                          "STATE": "HIGH",
+                          "PIN": "13"
+                        }
+                      }
+                    },
+                    "ELSE": {
+                      "block": {
+                        "type": "led_set",
+                        "fields": {
+                          "STATE": "LOW",
+                          "PIN": "13"
+                        }
+                      }
+                    }
+                  },
+                  "next": {
+                    "block": {
+                      "type": "time_delay",
+                      "inputs": {
+                        "MS": {
+                          "shadow": {
+                            "type": "math_number",
+                            "fields": {
+                              "NUM": 100
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
