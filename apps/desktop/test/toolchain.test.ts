@@ -7,9 +7,14 @@ import { ToolchainService } from '../src/main/toolchain/toolchain-service';
 
 describe('configurationYaml', () => {
   it('keeps every folder inside the app data root', () => {
-    const yaml = configurationYaml('/data/arduino');
-    expect(yaml).toContain('data: "/data/arduino/data"');
-    expect(yaml).toContain('user: "/data/arduino/user"');
+    const root = join(tmpdir(), 'arduino');
+    const yaml = configurationYaml(root);
+    // Paths are JSON-quoted so Windows backslashes stay valid in YAML double-quoted strings.
+    const folder = (line: string) =>
+      JSON.parse(yaml.match(new RegExp(`^  ${line}: (.+)$`, 'm'))![1]!);
+    expect(folder('data')).toBe(join(root, 'data'));
+    expect(folder('downloads')).toBe(join(root, 'staging'));
+    expect(folder('user')).toBe(join(root, 'user'));
     expect(yaml).toContain('package_esp32_index.json');
   });
 });
