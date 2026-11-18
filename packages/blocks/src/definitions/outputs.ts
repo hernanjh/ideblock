@@ -9,14 +9,9 @@ function servoName(pin: string): string {
 
 function useServo(generator: SketchGenerator, pin: string): string {
   const name = servoName(pin);
-  // The standard Servo library does not support the ESP32.
-  if (generator.board.architecture === 'esp32') {
-    generator.addInclude('ESP32Servo.h');
-    generator.addLibrary('ESP32Servo');
-  } else {
-    generator.addInclude('Servo.h');
-    generator.addLibrary('Servo');
-  }
+  const { header, library } = generator.board.servo;
+  generator.addInclude(header);
+  if (library) generator.addLibrary(library);
   generator.addGlobal(`servo:${pin}`, `Servo ${name};`);
   generator.addSetup(`servo:${pin}`, `${name}.attach(${pin});`);
   return name;

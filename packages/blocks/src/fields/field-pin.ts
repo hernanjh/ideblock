@@ -5,14 +5,17 @@ import { getActiveBoard, pinsFor, type PinKind } from '../board-context';
 function defaultPin(kind: PinKind): string | undefined {
   const board = getActiveBoard();
   const pins = pinsFor(board, kind);
-  const preferred: Record<PinKind, string | undefined> = {
-    output: board.builtinLedPin,
-    pwm: board.architecture === 'esp32' ? '13' : '9',
-    digital: board.architecture === 'esp32' ? '4' : '2',
-    analog: undefined,
+  // Inputs and PWM outputs avoid the built-in LED pin, which is usually wired to the LED.
+  const candidates: Record<PinKind, string[]> = {
+    output: [board.builtinLedPin],
+    pwm: ['9', '13', '5'],
+    digital: ['2', '4', '5'],
+    analog: [],
   };
-  const choice = preferred[kind];
-  return choice && pins.includes(choice) ? choice : pins[0];
+  const choice = candidates[kind].find(
+    (pin) => pins.includes(pin) && (kind === 'output' || pin !== board.builtinLedPin),
+  );
+  return choice ?? pins[0];
 }
 
 interface FieldPinJson extends Blockly.FieldDropdownFromJsonConfig {

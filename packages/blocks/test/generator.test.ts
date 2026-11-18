@@ -94,6 +94,18 @@ describe('sketch generator', () => {
     expect(esp32.libraries).toEqual(['ESP32Servo']);
   });
 
+  it('uses the servo library bundled with ESP8266 and RP2040 platforms', () => {
+    const servo = program(
+      [],
+      [{ type: 'servo_write', fields: { PIN: '5' }, inputs: { ANGLE: num(45) } }],
+    );
+    for (const board of ['nodemcu', 'pico']) {
+      const result = generate(servo, { board });
+      expect(result.code).toContain('#include <Servo.h>');
+      expect(result.libraries).toEqual([]);
+    }
+  });
+
   it('ignores blocks that are not inside the program', () => {
     const { code } = generate(program([], []), { extraTopBlocks: [led('HIGH', '7')] });
     expect(code).not.toContain('7');
