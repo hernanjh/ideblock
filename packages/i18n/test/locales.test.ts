@@ -18,8 +18,11 @@ function readNamespace(language: string, file: string): unknown {
   return JSON.parse(readFileSync(join(localesDir, language, file), 'utf8'));
 }
 
+// Covers i18next interpolation ({{name}}) and Blockly arguments (%1).
 function placeholders(text: string): string[] {
-  return [...text.matchAll(/{{\s*(\w+)\s*}}/g)].map((match) => match[1] ?? '').sort();
+  const named = [...text.matchAll(/{{\s*(\w+)\s*}}/g)].map((match) => match[1] ?? '');
+  const positional = [...text.matchAll(/%(\d+)/g)].map((match) => `%${match[1]}`);
+  return [...named, ...positional].sort();
 }
 
 const namespaces = readdirSync(join(localesDir, FALLBACK_LANGUAGE));

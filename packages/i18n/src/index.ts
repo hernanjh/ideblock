@@ -1,4 +1,6 @@
+import enBlocks from '../locales/en/blocks.json';
 import enCommon from '../locales/en/common.json';
+import esBlocks from '../locales/es/blocks.json';
 import esCommon from '../locales/es/common.json';
 
 export const SUPPORTED_LANGUAGES = ['en', 'es'] as const;
@@ -8,8 +10,8 @@ export const FALLBACK_LANGUAGE: SupportedLanguage = 'en';
 export const DEFAULT_NAMESPACE = 'common';
 
 export const resources = {
-  en: { common: enCommon },
-  es: { common: esCommon },
+  en: { common: enCommon, blocks: enBlocks },
+  es: { common: esCommon, blocks: esBlocks },
 } as const satisfies Record<SupportedLanguage, Record<string, unknown>>;
 
 export function isSupportedLanguage(value: string): value is SupportedLanguage {
