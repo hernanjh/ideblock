@@ -18,7 +18,7 @@ export interface BoardCore {
 }
 
 export interface BoardSimulation {
-  mcu: 'atmega328p' | 'atmega2560' | 'rp2040';
+  mcu: 'atmega328p' | 'atmega2560' | 'atmega32u4' | 'rp2040';
   clockHz: number;
 }
 

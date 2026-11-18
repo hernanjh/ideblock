@@ -237,7 +237,7 @@
     "stop": "Stop",
     "restart": "Restart the simulation",
     "preparing": "Preparing…",
-    "unsupported": "The simulator does not support {{board}} yet. To simulate, choose Arduino Uno, Nano, Mega or Raspberry Pi Pico; Verify and Upload still work with the real board.",
+    "unsupported": "The simulator does not support {{board}} yet. To simulate, choose Arduino Uno, Nano, Mega, Leonardo, Micro or Raspberry Pi Pico; Verify and Upload still work with the real board.",
     "crashed": "The simulation stopped because of an unexpected error. Press Simulate to try again.",
     "time": "Time: {{seconds}} s",
     "slow": "Running slower than real time",

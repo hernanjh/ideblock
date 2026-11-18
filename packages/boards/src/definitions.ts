@@ -147,6 +147,7 @@ export const leonardo: BoardDefinition = {
     { vid: '2341', pid: '8036' },
     { vid: '2341', pid: '0036' },
   ],
+  simulation: { mcu: 'atmega32u4', clockHz: 16_000_000 },
 };
 
 export const micro: BoardDefinition = {
@@ -158,6 +159,7 @@ export const micro: BoardDefinition = {
     { vid: '2341', pid: '8037' },
     { vid: '2341', pid: '0037' },
   ],
+  simulation: { mcu: 'atmega32u4', clockHz: 16_000_000 },
 };
 
 export const nanoEvery: BoardDefinition = {

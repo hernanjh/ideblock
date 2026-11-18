@@ -125,6 +125,11 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
       tracedBlocks = sketch.tracedBlocks;
     }
 
+    if (board.simulation?.mcu === 'atmega32u4') {
+      // The Leonardo's Serial is USB, which the emulator lacks; simulation builds
+      // use the chip's hardware serial port instead. #line keeps error lines right.
+      code = `#define Serial Serial1\n#line 1\n${code}`;
+    }
     const result = await window.ideblock.invoke('toolchain:compile', {
       code,
       boardId: board.id,

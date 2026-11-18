@@ -237,7 +237,7 @@
     "stop": "Detener",
     "restart": "Reiniciar la simulación",
     "preparing": "Preparando…",
-    "unsupported": "El simulador todavía no funciona con {{board}}. Para simular, elegí Arduino Uno, Nano, Mega o Raspberry Pi Pico; para la placa real, Verificar y Subir funcionan igual.",
+    "unsupported": "El simulador todavía no funciona con {{board}}. Para simular, elegí Arduino Uno, Nano, Mega, Leonardo, Micro o Raspberry Pi Pico; para la placa real, Verificar y Subir funcionan igual.",
     "crashed": "La simulación se detuvo por un error inesperado. Tocá Simular para probar de nuevo.",
     "time": "Tiempo: {{seconds}} s",
     "slow": "Va más lento que el tiempo real",
