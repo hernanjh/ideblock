@@ -14,20 +14,25 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
   cambiá su tamaño. El código se actualiza mientras movés los bloques, y en
   cualquier momento podés pasar un proyecto a C++ escrito a mano.
 - **Simulador.** Ejecutá el programa en un Arduino Uno o Nano simulado con LED,
-  botones, potenciómetros, sensores de luz, servos, buzzers y sensores
-  ultrasónicos. El bloque que se está ejecutando se ilumina. El simulador puede
-  abrirse en una ventana aparte.
+  LED RGB, botones, interruptores, potenciómetros, sensores de luz, temperatura,
+  movimiento, inclinación y distancia, servos, buzzers, una pantalla LCD I2C y
+  anillos NeoPixel. Los bloques se iluminan a medida que se ejecutan y el LED de
+  la placa también parpadea. El simulador puede abrirse en una ventana aparte.
 - **Vista de circuito.** Mirá la placa con cada componente y sus cables, mové los
-  componentes, cambiales el nombre y los pines. Aparece un aviso cuando dos
-  componentes comparten un pin.
+  componentes, cambiales el nombre y los pines. O cableá a mano: pinchá las
+  piezas en una protoboard, tendé los cables y agregá resistencias. Una revisión
+  del circuito explica los cables que faltan, los cortocircuitos y los LED sin
+  resistencia, que se queman en la simulación como los de verdad.
+- **Programa y circuito juntos.** Aparece un aviso cuando los bloques usan una
+  pieza que el circuito no tiene, con un botón para agregarla.
 - **Placas reales.** Verificá, subí el programa y usá el monitor serie y el
   gráfico con placas compatibles con Arduino Uno, Nano, Mega y ESP32. Las
   herramientas de cada placa se instalan la primera vez que hacen falta.
 - **Ayuda en lenguaje simple.** Los errores de compilación y de subida más comunes
   se explican en un español o inglés simple, con un enlace a la línea.
 - **Proyectos.** Los proyectos se guardan solos, se abren en el Arduino IDE y se
-  pueden abrir sketches `.ino` comunes. Nueve ejemplos van desde un LED que
-  parpadea hasta un sensor de estacionamiento.
+  pueden abrir sketches `.ino` comunes. Catorce ejemplos van desde un LED que
+  parpadea hasta una alarma de movimiento.
 
 ## Objetivos
 

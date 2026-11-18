@@ -7,6 +7,32 @@ commitments; each one is reviewed at the end of a phase before it enters the roa
 
 Last reviewed: 2026-11-18 (end of Phase 1).
 
+## Phase 2 progress
+
+Done so far: firmware cache, more boards (Leonardo, Micro, Nano Every, ESP32-C3
+and S3, ESP8266 and Pico), an I2C bus in the simulator with an LCD screen, RGB
+LEDs, NeoPixel rings, switches, motion, tilt and temperature sensors, hand
+wiring on a breadboard with resistors and a circuit check
+([ADR 0008](adr/0008-hand-wiring.md)), a notice when the program and the circuit
+do not match, the board's own LED, and every running block lit in turn. ESP32
+simulation moved to Phase 4 (see Risks).
+
+New notes from user tests and from comparing with Tinkercad and mBlock:
+
+- **Colour picker in blocks (medium).** mBlock lets children pick a colour from
+  swatches inside the block. `@blockly/field-colour` (Apache-2.0) would do it;
+  the named colours stay for reading aloud.
+- **Electrical simulation (low).** Capacitors, diodes, transistors, batteries
+  and a multimeter, as in Tinkercad, need currents and voltages computed, which
+  the connection-level analysis does not do.
+- **Motors (medium).** Vibration and DC motors driven by a pin or a transistor
+  module; wokwi-elements has no drawing for them, so they need artwork.
+- **More parts from wokwi-elements (medium).** Joystick, 7-segment display, LED
+  bar, sound, flame and gas sensors and an OLED screen have drawings and fit the
+  current models.
+- **Timed blocks (done in part).** "Turn on the LED for N seconds" exists; tones
+  and RGB colours could get the same form.
+
 ## Phase 1 review
 
 Done in Phase 1 from the candidates below: plain-language compile and upload

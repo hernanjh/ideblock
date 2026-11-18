@@ -51,13 +51,43 @@ Registrá la definición en `COMPONENTS`, en
 ## 2. Describir el aspecto
 
 En `catalog.ts`, asociá el tipo de componente con una etiqueta de wokwi-elements,
-el tipo de control (`press`, `slider`, `distance` o `none`) y las propiedades del
-elemento en cada cuadro.
+el tipo de control y las propiedades del elemento en cada cuadro. Los controles
+que aparecen en la tarjeta del componente son:
 
-## 3. Agregar los textos
+| Control       | Uso                                                                  |
+| ------------- | -------------------------------------------------------------------- |
+| `press`       | Se mantiene apretado, como un botón (`pressed`)                      |
+| `motion`      | Se mantiene apretado para activar un sensor de movimiento (`motion`) |
+| `toggle`      | Encendido y apagado, como un interruptor (`on`)                      |
+| `slider`      | Un valor de 0 a 1023 (`value`)                                       |
+| `distance`    | Una distancia en centímetros (`distance`)                            |
+| `temperature` | Una temperatura en °C (`temperature`)                                |
+| `none`        | Solo salidas                                                         |
 
-Agregá el nombre del componente en `components` y los nombres de pines nuevos en
-`componentPins`, en `packages/i18n/locales/*/common.json`.
+En `apps/desktop/src/renderer/src/circuit/geometry.ts`, agregá la forma que usan
+el dibujo del circuito y el cableado a mano:
+
+- `width`, `height` y `pins`: salen del `pinInfo` del elemento, en píxeles.
+- `signals`: qué pin del elemento usa cada pin simulado; `ground` y `supply`: las
+  patas que van a GND y a 5V o 3V3.
+- `resistors`: la pieza necesita una resistencia en serie (los LED).
+- `bridges`: patas unidas por dentro; `swappable`: la señal y la tierra funcionan
+  en cualquier orden.
+- `rotation`: un cuarto de vuelta, para que las patas entren en la protoboard.
+
+Las patas separadas 0,1 pulgada (9,6 px) entran en los agujeros de la
+protoboard. Dibujá un ícono para la paleta en `ComponentIcon.tsx`.
+
+## 3. Agregar los bloques y los textos
+
+Si hay bloques que manejan la pieza, agregalos en
+`packages/blocks/src/definitions/` y asocialos con la pieza en
+`packages/blocks/src/parts.ts`, así el simulador avisa cuando el programa usa una
+pieza que el circuito no tiene.
+
+Agregá el nombre del componente en `components`, su descripción en
+`componentInfo`, los nombres de pines nuevos en `componentPins` y los de patas en
+`legs`, en `packages/i18n/locales/*/common.json`.
 
 ## 4. Probarlo
 

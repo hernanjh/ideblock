@@ -14,5 +14,6 @@ Records are immutable once accepted; a later record supersedes an earlier one.
 | [0005](0005-process-isolation-and-ipc.md) | Process isolation and typed IPC                     | Accepted |
 | [0006](0006-toolchain.md)                 | Compiling, uploading and serial through arduino-cli | Accepted |
 | [0007](0007-simulator.md)                 | Simulator architecture                              | Accepted |
+| [0008](0008-hand-wiring.md)               | Hand wiring and the circuit check                   | Accepted |
 
 New records use the [template](template.md).

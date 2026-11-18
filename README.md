@@ -14,20 +14,25 @@ teenagers and adults who want to move on to real code.
   resize them. The code updates as you move blocks, and you can switch a project
   to hand-written C++ at any time.
 - **Simulator.** Run the program on a simulated Arduino Uno or Nano with LEDs,
-  buttons, potentiometers, light sensors, servos, buzzers and ultrasonic
-  sensors. The block that is running lights up. The simulator can open in its
-  own window.
+  RGB LEDs, buttons, switches, potentiometers, light, temperature, motion, tilt
+  and ultrasonic sensors, servos, buzzers, an I2C LCD screen and NeoPixel rings.
+  The blocks light up as they run, and the board's own LED blinks too. The
+  simulator can open in its own window.
 - **Circuit view.** See the board with every component and wire, move the
-  components, rename them and change their pins. A warning appears when two
-  components share a pin.
+  components, rename them and change their pins. Or wire by hand: plug parts
+  into a breadboard, lay the wires and add resistors. A circuit check explains
+  missing wires, short circuits and LEDs without a resistor, which burn out in
+  the simulation like real ones.
+- **Program and circuit together.** A notice appears when the blocks use a part
+  the circuit does not have, with a button to add it.
 - **Real boards.** Verify, upload and use the serial monitor and graph with
   Arduino Uno, Nano, Mega and ESP32 compatible boards. Board tools are installed
   the first time they are needed.
 - **Plain-language help.** Common compiler and upload errors are explained in
   simple English or Spanish, with a link to the line.
 - **Projects.** Projects are saved automatically, open in the Arduino IDE, and
-  plain `.ino` sketches can be opened. Nine examples go from a blinking LED to a
-  parking sensor.
+  plain `.ino` sketches can be opened. Fourteen examples go from a blinking LED to
+  a motion alarm.
 
 ## Goals
 

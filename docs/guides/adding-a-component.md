@@ -50,13 +50,42 @@ Register the definition in `COMPONENTS` in
 ## 2. Describe the appearance
 
 In `catalog.ts`, map the component type to a wokwi-elements tag, the kind of
-control (`press`, `slider`, `distance` or `none`) and the element properties for
-each frame.
+control and the element properties for each frame. Controls shown on the
+component card are:
 
-## 3. Add the texts
+| Control       | Use                                             |
+| ------------- | ----------------------------------------------- |
+| `press`       | Held down like a push button (`pressed`)        |
+| `motion`      | Held down to trigger a motion sensor (`motion`) |
+| `toggle`      | On and off, like a switch (`on`)                |
+| `slider`      | A value from 0 to 1023 (`value`)                |
+| `distance`    | A distance in centimetres (`distance`)          |
+| `temperature` | A temperature in °C (`temperature`)             |
+| `none`        | Outputs only                                    |
 
-Add the component name under `components` and any new pin names under
-`componentPins` in `packages/i18n/locales/*/common.json`.
+In `apps/desktop/src/renderer/src/circuit/geometry.ts`, add the shape used by the
+circuit drawing and by hand wiring:
+
+- `width`, `height` and `pins`: taken from the element's `pinInfo`, in pixels.
+- `signals`: which element pin each simulated pin uses; `ground` and `supply`:
+  the legs that go to GND and to 5V or 3V3.
+- `resistors`: the part needs a series resistor (LEDs).
+- `bridges`: legs joined inside the part; `swappable`: signal and ground work
+  either way round.
+- `rotation`: a quarter turn, so the legs fit a breadboard.
+
+Legs 0.1 inch apart (9.6 px) drop into breadboard holes. Draw a palette icon in
+`ComponentIcon.tsx`.
+
+## 3. Add the blocks and texts
+
+If blocks drive the part, add them in `packages/blocks/src/definitions/` and map
+them to the part in `packages/blocks/src/parts.ts`, so the simulator can warn
+when the program uses a part the circuit does not have.
+
+Add the component name under `components`, its description under
+`componentInfo`, new pin names under `componentPins` and new leg names under
+`legs` in `packages/i18n/locales/*/common.json`.
 
 ## 4. Test it
 
