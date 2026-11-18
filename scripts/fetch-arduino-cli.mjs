@@ -8,11 +8,11 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import {
   chmodSync,
+  copyFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
-  renameSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
@@ -104,8 +104,9 @@ try {
   // bsdtar, shipped with Windows 10 and macOS, also extracts zip files.
   execFileSync('tar', ['-xf', archivePath, '-C', work], { stdio: 'inherit' });
   mkdirSync(binDir, { recursive: true });
-  renameSync(join(work, binaryName), target);
-  renameSync(join(work, 'LICENSE.txt'), join(binDir, 'arduino-cli.LICENSE.txt'));
+  // Copy rather than rename: the temp folder may live on another drive (C: vs D: on CI runners).
+  copyFileSync(join(work, binaryName), target);
+  copyFileSync(join(work, 'LICENSE.txt'), join(binDir, 'arduino-cli.LICENSE.txt'));
   if (platform !== 'win32') chmodSync(target, 0o755);
   writeFileSync(stamp, `${VERSION} ${platform}-${arch}`);
   console.log(`arduino-cli ${VERSION} ready at ${target}`);
