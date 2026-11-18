@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { expect, test } from './fixtures';
+import { editorText, expect, test } from './fixtures';
 
 async function center(locator: Locator): Promise<{ x: number; y: number }> {
   const box = await locator.boundingBox();
@@ -41,9 +41,7 @@ test.describe('block editor', () => {
   test('starts with an empty program', async ({ launchApp }) => {
     const { window } = await launchApp();
     await window.getByTestId('view-split').click();
-    await expect(window.getByTestId('generated-code')).toHaveText(
-      'void setup() {\n}\n\nvoid loop() {\n}\n',
-    );
+    await expect.poll(() => editorText(window)).toBe('void setup() {\n}\n\nvoid loop() {\n}\n');
     await expect(window.locator('.blocklyText', { hasText: 'repeat forever' })).toBeVisible();
   });
 
@@ -53,9 +51,8 @@ test.describe('block editor', () => {
     await openCategory(window, 'Outputs');
     await dragIntoLoop(window, 'LED on pin', 'repeat forever');
 
-    const code = window.getByTestId('generated-code');
-    await expect(code).toContainText('pinMode(13, OUTPUT);');
-    await expect(code).toContainText('digitalWrite(13, HIGH);');
+    await expect.poll(() => editorText(window)).toContain('pinMode(13, OUTPUT);');
+    await expect.poll(() => editorText(window)).toContain('digitalWrite(13, HIGH);');
   });
 
   test('translates blocks and keeps the program when the language changes', async ({
@@ -65,14 +62,14 @@ test.describe('block editor', () => {
     await window.getByTestId('view-split').click();
     await openCategory(window, 'Outputs');
     await dragIntoLoop(window, 'LED on pin', 'repeat forever');
-    await expect(window.getByTestId('generated-code')).toContainText('digitalWrite(13, HIGH);');
+    await expect.poll(() => editorText(window)).toContain('digitalWrite(13, HIGH);');
 
     await window.getByTestId('open-settings').click();
     await window.getByTestId('language-select').selectOption('es');
     await window.getByTestId('settings-close').click();
 
     await expect(window.locator('.blocklyText', { hasText: 'repetir para siempre' })).toBeVisible();
-    await expect(window.getByTestId('generated-code')).toContainText('digitalWrite(13, HIGH);');
+    await expect.poll(() => editorText(window)).toContain('digitalWrite(13, HIGH);');
   });
 
   test('shows advanced categories on request', async ({ launchApp }) => {

@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -50,4 +51,15 @@ export { expect } from '@playwright/test';
 export async function openSettings(window: Page): Promise<void> {
   await window.getByTestId('open-settings').click();
   await window.getByTestId('settings-dialog').waitFor({ state: 'visible' });
+}
+
+/** Text shown in the code editor, with Monaco's non-breaking spaces normalized. */
+export async function editorText(window: Page): Promise<string> {
+  return window.evaluate(() => {
+    const lines = document.querySelectorAll('[data-testid="code-editor"] .view-line');
+    const sorted = [...lines].sort(
+      (a, b) => parseFloat((a as HTMLElement).style.top) - parseFloat((b as HTMLElement).style.top),
+    );
+    return sorted.map((line) => (line.textContent ?? '').replace(/\u00a0/g, ' ')).join('\n');
+  });
 }
