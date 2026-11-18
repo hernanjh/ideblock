@@ -1,4 +1,4 @@
-import type { I2CDevice } from './avr-runner';
+import type { I2CDevice } from './runner';
 
 /** How a component pin connects to the board, which limits the pins offered. */
 export type ComponentPinKind = 'output' | 'digital' | 'analog' | 'pwm' | 'sda' | 'scl';

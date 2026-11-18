@@ -11,7 +11,8 @@ import {
   type TWIEventHandler,
 } from 'avr8js';
 import { loadHex } from './hex';
-import { MCUS, type McuName, type McuProfile } from './mcu';
+import { MCUS, type AvrMcuName, type McuProfile } from './mcu';
+import type { I2CDevice, PinListener, Runner } from './runner';
 
 export const ATMEGA328_FREQUENCY = 16_000_000;
 
@@ -20,15 +21,7 @@ export const ATMEGA328_FREQUENCY = 16_000_000;
 const GPIOR0 = 0x3e;
 const GPIOR1 = 0x4a;
 
-export type PinListener = (pin: string, high: boolean, cycles: number) => void;
-
-/** A device on the I2C bus, as seen from the microcontroller acting as master. */
-export interface I2CDevice {
-  /** Returns true to acknowledge the byte. */
-  write(value: number): boolean;
-  read(): number;
-  stop?(): void;
-}
+export type { I2CDevice, PinListener } from './runner';
 
 /** Routes the TWI peripheral's bus activity to the simulated devices by address. */
 class I2CBus implements TWIEventHandler {
@@ -65,7 +58,7 @@ class I2CBus implements TWIEventHandler {
  * Runs compiled ATmega328P or ATmega2560 firmware. Only the peripherals used by
  * beginner sketches are wired: GPIO, timers, ADC, I2C and the serial port.
  */
-export class AvrRunner {
+export class AvrRunner implements Runner {
   readonly cpu: CPU;
   readonly frequency = ATMEGA328_FREQUENCY;
   private readonly mcu: McuProfile;
@@ -79,7 +72,7 @@ export class AvrRunner {
   onSerialByte: ((byte: number) => void) | null = null;
   onTrace: ((index: number) => void) | null = null;
 
-  constructor(hex: string, mcuName: McuName = 'atmega328p') {
+  constructor(hex: string, mcuName: AvrMcuName = 'atmega328p') {
     this.mcu = MCUS[mcuName];
     const flash = new Uint8Array(this.mcu.flashBytes);
     loadHex(hex, flash);
