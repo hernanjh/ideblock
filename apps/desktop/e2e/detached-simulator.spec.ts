@@ -21,7 +21,12 @@ test.describe('separate simulator window', () => {
     await expect(simulatorWindow.getByTestId('component-led1')).toBeVisible();
 
     const closed = simulatorWindow.waitForEvent('close');
-    await simulatorWindow.getByTestId('simulator-attach').click();
+    // The window closes as a result of the click, which can end the click call
+    // with a "page closed" error before it returns.
+    await simulatorWindow
+      .getByTestId('simulator-attach')
+      .click()
+      .catch(() => undefined);
     await closed;
     await expect(window.getByTestId('panel-simulator')).toBeVisible();
     await expect(window.getByTestId('component-led1')).toBeVisible();
