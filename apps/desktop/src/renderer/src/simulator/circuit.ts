@@ -89,3 +89,25 @@ export function sharedPins(items: CircuitItem[]): Set<string> {
   }
   return new Set([...counts].filter(([, count]) => count > 1).map(([pin]) => pin));
 }
+
+/**
+ * Moves parts on the I2C bus to the bus pins of another board: the bus has
+ * fixed pins, so A4 and A5 on an Uno become 20 and 21 on a Mega.
+ */
+export function withBoardBus(circuit: CircuitDocument, board: BoardDefinition): CircuitDocument {
+  let changed = false;
+  const items = circuitComponents(circuit).map((item) => {
+    const definition = findComponent(item.type);
+    if (!definition) return item;
+    const pins = { ...item.pins };
+    for (const spec of definition.pins) {
+      const bus = spec.kind === 'sda' ? board.i2c.sda : spec.kind === 'scl' ? board.i2c.scl : null;
+      if (bus && pins[spec.name] !== bus) {
+        pins[spec.name] = bus;
+        changed = true;
+      }
+    }
+    return { ...item, pins };
+  });
+  return changed ? withComponents(circuit, items) : circuit;
+}

@@ -1,4 +1,4 @@
-import { DEFAULT_BOARD_ID } from '@ideblock/boards';
+import { DEFAULT_BOARD_ID, getBoard } from '@ideblock/boards';
 import type { SketchResult } from '@ideblock/blocks';
 import {
   createProject,
@@ -10,6 +10,7 @@ import {
   type WorkspaceState,
 } from '@ideblock/project';
 import { create } from 'zustand';
+import { withBoardBus } from '../simulator/circuit';
 
 export type { ProjectMode, WorkspaceState };
 
@@ -115,7 +116,8 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     },
     newProject: (name) => get().load(createProject(name, get().boardId), null),
     setName: (name) => change({ name }),
-    setBoard: (boardId) => change({ boardId }),
+    setBoard: (boardId) =>
+      change({ boardId, circuit: withBoardBus(get().circuit, getBoard(boardId)) }),
     setWorkspaceState: (workspaceState) => change({ workspaceState }),
     syncWorkspaceState: (workspaceState) => set({ workspaceState }),
     setSketch: (sketch) => set({ sketch }),

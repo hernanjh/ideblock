@@ -593,6 +593,9 @@ function Properties({
               </label>
             );
           })}
+        {definition?.pins.some((spec) => spec.kind === 'sda') && (
+          <p className="palette__hint">{t('circuit.fixedBus', { board: boardName })}</p>
+        )}
         {!analysis && shape && shape.ground.length > 0 && (
           <p className="property property--fixed">
             <span>{t('circuit.ground')}</span>

@@ -7,6 +7,7 @@ import {
   type ToolboxLevel,
   createSketchGenerator,
   emptyWorkspaceState,
+  refreshBoardFields,
   registerBlocks,
   setActiveBoard,
 } from '@ideblock/blocks';
@@ -174,6 +175,7 @@ export function BlockEditor({ language }: BlockEditorProps) {
     if (!workspace) return;
     const board = getBoard(boardId);
     setActiveBoard(board);
+    refreshBoardFields(workspace);
     useProjectStore.getState().setSketch(createSketchGenerator(board).generate(workspace));
   }, [boardId]);
 
