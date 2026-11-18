@@ -1,46 +1,35 @@
 import { getBoard } from '@ideblock/boards';
 import { pinsFor } from '@ideblock/blocks';
-import { COMPONENTS, findComponent, type ComponentInstance } from '@ideblock/simulator';
+import {
+  COMPONENTS,
+  findComponent,
+  type ComponentInput,
+  type ComponentInstance,
+} from '@ideblock/simulator';
 import { Plus, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { currentCode, useProjectStore } from '../state/project';
-import { useSimulationStore } from '../state/simulation';
 import { BuzzerAudio } from './buzzer-audio';
 import { VISUALS } from './catalog';
 import { circuitComponents, newComponent } from './circuit';
+import { useSimulatorModel } from './model';
 import { WokwiElement } from './WokwiElement';
 
 export function SimulatorPanel() {
   const { t } = useTranslation();
-  const circuit = useProjectStore((state) => state.circuit);
-  const boardId = useProjectStore((state) => state.boardId);
-  const setCircuit = useProjectStore((state) => state.setCircuit);
-  const code = useProjectStore(currentCode);
-  const status = useSimulationStore((state) => state.status);
-  const runningCode = useSimulationStore((state) => state.runningCode);
-  const timeMs = useSimulationStore((state) => state.timeMs);
-  const speed = useSimulationStore((state) => state.speed);
-  const error = useSimulationStore((state) => state.error);
-  const restart = useSimulationStore((state) => state.restart);
+  const { snapshot, dispatch } = useSimulatorModel();
+  const { circuit, boardId, status, timeMs, speed, error, outdated } = snapshot;
   const [adding, setAdding] = useState(false);
 
   const board = getBoard(boardId);
   const components = useMemo(() => circuitComponents(circuit), [circuit]);
-  const firstRender = useRef(true);
-
-  useEffect(() => {
-    // Rewiring takes effect at once by restarting the running firmware.
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    restart();
-  }, [components, restart]);
 
   const update = (next: ComponentInstance[]): void =>
-    // Component instances are plain JSON objects, which is what circuit.json stores.
-    setCircuit({ ...circuit, components: next as unknown as typeof circuit.components });
+    dispatch({
+      type: 'setCircuit',
+      // Component instances are plain JSON objects, which is what circuit.json stores.
+      circuit: { ...circuit, components: next as unknown as typeof circuit.components },
+    });
 
   const add = (type: string): void => {
     const component = newComponent(type, circuit, board);
@@ -64,7 +53,7 @@ export function SimulatorPanel() {
         <div className="simulator__status" data-testid="simulator-status">
           <span>{t('simulator.time', { seconds: (timeMs / 1000).toFixed(1) })}</span>
           {speed < 0.9 && <span className="chip">{t('simulator.slow')}</span>}
-          {runningCode !== null && runningCode !== code && (
+          {outdated && (
             <span className="chip" data-testid="simulator-outdated">
               {t('simulator.outdated')}
             </span>
@@ -126,13 +115,21 @@ interface ComponentCardProps {
   onRemove: () => void;
 }
 
+function useComponentIo(id: string) {
+  const { snapshot, dispatch } = useSimulatorModel();
+  return {
+    state: snapshot.components[id],
+    input: snapshot.inputs[id],
+    sendInput: (componentId: string, input: ComponentInput) =>
+      dispatch({ type: 'input', id: componentId, input }),
+  };
+}
+
 function ComponentCard({ component, boardId, onChange, onRemove }: ComponentCardProps) {
   const { t } = useTranslation();
   const definition = findComponent(component.type);
   const visual = VISUALS[component.type];
-  const state = useSimulationStore((store) => store.components[component.id]);
-  const input = useSimulationStore((store) => store.inputs[component.id]);
-  const sendInput = useSimulationStore((store) => store.input);
+  const { state, input, sendInput } = useComponentIo(component.id);
   const name = t(`components.${component.type}` as never);
 
   const events = useMemo(
@@ -213,9 +210,7 @@ function Control({ component, name }: { component: ComponentInstance; name: stri
   const { t } = useTranslation();
   const visual = VISUALS[component.type];
   const definition = findComponent(component.type);
-  const state = useSimulationStore((store) => store.components[component.id]);
-  const input = useSimulationStore((store) => store.inputs[component.id]);
-  const sendInput = useSimulationStore((store) => store.input);
+  const { state, input, sendInput } = useComponentIo(component.id);
 
   if (visual?.control === 'press') {
     const pressed = Boolean(state?.['pressed']);
@@ -268,11 +263,10 @@ function Control({ component, name }: { component: ComponentInstance; name: stri
 }
 
 function BuzzerSound() {
-  const frequency = useSimulationStore((state) =>
-    Object.values(state.components).reduce(
-      (current, component) => current || Number(component['frequency'] ?? 0),
-      0,
-    ),
+  const { snapshot } = useSimulatorModel();
+  const frequency = Object.values(snapshot.components).reduce(
+    (current, component) => current || Number(component['frequency'] ?? 0),
+    0,
   );
   const audio = useRef<BuzzerAudio | null>(null);
 

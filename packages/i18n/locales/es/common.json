@@ -232,7 +232,9 @@
     "level": {
       "potentiometer": "Posición de la perilla: {{value}}",
       "photoresistor": "Nivel de luz: {{value}}"
-    }
+    },
+    "detach": "Abrir en una ventana aparte",
+    "attach": "Volver a la ventana principal"
   },
   "components": {
     "led": "LED",

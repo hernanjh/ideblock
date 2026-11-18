@@ -3,6 +3,7 @@ import { Blocks, Code, Cpu, Terminal } from 'lucide-react';
 import { useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '../state/settings';
+import { useUiStore } from '../state/ui';
 import { Panel } from './Panel';
 import { Splitter } from './Splitter';
 
@@ -34,7 +35,10 @@ export function Workspace({
   const mainRef = useRef<HTMLDivElement>(null);
   const editorsRef = useRef<HTMLDivElement>(null);
 
-  const { blocksVisible, codeVisible, simulatorVisible, consoleVisible } = settings;
+  const detached = useUiStore((state) => state.simulatorDetached);
+  const { blocksVisible, codeVisible, consoleVisible } = settings;
+  // A simulator in its own window frees the whole main window for the editors.
+  const simulatorVisible = settings.simulatorVisible && !detached;
   const editorsVisible = blocksVisible || codeVisible;
   const mainVisible = editorsVisible || simulatorVisible;
 

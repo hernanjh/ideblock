@@ -13,12 +13,25 @@ function openExternalSafely(url: string): void {
   }
 }
 
+interface WindowOptions {
+  /** Renderer view to show; the main window shows the full editor. */
+  view?: 'simulator';
+  width: number;
+  height: number;
+  minWidth: number;
+  minHeight: number;
+}
+
 export function createMainWindow(isDev: boolean): BrowserWindow {
+  return createAppWindow(isDev, { width: 1280, height: 800, minWidth: 960, minHeight: 600 });
+}
+
+export function createAppWindow(isDev: boolean, options: WindowOptions): BrowserWindow {
   const window = new BrowserWindow({
-    width: 1280,
-    height: 800,
-    minWidth: 960,
-    minHeight: 600,
+    width: options.width,
+    height: options.height,
+    minWidth: options.minWidth,
+    minHeight: options.minHeight,
     show: false,
     autoHideMenuBar: true,
     webPreferences: {
@@ -55,10 +68,11 @@ export function createMainWindow(isDev: boolean): BrowserWindow {
   }
 
   const devServerUrl = process.env['ELECTRON_RENDERER_URL'];
+  const hash = options.view ?? '';
   if (isDev && devServerUrl) {
-    void window.loadURL(devServerUrl);
+    void window.loadURL(hash ? `${devServerUrl}#${hash}` : devServerUrl);
   } else {
-    void window.loadFile(join(import.meta.dirname, '../renderer/index.html'));
+    void window.loadFile(join(import.meta.dirname, '../renderer/index.html'), { hash });
   }
 
   return window;

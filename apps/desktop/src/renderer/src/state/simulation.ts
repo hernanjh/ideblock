@@ -144,3 +144,15 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
 
   sendSerial: (text) => post({ type: 'serial', text }),
 }));
+
+// Rewiring takes effect at once by restarting the running firmware.
+useProjectStore.subscribe((state, previous) => {
+  if (state.circuit !== previous.circuit && state.loadId === previous.loadId) {
+    useSimulationStore.getState().restart();
+  }
+});
+
+// A different project stops the simulation of the previous one.
+useProjectStore.subscribe((state, previous) => {
+  if (state.loadId !== previous.loadId) useSimulationStore.getState().stop();
+});

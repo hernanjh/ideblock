@@ -11,6 +11,8 @@ import { initI18n } from './i18n';
 import { useBuildStore } from './state/build';
 import { usePortsStore } from './state/ports';
 import { useSerialStore } from './state/serial';
+import { useUiStore } from './state/ui';
+import { DetachedSimulator } from './simulator/DetachedSimulator';
 import { useProjectStore } from './state/project';
 import { useSettingsStore } from './state/settings';
 
@@ -24,6 +26,24 @@ async function bootstrap(): Promise<void> {
   const language = resolveLanguage(settings.language, appInfo.systemLanguages);
   applyAppearance(settings, language);
   const i18n = await initI18n(language);
+
+  const container = document.getElementById('root');
+  if (!container) {
+    throw new Error('Root element not found');
+  }
+
+  // The separate simulator window shares this bundle but shows only the simulator.
+  if (window.location.hash === '#simulator') {
+    window.ideblock.on('settings:changed', (updated) => {
+      useSettingsStore.getState().receive(updated);
+    });
+    createRoot(container).render(
+      <StrictMode>
+        <DetachedSimulator />
+      </StrictMode>,
+    );
+    return;
+  }
 
   const session = await window.ideblock.invoke('session:load');
   if (session) {
@@ -54,10 +74,10 @@ async function bootstrap(): Promise<void> {
     }
   });
 
-  const container = document.getElementById('root');
-  if (!container) {
-    throw new Error('Root element not found');
-  }
+  window.ideblock.on('simulator:detached', (detached) =>
+    useUiStore.getState().setSimulatorDetached(detached),
+  );
+
   createRoot(container).render(
     <StrictMode>
       <App />

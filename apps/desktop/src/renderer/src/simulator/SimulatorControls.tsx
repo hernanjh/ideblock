@@ -1,13 +1,13 @@
-import { LoaderCircle, Play, RotateCcw, Square } from 'lucide-react';
+import { AppWindow, LoaderCircle, PanelRightClose, Play, RotateCcw, Square } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useSimulationStore } from '../state/simulation';
+import { useSimulatorModel } from './model';
 
 export function SimulatorControls() {
   const { t } = useTranslation();
-  const status = useSimulationStore((state) => state.status);
-  const start = useSimulationStore((state) => state.start);
-  const stop = useSimulationStore((state) => state.stop);
+  const { snapshot, dispatch, detached, toggleWindow } = useSimulatorModel();
+  const { status } = snapshot;
   const running = status === 'running';
+  const windowLabel = detached ? t('simulator.attach') : t('simulator.detach');
 
   return (
     <>
@@ -18,7 +18,7 @@ export function SimulatorControls() {
           aria-label={t('simulator.restart')}
           title={t('simulator.restart')}
           data-testid="simulator-restart"
-          onClick={() => void start()}
+          onClick={() => dispatch({ type: 'start' })}
         >
           <RotateCcw aria-hidden="true" size="1.1em" />
         </button>
@@ -28,7 +28,7 @@ export function SimulatorControls() {
         className={running ? 'toggle-button--small' : 'action-button toggle-button--small'}
         data-testid={running ? 'simulator-stop' : 'simulator-start'}
         disabled={status === 'compiling'}
-        onClick={() => (running ? stop() : void start())}
+        onClick={() => dispatch({ type: running ? 'stop' : 'start' })}
       >
         {status === 'compiling' ? (
           <LoaderCircle aria-hidden="true" size="1.1em" className="spin" />
@@ -44,6 +44,20 @@ export function SimulatorControls() {
               ? t('simulator.stop')
               : t('simulator.start')}
         </span>
+      </button>
+      <button
+        type="button"
+        className="icon-button"
+        aria-label={windowLabel}
+        title={windowLabel}
+        data-testid={detached ? 'simulator-attach' : 'simulator-detach'}
+        onClick={toggleWindow}
+      >
+        {detached ? (
+          <PanelRightClose aria-hidden="true" size="1.1em" />
+        ) : (
+          <AppWindow aria-hidden="true" size="1.1em" />
+        )}
       </button>
     </>
   );

@@ -6,6 +6,7 @@ import { installApplicationMenu } from './menu';
 import { examplesDirectory, projectHandlers } from './project-ipc';
 import { ProjectService } from './project-service';
 import { SettingsStore } from './settings-store';
+import { SimulatorWindow } from './simulator-window';
 import { ArduinoCli } from './toolchain/arduino-cli';
 import { findMissingDrivers } from './toolchain/drivers';
 import { PortWatcher } from './toolchain/port-watcher';
@@ -74,6 +75,8 @@ if (!app.requestSingleInstanceLock()) {
       onStatus: (status) => broadcast('serial:status', status),
     });
     void ports.start();
+    let mainWindow: BrowserWindow | null = null;
+    const simulatorWindow = new SimulatorWindow(() => mainWindow, isDev);
     app.on('before-quit', () => {
       ports.stop();
       serial.close();
@@ -110,6 +113,11 @@ if (!app.requestSingleInstanceLock()) {
       'serial:open': (_event, request) => serial.open(serialOpenSchema.parse(request)),
       'serial:close': () => serial.close(),
       'serial:write': (_event, text) => serial.write(z.string().max(4096).parse(text)),
+      'simulator:detach': () => simulatorWindow.open(),
+      'simulator:attach': () => simulatorWindow.close(),
+      'simulator:sync': (_event, snapshot) => simulatorWindow.sync(snapshot),
+      'simulator:action': (_event, action) =>
+        simulatorWindow.forward(z.looseObject({ type: z.string() }).parse(action)),
       'app:open-external': async (_event, url) => {
         const parsed = new URL(z.string().parse(url));
         if (parsed.protocol === 'https:') await shell.openExternal(parsed.toString());
@@ -117,12 +125,19 @@ if (!app.requestSingleInstanceLock()) {
     });
 
     installApplicationMenu();
-    createMainWindow(isDev);
+    const openMainWindow = (): void => {
+      const window = createMainWindow(isDev);
+      mainWindow = window;
+      // The simulator window only mirrors the main one, so it closes with it.
+      window.on('closed', () => {
+        mainWindow = null;
+        simulatorWindow.close();
+      });
+    };
+    openMainWindow();
 
     app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) {
-        createMainWindow(isDev);
-      }
+      if (!mainWindow) openMainWindow();
     });
   });
 

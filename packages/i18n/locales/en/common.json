@@ -232,7 +232,9 @@
     "level": {
       "potentiometer": "Knob position: {{value}}",
       "photoresistor": "Light level: {{value}}"
-    }
+    },
+    "detach": "Open in a separate window",
+    "attach": "Bring back to the main window"
   },
   "components": {
     "led": "LED",
