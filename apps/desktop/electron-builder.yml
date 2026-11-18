@@ -11,6 +11,8 @@ files:
 extraResources:
   - from: ../../LICENSE
     to: LICENSE
+  - from: ../../examples
+    to: examples
 asar: true
 artifactName: ${productName}-${version}-${os}-${arch}.${ext}
 win:

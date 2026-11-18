@@ -2,6 +2,8 @@ import { join } from 'node:path';
 import { app, BrowserWindow } from 'electron';
 import { broadcast, registerInvokeHandlers } from './ipc';
 import { installApplicationMenu } from './menu';
+import { examplesDirectory, projectHandlers } from './project-ipc';
+import { ProjectService } from './project-service';
 import { SettingsStore } from './settings-store';
 import { createMainWindow } from './window';
 
@@ -29,6 +31,7 @@ if (!app.requestSingleInstanceLock()) {
   void app.whenReady().then(async () => {
     const settings = new SettingsStore(join(app.getPath('userData'), 'settings.json'));
     await settings.load();
+    const projects = new ProjectService(app.getPath('userData'), examplesDirectory());
 
     registerInvokeHandlers({
       'app:get-info': () => ({
@@ -44,6 +47,7 @@ if (!app.requestSingleInstanceLock()) {
         broadcast('settings:changed', updated);
         return updated;
       },
+      ...projectHandlers(projects),
     });
 
     installApplicationMenu();
