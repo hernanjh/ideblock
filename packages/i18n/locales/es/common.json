@@ -5,15 +5,9 @@
   },
   "toolbar": {
     "label": "Barra de herramientas principal",
-    "view": "Vista",
     "panels": "Paneles",
     "settings": "Ajustes",
     "board": "Placa"
-  },
-  "view": {
-    "blocks": "Bloques",
-    "split": "Bloques y código",
-    "code": "Código"
   },
   "blocks": {
     "allBlocks": "Todos los bloques",
@@ -32,7 +26,8 @@
     "hide": "Ocultar {{panel}}",
     "close": "Cerrar {{panel}}",
     "resize": "Cambiar el tamaño de {{panel}}",
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "allHidden": "Todos los paneles están ocultos. Elegí qué querés ver."
   },
   "settings": {
     "title": "Ajustes",

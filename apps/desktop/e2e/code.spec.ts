@@ -3,7 +3,8 @@ import { editorText, expect, test } from './fixtures';
 test.describe('code editor', () => {
   test('explains that generated code is written by the blocks', async ({ launchApp }) => {
     const { window } = await launchApp();
-    await window.getByTestId('view-code').click();
+    await window.getByTestId('toggle-code').click();
+    await window.getByTestId('toggle-blocks').click();
     await window.locator('[data-testid="code-editor"] .view-lines').click();
     await window.keyboard.type('x');
 
@@ -13,7 +14,7 @@ test.describe('code editor', () => {
 
   test('switches to hand-written code and back while unchanged', async ({ launchApp }) => {
     const { window } = await launchApp();
-    await window.getByTestId('view-split').click();
+    await window.getByTestId('toggle-code').click();
     await window.locator('[data-testid="code-editor"] .view-lines').click();
     await window.keyboard.type('x');
     await window.getByTestId('switch-to-code').click();
@@ -25,7 +26,7 @@ test.describe('code editor', () => {
 
   test('keeps edited code and does not offer to discard it', async ({ launchApp }) => {
     const { window } = await launchApp();
-    await window.getByTestId('view-split').click();
+    await window.getByTestId('toggle-code').click();
     const editor = window.locator('[data-testid="code-editor"] .view-lines');
     await editor.click();
     await window.keyboard.type('x');

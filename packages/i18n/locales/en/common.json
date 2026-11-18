@@ -5,15 +5,9 @@
   },
   "toolbar": {
     "label": "Main toolbar",
-    "view": "View",
     "panels": "Panels",
     "settings": "Settings",
     "board": "Board"
-  },
-  "view": {
-    "blocks": "Blocks",
-    "split": "Blocks and code",
-    "code": "Code"
   },
   "blocks": {
     "allBlocks": "All blocks",
@@ -32,7 +26,8 @@
     "hide": "Hide {{panel}}",
     "close": "Close {{panel}}",
     "resize": "Resize {{panel}}",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "allHidden": "All panels are hidden. Choose what you want to see."
   },
   "settings": {
     "title": "Settings",

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { PANEL_VISIBILITY, type PanelId } from '../panels';
 import { matchShortcut } from '../shortcuts';
 import { useSettingsStore } from '../state/settings';
 
@@ -9,32 +10,17 @@ export function useKeyboardShortcuts(): void {
       if (!shortcut) return;
       event.preventDefault();
       const { settings, update, changeFontScale } = useSettingsStore.getState();
-      switch (shortcut) {
-        case 'viewBlocks':
-          void update({ editorView: 'blocks' });
-          break;
-        case 'viewSplit':
-          void update({ editorView: 'split' });
-          break;
-        case 'viewCode':
-          void update({ editorView: 'code' });
-          break;
-        case 'toggleSimulator':
-          void update({ simulatorVisible: !settings.simulatorVisible });
-          break;
-        case 'toggleConsole':
-          void update({ consoleVisible: !settings.consoleVisible });
-          break;
-        case 'fontIncrease':
-          void changeFontScale(1);
-          break;
-        case 'fontDecrease':
-          void changeFontScale(-1);
-          break;
-        case 'fontReset':
-          void changeFontScale(0);
-          break;
+      const panel = (Object.keys(PANEL_VISIBILITY) as PanelId[]).find(
+        (id) => PANEL_VISIBILITY[id].shortcut === shortcut,
+      );
+      if (panel) {
+        const setting = PANEL_VISIBILITY[panel].setting;
+        void update({ [setting]: !settings[setting] });
+        return;
       }
+      if (shortcut === 'fontIncrease') void changeFontScale(1);
+      if (shortcut === 'fontDecrease') void changeFontScale(-1);
+      if (shortcut === 'fontReset') void changeFontScale(0);
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);

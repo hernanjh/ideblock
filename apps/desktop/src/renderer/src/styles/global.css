@@ -129,35 +129,16 @@ button:disabled {
   border-color: transparent;
 }
 
-.toggle-button[aria-pressed='true'],
-.segmented__option[aria-checked='true'] {
+.toggle-button[aria-pressed='true'] {
   background: var(--color-accent-soft);
   border-color: var(--color-accent);
   color: var(--color-text);
   font-weight: 700;
 }
 
-:root[data-theme='high-contrast'] .toggle-button[aria-pressed='true'],
-:root[data-theme='high-contrast'] .segmented__option[aria-checked='true'] {
+:root[data-theme='high-contrast'] .toggle-button[aria-pressed='true'] {
   background: var(--color-accent);
   color: var(--color-accent-contrast);
-}
-
-.segmented {
-  display: inline-flex;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.segmented__option {
-  border: none;
-  border-radius: 0;
-  background: var(--color-surface);
-}
-
-.segmented__option + .segmented__option {
-  border-left: 1px solid var(--color-border);
 }
 
 .app {
@@ -203,6 +184,16 @@ button:disabled {
   display: flex;
   flex: 1 1 0;
   min-height: 0;
+}
+
+.workspace__empty {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--color-text-muted);
 }
 
 .workspace__editors {

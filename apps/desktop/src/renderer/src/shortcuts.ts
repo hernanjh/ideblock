@@ -1,7 +1,6 @@
 export type ShortcutId =
-  | 'viewBlocks'
-  | 'viewSplit'
-  | 'viewCode'
+  | 'toggleBlocks'
+  | 'toggleCode'
   | 'toggleSimulator'
   | 'toggleConsole'
   | 'fontIncrease'
@@ -16,10 +15,9 @@ interface ShortcutDefinition {
 
 /** All shortcuts use Ctrl (Cmd on macOS) without Alt. */
 export const SHORTCUTS: Record<ShortcutId, ShortcutDefinition> = {
-  viewBlocks: { keys: ['1'], display: '1' },
-  viewSplit: { keys: ['2'], display: '2' },
-  viewCode: { keys: ['3'], display: '3' },
-  toggleSimulator: { keys: ['4'], display: '4' },
+  toggleBlocks: { keys: ['1'], display: '1' },
+  toggleCode: { keys: ['2'], display: '2' },
+  toggleSimulator: { keys: ['3'], display: '3' },
   toggleConsole: { keys: ['j', 'J'], display: 'J' },
   fontIncrease: { keys: ['+', '='], display: '+' },
   fontDecrease: { keys: ['-', '_'], display: '−' },

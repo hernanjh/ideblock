@@ -1,33 +1,42 @@
 import { expect, test } from './fixtures';
 
 test.describe('workspace layout', () => {
-  test('shows blocks, code or both', async ({ launchApp }) => {
+  test('toggles the blocks and code panels independently', async ({ launchApp }) => {
     const { window } = await launchApp();
     const blocks = window.getByTestId('panel-blocks');
     const code = window.getByTestId('panel-code');
+    const toggleBlocks = window.getByTestId('toggle-blocks');
+    const toggleCode = window.getByTestId('toggle-code');
 
     await expect(blocks).toBeVisible();
     await expect(code).toHaveCount(0);
+    await expect(toggleBlocks).toHaveAttribute('aria-pressed', 'true');
 
-    await window.getByTestId('view-split').click();
+    await toggleCode.click();
     await expect(blocks).toBeVisible();
     await expect(code).toBeVisible();
 
-    await window.getByTestId('view-code').click();
+    await toggleBlocks.click();
     await expect(blocks).toHaveCount(0);
     await expect(code).toBeVisible();
 
     await window.keyboard.press('Control+1');
     await expect(blocks).toBeVisible();
+    await window.getByTestId('panel-code-close').click();
     await expect(code).toHaveCount(0);
+    await expect(toggleCode).toHaveAttribute('aria-pressed', 'false');
   });
 
-  test('moves between views with arrow keys', async ({ launchApp }) => {
+  test('gives the simulator the full width when both editors are hidden', async ({ launchApp }) => {
     const { window } = await launchApp();
-    await window.getByTestId('view-blocks').focus();
-    await window.keyboard.press('ArrowRight');
-    await expect(window.getByTestId('view-split')).toBeFocused();
-    await expect(window.getByTestId('view-split')).toHaveAttribute('aria-checked', 'true');
+    await window.getByTestId('toggle-blocks').click();
+    await expect(window.getByTestId('splitter-simulator')).toHaveCount(0);
+    const simulator = await window.getByTestId('panel-simulator').boundingBox();
+    const workspace = await window.getByTestId('workspace').boundingBox();
+    expect(simulator!.width).toBeGreaterThan(workspace!.width * 0.9);
+
+    await window.getByTestId('toggle-simulator').click();
+    await expect(window.getByTestId('workspace-empty')).toBeVisible();
   });
 
   test('opens and closes the simulator and console', async ({ launchApp }) => {
@@ -72,7 +81,7 @@ test.describe('workspace layout', () => {
 
   test('resizes panels by dragging', async ({ launchApp }) => {
     const { window } = await launchApp();
-    await window.getByTestId('view-split').click();
+    await window.getByTestId('toggle-code').click();
     const splitter = window.getByTestId('splitter-editors');
     const box = await splitter.boundingBox();
     if (!box) throw new Error('Splitter not rendered');

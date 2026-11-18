@@ -40,14 +40,14 @@ async function dragIntoLoop(window: Page, text: string, loopLabel: string): Prom
 test.describe('block editor', () => {
   test('starts with an empty program', async ({ launchApp }) => {
     const { window } = await launchApp();
-    await window.getByTestId('view-split').click();
+    await window.getByTestId('toggle-code').click();
     await expect.poll(() => editorText(window)).toBe('void setup() {\n}\n\nvoid loop() {\n}\n');
     await expect(window.locator('.blocklyText', { hasText: 'repeat forever' })).toBeVisible();
   });
 
   test('generates code for blocks added to the program', async ({ launchApp }) => {
     const { window } = await launchApp();
-    await window.getByTestId('view-split').click();
+    await window.getByTestId('toggle-code').click();
     await openCategory(window, 'Outputs');
     await dragIntoLoop(window, 'LED on pin', 'repeat forever');
 
@@ -59,7 +59,7 @@ test.describe('block editor', () => {
     launchApp,
   }) => {
     const { window } = await launchApp();
-    await window.getByTestId('view-split').click();
+    await window.getByTestId('toggle-code').click();
     await openCategory(window, 'Outputs');
     await dragIntoLoop(window, 'LED on pin', 'repeat forever');
     await expect.poll(() => editorText(window)).toContain('digitalWrite(13, HIGH);');

@@ -11,12 +11,20 @@ interface WorkspaceProps {
   blocksActions?: ReactNode;
   code: ReactNode;
   simulator: ReactNode;
+  simulatorActions?: ReactNode;
   console: ReactNode;
 }
 
 const percent = (fraction: number): string => `${fraction * 100}%`;
 
-export function Workspace({ blocks, blocksActions, code, simulator, console }: WorkspaceProps) {
+export function Workspace({
+  blocks,
+  blocksActions,
+  code,
+  simulator,
+  simulatorActions,
+  console,
+}: WorkspaceProps) {
   const { t } = useTranslation();
   const settings = useSettingsStore((state) => state.settings);
   const preview = useSettingsStore((state) => state.preview);
@@ -26,9 +34,9 @@ export function Workspace({ blocks, blocksActions, code, simulator, console }: W
   const mainRef = useRef<HTMLDivElement>(null);
   const editorsRef = useRef<HTMLDivElement>(null);
 
-  const { editorView, simulatorVisible, consoleVisible } = settings;
-  const showBlocks = editorView !== 'code';
-  const showCode = editorView !== 'blocks';
+  const { blocksVisible, codeVisible, simulatorVisible, consoleVisible } = settings;
+  const editorsVisible = blocksVisible || codeVisible;
+  const mainVisible = editorsVisible || simulatorVisible;
 
   const blocksTitle = t('panels.blocks');
   const codeTitle = t('panels.code');
@@ -36,41 +44,49 @@ export function Workspace({ blocks, blocksActions, code, simulator, console }: W
   const consoleTitle = t('panels.console');
 
   return (
-    <div className="workspace" ref={rootRef} data-testid="workspace" data-view={editorView}>
-      <div className="workspace__main" ref={mainRef}>
-        <div className="workspace__editors" ref={editorsRef}>
-          {showBlocks && (
-            <Panel
-              id="blocks"
-              title={blocksTitle}
-              icon={<Blocks aria-hidden="true" size="1.1em" />}
-              actions={blocksActions}
-              style={showCode ? { flex: `0 0 ${percent(settings.editorSplit)}` } : undefined}
-            >
-              {blocks}
-            </Panel>
+    <div className="workspace" ref={rootRef} data-testid="workspace">
+      {mainVisible ? (
+        <div className="workspace__main" ref={mainRef}>
+          {editorsVisible && (
+            <div className="workspace__editors" ref={editorsRef}>
+              {blocksVisible && (
+                <Panel
+                  id="blocks"
+                  title={blocksTitle}
+                  icon={<Blocks aria-hidden="true" size="1.1em" />}
+                  actions={blocksActions}
+                  style={codeVisible ? { flex: `0 0 ${percent(settings.editorSplit)}` } : undefined}
+                  onClose={() => void update({ blocksVisible: false })}
+                >
+                  {blocks}
+                </Panel>
+              )}
+              {blocksVisible && codeVisible && (
+                <Splitter
+                  orientation="vertical"
+                  containerRef={editorsRef}
+                  value={settings.editorSplit}
+                  {...PANEL_LIMITS.editorSplit}
+                  label={t('panels.resize', { panel: blocksTitle })}
+                  testId="splitter-editors"
+                  onChange={(editorSplit) => preview({ editorSplit })}
+                  onCommit={(editorSplit) => void update({ editorSplit })}
+                />
+              )}
+              {codeVisible && (
+                <Panel
+                  id="code"
+                  title={codeTitle}
+                  icon={<Code aria-hidden="true" size="1.1em" />}
+                  onClose={() => void update({ codeVisible: false })}
+                >
+                  {code}
+                </Panel>
+              )}
+            </div>
           )}
-          {showBlocks && showCode && (
-            <Splitter
-              orientation="vertical"
-              containerRef={editorsRef}
-              value={settings.editorSplit}
-              {...PANEL_LIMITS.editorSplit}
-              label={t('panels.resize', { panel: blocksTitle })}
-              testId="splitter-editors"
-              onChange={(editorSplit) => preview({ editorSplit })}
-              onCommit={(editorSplit) => void update({ editorSplit })}
-            />
-          )}
-          {showCode && (
-            <Panel id="code" title={codeTitle} icon={<Code aria-hidden="true" size="1.1em" />}>
-              {code}
-            </Panel>
-          )}
-        </div>
 
-        {simulatorVisible && (
-          <>
+          {simulatorVisible && editorsVisible && (
             <Splitter
               orientation="vertical"
               containerRef={mainRef}
@@ -82,18 +98,25 @@ export function Workspace({ blocks, blocksActions, code, simulator, console }: W
               onChange={(simulatorSize) => preview({ simulatorSize })}
               onCommit={(simulatorSize) => void update({ simulatorSize })}
             />
+          )}
+          {simulatorVisible && (
             <Panel
               id="simulator"
               title={simulatorTitle}
               icon={<Cpu aria-hidden="true" size="1.1em" />}
-              style={{ flex: `0 0 ${percent(settings.simulatorSize)}` }}
+              actions={simulatorActions}
+              style={
+                editorsVisible ? { flex: `0 0 ${percent(settings.simulatorSize)}` } : undefined
+              }
               onClose={() => void update({ simulatorVisible: false })}
             >
               {simulator}
             </Panel>
-          </>
-        )}
-      </div>
+          )}
+        </div>
+      ) : (
+        <EmptyWorkspace />
+      )}
 
       {consoleVisible && (
         <>
@@ -112,13 +135,33 @@ export function Workspace({ blocks, blocksActions, code, simulator, console }: W
             id="console"
             title={consoleTitle}
             icon={<Terminal aria-hidden="true" size="1.1em" />}
-            style={{ flex: `0 0 ${percent(settings.consoleSize)}` }}
+            style={mainVisible ? { flex: `0 0 ${percent(settings.consoleSize)}` } : undefined}
             onClose={() => void update({ consoleVisible: false })}
           >
             {console}
           </Panel>
         </>
       )}
+    </div>
+  );
+}
+
+function EmptyWorkspace() {
+  const { t } = useTranslation();
+  const update = useSettingsStore((state) => state.update);
+  return (
+    <div className="workspace__empty" data-testid="workspace-empty">
+      <p>{t('panels.allHidden')}</p>
+      <div className="field__row">
+        <button type="button" onClick={() => void update({ blocksVisible: true })}>
+          <Blocks aria-hidden="true" size="1.1em" />
+          {t('panels.show', { panel: t('panels.blocks') })}
+        </button>
+        <button type="button" onClick={() => void update({ codeVisible: true })}>
+          <Code aria-hidden="true" size="1.1em" />
+          {t('panels.show', { panel: t('panels.code') })}
+        </button>
+      </div>
     </div>
   );
 }
