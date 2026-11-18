@@ -1,4 +1,14 @@
-export type BoardArchitecture = 'avr' | 'esp32';
+export type BoardArchitecture = 'avr' | 'megaavr' | 'esp32' | 'esp8266' | 'rp2040';
+
+/** Groups boards in the board selector. */
+export type BoardFamily = 'arduino' | 'esp32' | 'esp8266' | 'raspberry-pi';
+
+/** How to include the servo library, which differs between platforms. */
+export interface ServoSupport {
+  header: string;
+  /** Library to install, when the board platform does not bundle one. */
+  library?: string;
+}
 
 export interface BoardCore {
   /** arduino-cli platform identifier, e.g. "arduino:avr". */
@@ -17,7 +27,13 @@ export interface BoardDefinition {
   name: string;
   fqbn: string;
   architecture: BoardArchitecture;
+  family: BoardFamily;
   core: BoardCore;
+  servo: ServoSupport;
+  /** Drawing used in the circuit view. */
+  drawing: 'uno' | 'esp32' | 'generic';
+  /** Prefix for numbered pins in labels, e.g. "D13", "GPIO 2", "GP15". */
+  pinLabelPrefix: string;
   /** Pins usable with digitalRead/digitalWrite, as they are written in code. */
   digitalPins: readonly string[];
   /** Pins usable with analogRead. */

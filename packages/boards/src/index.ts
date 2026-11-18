@@ -18,8 +18,13 @@ export function getBoard(id: string): BoardDefinition {
 
 /** Output-capable pins: every digital pin except input-only ones. */
 export function outputPins(board: BoardDefinition): readonly string[] {
-  if (board.architecture === 'esp32') {
+  if (board.id === 'esp32-devkit') {
+    // GPIO 34-39 are input only on the original ESP32.
     return board.pwmPins;
   }
   return board.digitalPins;
+}
+
+export function pinLabel(board: BoardDefinition, pin: string): string {
+  return /^\d+$/.test(pin) ? `${board.pinLabelPrefix}${pin}` : pin;
 }

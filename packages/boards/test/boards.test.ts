@@ -26,6 +26,16 @@ describe('board definitions', () => {
     });
   }
 
+  it('declares where every non-default core comes from', async () => {
+    const { BOARD_INDEX_URLS } = await import('../src');
+    for (const board of BOARDS) {
+      if (board.core.id !== 'arduino:avr' && board.core.id !== 'arduino:megaavr') {
+        expect(board.core.indexUrl, board.id).toBeTruthy();
+        expect(BOARD_INDEX_URLS).toContain(board.core.indexUrl);
+      }
+    }
+  });
+
   it('falls back to the default board for unknown ids', () => {
     expect(getBoard('does-not-exist').id).toBe('uno');
   });
