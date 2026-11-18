@@ -10,6 +10,6 @@ export {
 export { applyBlockMessages, blockMessages } from './messages';
 export { BLOCK_MODULES } from './modules';
 export { createSketchGenerator, registerBlocks } from './register';
-export { buildToolbox, type ToolboxLevel } from './toolbox';
+export { buildToolbox, toolboxBlock, toolboxBlockTypes, type ToolboxLevel } from './toolbox';
 export type { BlockGenerator, BlockJson, BlockModule } from './types';
 export { emptyWorkspaceState } from './workspace';

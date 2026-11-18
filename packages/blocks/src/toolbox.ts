@@ -14,6 +14,8 @@ interface ToolboxBlock {
 
 interface ToolboxCategory {
   kind: 'category';
+  /** Stable id, used by the interface to pick the category icon. */
+  toolboxitemid: string;
   name: string;
   colour: string;
   contents?: ToolboxBlock[];
@@ -27,6 +29,7 @@ const text = (value: string) => ({ shadow: { type: 'text', fields: { TEXT: value
 const CATEGORIES: ToolboxCategory[] = [
   {
     kind: 'category',
+    toolboxitemid: 'outputs',
     name: '%{BKY_IDEBLOCK_CATEGORY_OUTPUTS}',
     colour: COLOURS.outputs,
     contents: [
@@ -43,6 +46,7 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'sensors',
     name: '%{BKY_IDEBLOCK_CATEGORY_SENSORS}',
     colour: COLOURS.sensors,
     contents: [
@@ -54,6 +58,7 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'time',
     name: '%{BKY_IDEBLOCK_CATEGORY_TIME}',
     colour: COLOURS.time,
     contents: [
@@ -64,6 +69,7 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'logic',
     name: '%{BKY_IDEBLOCK_CATEGORY_LOGIC}',
     colour: COLOURS.logic,
     contents: [
@@ -78,6 +84,7 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'loops',
     name: '%{BKY_IDEBLOCK_CATEGORY_LOOPS}',
     colour: COLOURS.loops,
     contents: [
@@ -94,6 +101,7 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'math',
     name: '%{BKY_IDEBLOCK_CATEGORY_MATH}',
     colour: COLOURS.math,
     contents: [
@@ -124,6 +132,7 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'text',
     name: '%{BKY_IDEBLOCK_CATEGORY_TEXT}',
     colour: COLOURS.text,
     contents: [
@@ -134,6 +143,7 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'serial',
     name: '%{BKY_IDEBLOCK_CATEGORY_SERIAL}',
     colour: COLOURS.serial,
     contents: [
@@ -144,6 +154,7 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'pins',
     name: '%{BKY_IDEBLOCK_CATEGORY_PINS}',
     colour: COLOURS.pins,
     advanced: true,
@@ -156,12 +167,14 @@ const CATEGORIES: ToolboxCategory[] = [
   },
   {
     kind: 'category',
+    toolboxitemid: 'variables',
     name: '%{BKY_IDEBLOCK_CATEGORY_VARIABLES}',
     colour: COLOURS.variables,
     custom: 'VARIABLE',
   },
   {
     kind: 'category',
+    toolboxitemid: 'functions',
     name: '%{BKY_IDEBLOCK_CATEGORY_FUNCTIONS}',
     colour: COLOURS.functions,
     custom: 'PROCEDURE',
@@ -185,4 +198,27 @@ export function buildToolbox(level: ToolboxLevel) {
         : {}),
     })),
   };
+}
+
+/** Block types offered in the toolbox at a level, for searching. */
+export function toolboxBlockTypes(level: ToolboxLevel): string[] {
+  const toolbox = buildToolbox(level);
+  const types = toolbox.contents.flatMap((category) =>
+    'contents' in category && Array.isArray(category.contents)
+      ? category.contents.map((block) => (block as { type: string }).type)
+      : [],
+  );
+  return [...new Set(types)];
+}
+
+/** Toolbox entry for a block, with the same default inputs as in its category. */
+export function toolboxBlock(type: string): Record<string, unknown> | undefined {
+  for (const category of CATEGORIES) {
+    const block = category.contents?.find((item) => item.type === type);
+    if (block) {
+      const { advanced: _advanced, ...rest } = block;
+      return rest;
+    }
+  }
+  return undefined;
 }
