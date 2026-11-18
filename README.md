@@ -40,10 +40,11 @@ teenagers and adults who want to move on to real code.
 - **English and Spanish** from day one, ready for more languages.
 - **Private by design.** No accounts, no telemetry, no data collection.
 
-## Supported boards (planned)
+## Supported boards
 
-Arduino Uno, Nano and Mega compatible boards, and ESP32 DevKit. More boards such as
-Raspberry Pi Pico and ESP32-C3 will follow.
+Boards compatible with Arduino Uno, Nano, Mega, Leonardo, Micro and Nano Every, ESP32
+DevKit, ESP32-C3 and ESP32-S3, NodeMCU and Wemos D1 mini (ESP8266), and Raspberry Pi
+Pico. The simulator runs Uno and Nano programs.
 
 ## Roadmap
 
@@ -51,9 +52,9 @@ Raspberry Pi Pico and ESP32-C3 will follow.
 | ----- | ----------------------------------------------------------------------------------------------------- |
 | 0     | Repository structure, CI, internationalization, documentation                                         |
 | 1     | Blocks to code, code editor, compile and upload, serial monitor, AVR simulator, projects and examples |
-| 2     | ESP32 simulation, more components, full circuit editor                                                |
+| 2     | More components, full circuit editor                                                                  |
 | 3     | Code to blocks conversion                                                                             |
-| 4     | On-demand board manager, signed installers, offline school installer, more boards                     |
+| 4     | ESP32 simulation, on-demand board manager, signed installers, offline school installer                |
 
 ## Development
 

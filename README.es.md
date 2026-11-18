@@ -41,10 +41,11 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
 - **Inglés y español** desde el primer día, preparado para sumar más idiomas.
 - **Privacidad ante todo.** Sin cuentas, sin telemetría, sin recolección de datos.
 
-## Placas soportadas (previstas)
+## Placas soportadas
 
-Placas compatibles con Arduino Uno, Nano y Mega, y ESP32 DevKit. Más adelante se
-sumarán otras como Raspberry Pi Pico y ESP32-C3.
+Placas compatibles con Arduino Uno, Nano, Mega, Leonardo, Micro y Nano Every, ESP32
+DevKit, ESP32-C3 y ESP32-S3, NodeMCU y Wemos D1 mini (ESP8266), y Raspberry Pi Pico. El
+simulador corre programas de Uno y Nano.
 
 ## Hoja de ruta
 
@@ -52,9 +53,9 @@ sumarán otras como Raspberry Pi Pico y ESP32-C3.
 | ---- | ------------------------------------------------------------------------------------------------------------ |
 | 0    | Estructura del repositorio, CI, internacionalización, documentación                                          |
 | 1    | Bloques a código, editor de código, compilación y subida, monitor serie, simulador AVR, proyectos y ejemplos |
-| 2    | Simulación de ESP32, más componentes, editor de circuitos completo                                           |
+| 2    | Más componentes, editor de circuitos completo                                                                |
 | 3    | Conversión de código a bloques                                                                               |
-| 4    | Gestor de placas bajo demanda, instaladores firmados, instalador offline para escuelas, más placas           |
+| 4    | Simulación de ESP32, gestor de placas bajo demanda, instaladores firmados, instalador offline para escuelas  |
 
 ## Desarrollo
 
