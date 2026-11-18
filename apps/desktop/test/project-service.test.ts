@@ -73,7 +73,8 @@ describe('ProjectService', () => {
 
   it('lists the bundled examples in teaching order', async () => {
     const examples = await service.listExamples();
-    expect(examples[0]?.id).toBe('Blink');
+    // The first example needs nothing wired: the board's own LED.
+    expect(examples.slice(0, 2).map((example) => example.id)).toEqual(['BoardBlink', 'Blink']);
     expect(examples.every((example) => example.title.es && example.title.en)).toBe(true);
   });
 
