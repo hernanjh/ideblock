@@ -1,0 +1,66 @@
+# IdeBlock
+
+[Leer en español](README.es.md)
+
+IdeBlock is a free and open source desktop IDE for programming Arduino-compatible
+and ESP32 boards. It is designed for kids taking their first steps, and grows with
+teenagers and adults who want to move on to real code.
+
+> **Status:** early development. The application shell, language support and
+> accessibility settings are in place; the block editor, code editor, compiler
+> integration and simulator are being built. See the [roadmap](#roadmap).
+
+## Goals
+
+- **Blocks or code.** Program with visual blocks or write C++ directly, and move
+  between both.
+- **Built-in simulator.** Try circuits and programs without hardware, running the
+  real compiled firmware.
+- **Real boards.** Compile, upload and open the serial monitor on physical boards.
+- **Works offline.** Built for classrooms with poor or no connectivity.
+- **English and Spanish** from day one, ready for more languages.
+- **Private by design.** No accounts, no telemetry, no data collection.
+
+## Supported boards (planned)
+
+Arduino Uno, Nano and Mega compatible boards, and ESP32 DevKit. More boards such as
+Raspberry Pi Pico and ESP32-C3 will follow.
+
+## Roadmap
+
+| Phase | Scope                                                                                                 |
+| ----- | ----------------------------------------------------------------------------------------------------- |
+| 0     | Repository structure, CI, internationalization, documentation                                         |
+| 1     | Blocks to code, code editor, compile and upload, serial monitor, AVR simulator, projects and examples |
+| 2     | ESP32 simulation, more components, full circuit editor                                                |
+| 3     | Code to blocks conversion                                                                             |
+| 4     | On-demand board manager, signed installers, offline school installer, more boards                     |
+
+## Development
+
+Requirements: Node.js 22.12 or later and npm.
+
+```bash
+npm install
+npm run dev
+```
+
+| Command                  | Description                                            |
+| ------------------------ | ------------------------------------------------------ |
+| `npm run dev`            | Start the app with hot reload                          |
+| `npm run lint`           | Run ESLint                                             |
+| `npm run format`         | Format the code with Prettier                          |
+| `npm run typecheck`      | Type-check all workspaces                              |
+| `npm test`               | Run unit tests                                         |
+| `npm run test:e2e`       | Build the app and run end-to-end tests                 |
+| `npm run package`        | Build an installer for the current platform            |
+| `npm run check:licenses` | Verify that dependency licenses are GPL-3.0 compatible |
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the project structure and guidelines.
+
+## License
+
+IdeBlock is licensed under the [GNU General Public License v3.0](LICENSE).
+
+Arduino is a trademark of Arduino SA. IdeBlock is an independent project and is not
+affiliated with or endorsed by Arduino SA. ESP32 is a trademark of Espressif Systems.
