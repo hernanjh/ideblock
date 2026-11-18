@@ -149,4 +149,53 @@ describe('new components', () => {
         .filter((colour) => colour === '255,0,0'),
     ).toHaveLength(1);
   });
+
+  it('reads the temperature sensor like the real module', () => {
+    const simulation = new Simulation(hex('Thermometer'), [
+      { id: 'thermo', type: 'temperature-sensor', pins: { signal: 'A0' } },
+      led('13'),
+    ]);
+    const readings = () =>
+      run(simulation, 1200, 50)
+        .map((frame) => frame.serial)
+        .join('')
+        .split('\r\n')
+        .filter((line) => line !== '')
+        .map(Number);
+    const room = readings();
+    expect(room.length).toBeGreaterThan(0);
+    // The 10-bit reading limits the precision to a few tenths of a degree.
+    expect(room.at(-1)).toBeCloseTo(24, 0);
+    expect(simulation.frame().components['led']).toEqual({ brightness: 0 });
+
+    simulation.input('thermo', { temperature: 35 });
+    expect(readings().at(-1)).toBeCloseTo(35, 0);
+    expect(simulation.frame().components['led']).toEqual({ brightness: 1 });
+  });
+
+  it('sounds the alarm only while armed and something moves', () => {
+    const simulation = new Simulation(hex('MotionAlarm'), [
+      { id: 'switch', type: 'slide-switch', pins: { signal: '4' } },
+      { id: 'pir', type: 'pir-sensor', pins: { signal: '7' } },
+      { id: 'buzzer', type: 'buzzer', pins: { signal: '8' } },
+      led('13'),
+    ]);
+    simulation.input('pir', { motion: true });
+    run(simulation, 600);
+    expect(simulation.frame().components['led']).toEqual({ brightness: 0 });
+
+    simulation.input('switch', { on: true });
+    const armed = run(simulation, 600);
+    expect(armed.some((frame) => frame.components['led']?.['brightness'] === 1)).toBe(true);
+    expect(armed.some((frame) => frame.components['buzzer']?.['frequency'] === 880)).toBe(true);
+
+    // The sensor keeps its output on for a while after the motion stops.
+    simulation.input('pir', { motion: false });
+    run(simulation, 1000);
+    expect(simulation.frame().components['pir']).toEqual({ motion: true });
+    run(simulation, 1500);
+    expect(simulation.frame().components['pir']).toEqual({ motion: false });
+    run(simulation, 500);
+    expect(simulation.frame().components['led']).toEqual({ brightness: 0 });
+  });
 });
