@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Thermometer",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "Thermometer",
+      "es": "Termómetro"
+    },
+    "description": {
+      "en": "Shows the temperature in the serial monitor and lights the LED above 30 °C.",
+      "es": "Muestra la temperatura en el monitor serie y enciende el LED si pasa de 30 °C."
+    },
+    "level": 2,
+    "order": 13
+  }
+}

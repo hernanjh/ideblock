@@ -1,0 +1,103 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ideblock_program",
+        "id": "program",
+        "x": 40,
+        "y": 40,
+        "deletable": false,
+        "inputs": {
+          "LOOP": {
+            "block": {
+              "type": "serial_print",
+              "fields": {
+                "NEWLINE": "TRUE"
+              },
+              "inputs": {
+                "TEXT": {
+                  "block": {
+                    "type": "temperature_read",
+                    "fields": {
+                      "PIN": "A0"
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "controls_if",
+                  "extraState": {
+                    "hasElse": true
+                  },
+                  "inputs": {
+                    "IF0": {
+                      "block": {
+                        "type": "logic_compare",
+                        "fields": {
+                          "OP": "GT"
+                        },
+                        "inputs": {
+                          "A": {
+                            "block": {
+                              "type": "temperature_read",
+                              "fields": {
+                                "PIN": "A0"
+                              }
+                            }
+                          },
+                          "B": {
+                            "block": {
+                              "type": "math_number",
+                              "fields": {
+                                "NUM": 30
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "DO0": {
+                      "block": {
+                        "type": "led_set",
+                        "fields": {
+                          "STATE": "HIGH",
+                          "PIN": "13"
+                        }
+                      }
+                    },
+                    "ELSE": {
+                      "block": {
+                        "type": "led_set",
+                        "fields": {
+                          "STATE": "LOW",
+                          "PIN": "13"
+                        }
+                      }
+                    }
+                  },
+                  "next": {
+                    "block": {
+                      "type": "time_delay_seconds",
+                      "inputs": {
+                        "SECONDS": {
+                          "shadow": {
+                            "type": "math_number",
+                            "fields": {
+                              "NUM": 0.5
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

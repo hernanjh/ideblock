@@ -1,0 +1,20 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "thermo1",
+      "type": "temperature-sensor",
+      "pins": {
+        "signal": "A0"
+      }
+    },
+    {
+      "id": "led1",
+      "type": "led",
+      "pins": {
+        "anode": "13"
+      }
+    }
+  ],
+  "connections": []
+}

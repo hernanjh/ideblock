@@ -1,0 +1,34 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "switch1",
+      "type": "slide-switch",
+      "pins": {
+        "signal": "4"
+      }
+    },
+    {
+      "id": "pir1",
+      "type": "pir-sensor",
+      "pins": {
+        "signal": "7"
+      }
+    },
+    {
+      "id": "buzzer1",
+      "type": "buzzer",
+      "pins": {
+        "signal": "8"
+      }
+    },
+    {
+      "id": "led1",
+      "type": "led",
+      "pins": {
+        "anode": "13"
+      }
+    }
+  ],
+  "connections": []
+}

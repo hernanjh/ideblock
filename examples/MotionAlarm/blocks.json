@@ -1,0 +1,111 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ideblock_program",
+        "id": "program",
+        "x": 40,
+        "y": 40,
+        "deletable": false,
+        "inputs": {
+          "LOOP": {
+            "block": {
+              "type": "controls_if",
+              "extraState": {
+                "hasElse": true
+              },
+              "inputs": {
+                "IF0": {
+                  "block": {
+                    "type": "logic_operation",
+                    "fields": {
+                      "OP": "AND"
+                    },
+                    "inputs": {
+                      "A": {
+                        "block": {
+                          "type": "switch_on",
+                          "fields": {
+                            "PIN": "4"
+                          }
+                        }
+                      },
+                      "B": {
+                        "block": {
+                          "type": "motion_detected",
+                          "fields": {
+                            "PIN": "7"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "DO0": {
+                  "block": {
+                    "type": "led_set",
+                    "fields": {
+                      "STATE": "HIGH",
+                      "PIN": "13"
+                    },
+                    "next": {
+                      "block": {
+                        "type": "buzzer_tone",
+                        "fields": {
+                          "PIN": "8"
+                        },
+                        "inputs": {
+                          "FREQUENCY": {
+                            "shadow": {
+                              "type": "math_number",
+                              "fields": {
+                                "NUM": 880
+                              }
+                            }
+                          },
+                          "DURATION": {
+                            "shadow": {
+                              "type": "math_number",
+                              "fields": {
+                                "NUM": 200
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "ELSE": {
+                  "block": {
+                    "type": "led_set",
+                    "fields": {
+                      "STATE": "LOW",
+                      "PIN": "13"
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "time_delay",
+                  "inputs": {
+                    "MS": {
+                      "shadow": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 250
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Motion alarm",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "Motion alarm",
+      "es": "Alarma de movimiento"
+    },
+    "description": {
+      "en": "With the switch on, the buzzer sounds and the LED lights when the sensor detects movement.",
+      "es": "Con el interruptor encendido, suena el buzzer y se enciende el LED cuando el sensor detecta movimiento."
+    },
+    "level": 2,
+    "order": 14
+  }
+}
