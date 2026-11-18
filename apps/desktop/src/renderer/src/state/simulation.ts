@@ -11,7 +11,8 @@ import { currentCode, useProjectStore } from './project';
 import { useSerialStore } from './serial';
 import { useSettingsStore } from './settings';
 
-export type SimulationStatus = 'stopped' | 'compiling' | 'running' | 'error' | 'unsupported';
+export type SimulationStatus =
+  'stopped' | 'compiling' | 'running' | 'paused' | 'error' | 'unsupported';
 
 interface SimulationState {
   status: SimulationStatus;
@@ -28,6 +29,8 @@ interface SimulationState {
   stop: () => void;
   /** Restarts the running firmware, e.g. after the circuit changed. */
   restart: () => void;
+  pause: () => void;
+  resume: () => void;
   input: (componentId: string, input: ComponentInput) => void;
   sendSerial: (text: string) => void;
 }
@@ -132,7 +135,23 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
   },
 
   restart: () => {
-    if (get().status === 'running' && hex) launch(hex);
+    const { status } = get();
+    if ((status === 'running' || status === 'paused') && hex) {
+      launch(hex);
+      set({ status: 'running' });
+    }
+  },
+
+  pause: () => {
+    if (get().status !== 'running') return;
+    post({ type: 'pause' });
+    set({ status: 'paused' });
+  },
+
+  resume: () => {
+    if (get().status !== 'paused') return;
+    post({ type: 'resume' });
+    set({ status: 'running' });
   },
 
   input: (componentId, input) => {

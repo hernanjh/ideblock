@@ -41,5 +41,11 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
     simulation?.input(message.id, message.input);
   } else if (message.type === 'serial') {
     simulation?.writeSerial(message.text);
+  } else if (message.type === 'pause') {
+    clearInterval(timer);
+  } else if (message.type === 'resume' && simulation) {
+    // Paused time is skipped rather than caught up.
+    lastTick = performance.now();
+    timer = setInterval(tick, FRAME_MS);
   }
 };
