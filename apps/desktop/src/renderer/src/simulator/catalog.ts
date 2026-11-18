@@ -1,6 +1,7 @@
 import type { ComponentInput, ComponentState } from '@ideblock/simulator';
 
-export type ControlKind = 'press' | 'slider' | 'distance' | 'none';
+export type ControlKind =
+  'press' | 'slider' | 'distance' | 'temperature' | 'toggle' | 'motion' | 'none';
 
 interface VisualDefinition {
   tag: string;
@@ -91,6 +92,26 @@ export const VISUALS: Record<string, VisualDefinition> = {
         ring.setPixel?.(pixel, { r: r / 255, g: g / 255, b: b / 255 });
       });
     },
+  },
+  'slide-switch': {
+    tag: 'wokwi-slide-switch',
+    control: 'toggle',
+    properties: (state, input) => ({ value: (state?.['on'] ?? input?.['on']) ? 1 : 0 }),
+  },
+  'tilt-switch': {
+    tag: 'wokwi-tilt-switch',
+    control: 'toggle',
+    properties: () => ({}),
+  },
+  'pir-sensor': {
+    tag: 'wokwi-pir-motion-sensor',
+    control: 'motion',
+    properties: () => ({}),
+  },
+  'temperature-sensor': {
+    tag: 'wokwi-ntc-temperature-sensor',
+    control: 'temperature',
+    properties: () => ({}),
   },
   'hc-sr04': {
     tag: 'wokwi-hc-sr04',

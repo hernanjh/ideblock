@@ -474,7 +474,12 @@ export function CircuitScene({
                     input: (event: Event) =>
                       onInput?.(item.id, { value: Number((event as CustomEvent).detail) }),
                   }
-                : undefined;
+                : item.type === 'slide-switch'
+                  ? {
+                      input: (event: Event) =>
+                        onInput?.(item.id, { on: Number((event as CustomEvent).detail) === 1 }),
+                    }
+                  : undefined;
           const element = (
             <WokwiElement
               tag={shape.tag}

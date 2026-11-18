@@ -90,6 +90,44 @@ export function ComponentIcon({ type, size = 34 }: { type: string; size?: number
           <circle cx="5" cy="17" r="2.5" fill="#fc0" />
         </svg>
       );
+    case 'slide-switch':
+      return (
+        <svg {...common}>
+          <rect x="3" y="10" width="28" height="14" rx="3" fill="#2c2f35" />
+          <rect x="17" y="12" width="11" height="10" rx="2" fill="#e0e3e8" />
+          <path d="M9 24v8M17 24v8M25 24v8" stroke="#999" strokeWidth="2" />
+        </svg>
+      );
+    case 'tilt-switch':
+      return (
+        <svg {...common}>
+          <rect
+            x="2"
+            y="9"
+            width="30"
+            height="16"
+            rx="3"
+            fill="#1f6fe0"
+            transform="rotate(-15 17 17)"
+          />
+          <circle cx="12" cy="18" r="4" fill="#cfd5e2" />
+        </svg>
+      );
+    case 'pir-sensor':
+      return (
+        <svg {...common}>
+          <rect x="3" y="20" width="28" height="12" rx="2" fill="#1f8a4c" />
+          <path d="M5 21a12 12 0 0 1 24 0z" fill="#f2f2f2" stroke="#bbb" />
+        </svg>
+      );
+    case 'temperature-sensor':
+      return (
+        <svg {...common}>
+          <rect x="13" y="3" width="8" height="20" rx="4" fill="#e6e6e6" stroke="#999" />
+          <circle cx="17" cy="26" r="6" fill="#e53935" />
+          <rect x="15.5" y="12" width="3" height="12" fill="#e53935" />
+        </svg>
+      );
     case 'breadboard':
       return (
         <svg {...common}>

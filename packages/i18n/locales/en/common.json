@@ -265,7 +265,11 @@
     "mismatchMissing": "Your program uses {{part}} on pin {{pins}}, but the circuit does not have it.",
     "mismatchOccupied": "Your program uses {{part}} on pin {{pins}}, but in the circuit that pin is wired to {{other}}.",
     "mismatchAdd": "Add {{part}}",
-    "mismatchMove": "Move {{part}} to pin {{pins}}"
+    "mismatchMove": "Move {{part}} to pin {{pins}}",
+    "motion": "Move in front",
+    "on": "On",
+    "off": "Off",
+    "temperature": "Temperature: {{value}} °C"
   },
   "components": {
     "led": "LED",
@@ -279,7 +283,11 @@
     "lcd1602": "LCD 16x2 screen (I2C)",
     "neopixel-ring": "NeoPixel ring",
     "breadboard": "Breadboard",
-    "resistor": "Resistor"
+    "resistor": "Resistor",
+    "slide-switch": "Slide switch",
+    "tilt-switch": "Tilt sensor",
+    "pir-sensor": "Motion sensor (PIR)",
+    "temperature-sensor": "Temperature sensor"
   },
   "componentPins": {
     "anode": "Pin",
@@ -401,7 +409,11 @@
     "lcd1602": "A screen with 2 rows of 16 characters. It uses the I2C bus, so it only needs the SDA and SCL pins plus power.",
     "neopixel-ring": "A ring of colour LEDs controlled through a single data pin. Each LED can have its own colour.",
     "breadboard": "A board with holes for building circuits without soldering. Each column of 5 holes (a–e and f–j) is joined inside, and the + and − rails along the edges run the whole length.",
-    "resistor": "Limits the current to protect LEDs. This one is 220 Ω, the usual value for an LED on {{board}}."
+    "resistor": "Limits the current to protect LEDs. This one is 220 Ω, the usual value for an LED on {{board}}.",
+    "slide-switch": "A lever with two positions. The middle leg goes to the pin and the outer ones to 5V and GND. The program reads HIGH or LOW depending on the position.",
+    "tilt-switch": "Detects tilting. Its output (OUT) goes HIGH while tilted.",
+    "pir-sensor": "Detects people or animals moving by the heat they give off. Its output (OUT) stays HIGH for a few seconds after it detects something.",
+    "temperature-sensor": "Measures temperature with a thermistor, whose resistance changes with heat. It connects to an analog pin of {{board}}."
   },
   "languageShort": {
     "system": "Auto",
@@ -437,6 +449,8 @@
     "1_l": "leg 1",
     "1_r": "leg 1",
     "2_l": "leg 2",
-    "2_r": "leg 2"
+    "2_r": "leg 2",
+    "OUT": "output (OUT)",
+    "3": "leg 3"
   }
 }

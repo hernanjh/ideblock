@@ -265,7 +265,11 @@
     "mismatchMissing": "Tu programa usa {{part}} en el pin {{pins}}, pero el circuito no lo tiene.",
     "mismatchOccupied": "Tu programa usa {{part}} en el pin {{pins}}, pero en el circuito ese pin está conectado a {{other}}.",
     "mismatchAdd": "Agregar {{part}}",
-    "mismatchMove": "Pasar {{part}} al pin {{pins}}"
+    "mismatchMove": "Pasar {{part}} al pin {{pins}}",
+    "motion": "Moverse delante",
+    "on": "Encendido",
+    "off": "Apagado",
+    "temperature": "Temperatura: {{value}} °C"
   },
   "components": {
     "led": "LED",
@@ -279,7 +283,11 @@
     "lcd1602": "Pantalla LCD 16x2 (I2C)",
     "neopixel-ring": "Anillo NeoPixel",
     "breadboard": "Protoboard",
-    "resistor": "Resistencia"
+    "resistor": "Resistencia",
+    "slide-switch": "Interruptor",
+    "tilt-switch": "Sensor de inclinación",
+    "pir-sensor": "Sensor de movimiento (PIR)",
+    "temperature-sensor": "Sensor de temperatura"
   },
   "componentPins": {
     "anode": "Pin",
@@ -401,7 +409,11 @@
     "lcd1602": "Una pantalla de 2 filas de 16 caracteres. Usa el bus I2C, así que solo necesita los pines SDA y SCL y la alimentación.",
     "neopixel-ring": "Un anillo de LED de colores controlado con un solo pin de datos. Cada LED puede tener su propio color.",
     "breadboard": "Una placa con agujeros para armar circuitos sin soldar. Cada columna de 5 agujeros (a–e y f–j) está unida por dentro, y las filas + y − de los costados recorren toda la protoboard.",
-    "resistor": "Limita la corriente para cuidar a los LED. Esta es de 220 Ω, el valor típico para un LED con {{board}}."
+    "resistor": "Limita la corriente para cuidar a los LED. Esta es de 220 Ω, el valor típico para un LED con {{board}}.",
+    "slide-switch": "Una palanca con dos posiciones. La pata del medio va al pin; las de los costados, a 5V y a GND. El programa lee ALTA o BAJA según la posición.",
+    "tilt-switch": "Detecta si se inclina. Su salida (OUT) pasa a ALTA cuando está inclinado.",
+    "pir-sensor": "Detecta el movimiento de personas o animales por el calor que emiten. Su salida (OUT) queda en ALTA unos segundos después de detectar algo.",
+    "temperature-sensor": "Mide la temperatura con un termistor: su resistencia cambia con el calor. Se conecta a un pin analógico de {{board}}."
   },
   "languageShort": {
     "system": "Auto",
@@ -437,6 +449,8 @@
     "1_l": "pata 1",
     "1_r": "pata 1",
     "2_l": "pata 2",
-    "2_r": "pata 2"
+    "2_r": "pata 2",
+    "OUT": "salida (OUT)",
+    "3": "pata 3"
   }
 }

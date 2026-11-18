@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { CircuitScene } from '../circuit/CircuitScene';
 import { ComponentIcon } from '../circuit/ComponentIcon';
 import { BuzzerAudio } from './buzzer-audio';
-import { VISUALS } from './catalog';
+import { VISUALS, type ControlKind } from './catalog';
 import { programMismatches } from '../circuit/mismatch';
 import { circuitWires, visibleParts } from '../circuit/model';
 import {
@@ -336,33 +336,33 @@ function ComponentCard({ item, name, state, input, onInput, onOpen }: ComponentC
         <strong>{name}</strong>
         <span className="pin-chip">{t('simulator.pinList', { pins })}</span>
       </button>
-      {visual?.control === 'press' && (
+      {(visual?.control === 'press' || visual?.control === 'motion') && (
+        <HoldButton
+          id={item.id}
+          inputKey={visual.control === 'press' ? 'pressed' : 'motion'}
+          held={Boolean(input?.[visual.control === 'press' ? 'pressed' : 'motion'])}
+          label={visual.control === 'press' ? t('simulator.press') : t('simulator.motion')}
+          testId={visual.control === 'press' ? `press-${item.id}` : `motion-${item.id}`}
+          onInput={onInput}
+        />
+      )}
+      {visual?.control === 'toggle' && (
         <button
           type="button"
           className="press-button"
-          aria-pressed={Boolean(state?.['pressed'])}
-          data-testid={`press-${item.id}`}
-          onPointerDown={() => onInput(item.id, { pressed: true })}
-          onPointerUp={() => onInput(item.id, { pressed: false })}
-          onPointerLeave={() => state?.['pressed'] && onInput(item.id, { pressed: false })}
-          onKeyDown={(event) => {
-            if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
-              onInput(item.id, { pressed: true });
-            }
-          }}
-          onKeyUp={() => onInput(item.id, { pressed: false })}
+          aria-pressed={Boolean(state?.['on'] ?? input?.['on'])}
+          data-testid={`toggle-${item.id}`}
+          onClick={() => onInput(item.id, { on: !(state?.['on'] ?? input?.['on']) })}
         >
-          {t('simulator.press')}
+          {(state?.['on'] ?? input?.['on']) ? t('simulator.on') : t('simulator.off')}
         </button>
       )}
-      {(visual?.control === 'slider' || visual?.control === 'distance') && (
+      {visual && SLIDERS[visual.control] && (
         <Slider
           item={item}
           name={name}
-          distance={visual.control === 'distance'}
-          initial={Number(
-            definition?.initialInput?.[visual.control === 'distance' ? 'distance' : 'value'] ?? 0,
-          )}
+          config={SLIDERS[visual.control]!}
+          initial={Number(definition?.initialInput?.[SLIDERS[visual.control]!.key] ?? 0)}
           input={input}
           onInput={onInput}
         />
@@ -371,26 +371,69 @@ function ComponentCard({ item, name, state, input, onInput, onOpen }: ComponentC
   );
 }
 
+interface SliderConfig {
+  key: string;
+  min: number;
+  max: number;
+}
+
+const SLIDERS: Partial<Record<ControlKind, SliderConfig>> = {
+  slider: { key: 'value', min: 0, max: 1023 },
+  distance: { key: 'distance', min: 2, max: 400 },
+  temperature: { key: 'temperature', min: -20, max: 80 },
+};
+
+interface HoldButtonProps {
+  id: string;
+  inputKey: string;
+  held: boolean;
+  label: string;
+  testId: string;
+  onInput: (id: string, input: ComponentInput) => void;
+}
+
+/** A control that is on while held down, with the mouse or the keyboard. */
+function HoldButton({ id, inputKey, held, label, testId, onInput }: HoldButtonProps) {
+  return (
+    <button
+      type="button"
+      className="press-button"
+      aria-pressed={held}
+      data-testid={testId}
+      onPointerDown={() => onInput(id, { [inputKey]: true })}
+      onPointerUp={() => onInput(id, { [inputKey]: false })}
+      onPointerLeave={() => held && onInput(id, { [inputKey]: false })}
+      onKeyDown={(event) => {
+        if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
+          onInput(id, { [inputKey]: true });
+        }
+      }}
+      onKeyUp={() => onInput(id, { [inputKey]: false })}
+    >
+      {label}
+    </button>
+  );
+}
+
 interface SliderProps {
   item: CircuitItem;
   name: string;
-  distance: boolean;
+  config: SliderConfig;
   initial: number;
   input: ComponentInput | undefined;
   onInput: (id: string, input: ComponentInput) => void;
 }
 
-function Slider({ item, name, distance, initial, input, onInput }: SliderProps) {
+function Slider({ item, name, config, initial, input, onInput }: SliderProps) {
   const { t } = useTranslation();
-  const key = distance ? 'distance' : 'value';
+  const { key, min, max } = config;
   const value = Number(input?.[key] ?? initial);
-  const [min, max] = distance ? [2, 400] : [0, 1023];
   return (
     <label className="component-card__slider">
       <span>
-        {distance
-          ? t('simulator.distance', { value })
-          : t(`simulator.level.${item.type}` as never, { value })}
+        {key === 'value'
+          ? t(`simulator.level.${item.type}` as never, { value })
+          : t(`simulator.${key}` as 'simulator.distance', { value })}
       </span>
       <input
         type="range"
