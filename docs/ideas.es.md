@@ -6,7 +6,36 @@ Notas de trabajo sobre funcionalidades, referencias y riesgos. Son propuestas, n
 compromisos; cada una se revisa al cierre de una fase antes de entrar en la hoja de
 ruta.
 
-Última revisión: 2026-11-18 (cierre de la Fase 0).
+Última revisión: 2026-11-18 (cierre de la Fase 1).
+
+## Revisión de la Fase 1
+
+De las candidatas de abajo, en la Fase 1 se hicieron: errores de compilación y de
+subida en lenguaje simple, la opción "mostrar todos los puertos", la guía de
+drivers CH340, CP210x y FTDI en Windows, el resaltado de bloques durante la
+simulación, las entradas interactivas del simulador, los niveles básico y avanzado
+de la caja de herramientas, el aviso de simulación lenta, la galería de ejemplos,
+el autoguardado y la recuperación de la sesión. Además, el simulador puede abrirse
+en una ventana aparte.
+
+Notas nuevas que surgieron al construirlo:
+
+- **Tamaño al iniciar.** Monaco hace que el bundle principal pese unos 9 MB.
+  Cargar el editor de código recién cuando se muestra su panel aceleraría el
+  inicio en computadoras viejas.
+- **Simulación que arranca más rápido.** Iniciar el simulador compila el sketch.
+  El firmware se podría guardar en caché según el código y la placa, para que
+  reiniciar un programa sin cambios sea instantáneo.
+- **Cableado visual.** Los componentes se conectan eligiendo pines de una lista.
+  Una vista de protoboard con cables (Fase 2) necesita dibujos de placas sin
+  marcas registradas.
+- **Simulación del Mega.** avr8js puede emular el ATmega2560 con sus puertos y
+  timers adicionales; sería un paso chico después de la Fase 1.
+- **Prueba con hardware.** Durante el desarrollo no se pudo probar la subida en
+  placas reales. Antes de publicar, probar un Uno original, un clon Nano con CH340
+  y bootloader viejo, y un ESP32 DevKit que necesita el botón BOOT.
+- **macOS.** Los builds sin firmar quedan bloqueados por Gatekeeper; la
+  notarización necesita una cuenta de desarrollador de Apple.
 
 ## Panorama
 

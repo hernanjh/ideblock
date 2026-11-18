@@ -5,7 +5,34 @@
 Working notes on features, references and risks. Items here are proposals, not
 commitments; each one is reviewed at the end of a phase before it enters the roadmap.
 
-Last reviewed: 2026-11-18 (end of Phase 0).
+Last reviewed: 2026-11-18 (end of Phase 1).
+
+## Phase 1 review
+
+Done in Phase 1 from the candidates below: plain-language compile and upload
+errors, the "show all ports" fallback, driver guidance for CH340, CP210x and
+FTDI on Windows, block highlighting while simulating, interactive simulator
+inputs, beginner and advanced toolbox levels, a slow-simulation notice, an
+example gallery, autosave and session recovery. The simulator can also open in
+its own window.
+
+New notes from building it:
+
+- **Startup size.** Monaco makes the main bundle about 9 MB. Loading the code
+  editor only when its panel is first shown would speed up startup on old
+  computers.
+- **Faster simulation start.** Starting the simulator compiles the sketch. The
+  firmware could be cached by code and board, so restarting an unchanged program
+  is instant.
+- **Visual wiring.** Components are wired by choosing pins from a list. A
+  breadboard view with wires (Phase 2) needs board artwork without trademarks.
+- **Mega simulation.** avr8js can emulate the ATmega2560 with the extra ports
+  and timers; it would be a small step after Phase 1.
+- **Hardware test pass.** Uploading could not be tested on real boards during
+  development. Before a release, test an original Uno, a CH340 Nano clone with
+  the old bootloader and an ESP32 DevKit that needs the BOOT button.
+- **macOS.** Unsigned macOS builds are blocked by Gatekeeper; notarization needs
+  an Apple developer account.
 
 ## Landscape
 
