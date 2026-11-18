@@ -167,20 +167,23 @@ describe('sketch generator', () => {
     expect(code).toContain('for (step = 10; step >= 0; step -= 2) {');
   });
 
-  it('generates statement trace calls when requested', async () => {
+  it('reports running blocks to the simulator when tracing', async () => {
     const { getBoard } = await import('@ideblock/boards');
     const { createSketchGenerator, applyBlockMessages } = await import('../src');
     const Blockly = await import('blockly/core');
     applyBlockMessages('en');
     const generator = createSketchGenerator(getBoard('uno'));
-    generator.configure({ board: getBoard('uno'), traceStatement: (index) => `trace(${index});` });
+    generator.configure({ board: getBoard('uno'), trace: true });
     const workspace = new Blockly.Workspace();
     Blockly.serialization.workspaces.load(
       { blocks: { languageVersion: 0, blocks: [program([], [led('HIGH'), led('LOW')])] } },
       workspace,
     );
     const result = generator.generate(workspace);
-    expect(result.code).toContain('  trace(0);\n  digitalWrite(13, HIGH);\n  trace(1);\n');
+    expect(result.code).toContain('inline void ideblockTrace(uint16_t index)');
+    expect(result.code).toContain(
+      '  ideblockTrace(0);\n  digitalWrite(13, HIGH);\n  ideblockTrace(1);\n',
+    );
     expect(result.tracedBlocks).toHaveLength(2);
     workspace.dispose();
   });

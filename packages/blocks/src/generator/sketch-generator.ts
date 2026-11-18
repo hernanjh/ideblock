@@ -15,10 +15,10 @@ export interface TypeResolver {
 export interface SketchGeneratorOptions {
   board: BoardDefinition;
   /**
-   * Emits a call before each statement with the block's index, so the
-   * simulator can highlight the block that is running.
+   * Reports each statement's block to the simulator before it runs, so the
+   * running block can be highlighted. Only used for simulator builds.
    */
-  traceStatement?: (blockIndex: number) => string;
+  trace?: boolean;
 }
 
 export interface SketchResult {
@@ -53,6 +53,13 @@ interface Sections {
   userSetup: string;
   userLoop: string;
 }
+
+// The simulator watches these general purpose registers, which real sketches
+// never use, to learn which block is running.
+const TRACE_HELPER = `inline void ideblockTrace(uint16_t index) {
+  GPIOR1 = index >> 8;
+  GPIOR0 = index & 0xFF;
+}`;
 
 /** Keeps setup() in a predictable order regardless of block order. */
 function setupRank(key: string): number {
@@ -160,9 +167,10 @@ export class SketchGenerator extends Blockly.CodeGenerator {
       prefix += this.prefixLines(`${comment}\n`, '// ');
     }
     const isStatement = Boolean(block.previousConnection) && !block.outputConnection;
-    if (isStatement && this.options.traceStatement && code) {
+    if (isStatement && this.options.trace && code) {
       const index = this.tracedBlocks.push(block.id) - 1;
-      prefix += `${this.options.traceStatement(index)}\n`;
+      this.addHelper('ideblockTrace', TRACE_HELPER);
+      prefix += `ideblockTrace(${index});\n`;
     }
     const next = block.nextConnection?.targetBlock();
     const nextCode = thisOnly || !next ? '' : this.blockToCode(next);
