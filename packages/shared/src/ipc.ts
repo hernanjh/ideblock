@@ -83,6 +83,48 @@ export interface ToolchainProgress {
   detail: string;
 }
 
+export interface PortInfo {
+  address: string;
+  label: string;
+  /** USB ids in lower-case hex, when the port belongs to a USB device. */
+  vid?: string;
+  pid?: string;
+  /** Boards that identified themselves on this port. */
+  boards: { name: string; fqbn: string }[];
+}
+
+export interface MissingDriver {
+  chip: 'CH340' | 'CP210x' | 'FTDI';
+  /** Vendor page where the driver can be downloaded. */
+  url: string;
+}
+
+export interface UploadRequest {
+  compile: CompileRequest;
+  port: string;
+}
+
+export type UploadFailure = 'compile' | 'upload' | CompileFailure;
+
+export interface UploadResult {
+  ok: boolean;
+  failure?: UploadFailure;
+  compile: CompileResult;
+  /** Upload tool output, explained with the "uploadHelp" translations. */
+  output: string;
+}
+
+export interface SerialOpenRequest {
+  port: string;
+  baudRate: number;
+}
+
+export interface SerialStatus {
+  state: 'open' | 'closed' | 'error';
+  port?: string;
+  message?: string;
+}
+
 /**
  * Request/response channels handled by the main process. Adding a channel here
  * makes it type-checked end to end: main handler, preload bridge and renderer.
@@ -108,12 +150,22 @@ export interface InvokeContract {
   'session:load': { args: []; result: OpenedProject | null };
   'session:save': { args: [session: OpenedProject]; result: void };
   'toolchain:compile': { args: [request: CompileRequest]; result: CompileResult };
+  'toolchain:upload': { args: [request: UploadRequest]; result: UploadResult };
+  'ports:list': { args: []; result: PortInfo[] };
+  'ports:missing-drivers': { args: []; result: MissingDriver[] };
+  'serial:open': { args: [request: SerialOpenRequest]; result: SerialStatus };
+  'serial:close': { args: []; result: void };
+  'serial:write': { args: [text: string]; result: void };
+  'app:open-external': { args: [url: string]; result: void };
 }
 
 /** Events pushed from the main process to the renderer. */
 export interface EventContract {
   'settings:changed': Settings;
   'toolchain:progress': ToolchainProgress;
+  'ports:changed': PortInfo[];
+  'serial:data': string;
+  'serial:status': SerialStatus;
 }
 
 export type InvokeChannel = keyof InvokeContract;
@@ -137,10 +189,20 @@ const invokeChannelSet: Record<InvokeChannel, true> = {
   'session:load': true,
   'session:save': true,
   'toolchain:compile': true,
+  'toolchain:upload': true,
+  'ports:list': true,
+  'ports:missing-drivers': true,
+  'serial:open': true,
+  'serial:close': true,
+  'serial:write': true,
+  'app:open-external': true,
 };
 const eventChannelSet: Record<EventChannel, true> = {
   'settings:changed': true,
   'toolchain:progress': true,
+  'ports:changed': true,
+  'serial:data': true,
+  'serial:status': true,
 };
 
 export const INVOKE_CHANNELS = Object.keys(invokeChannelSet) as InvokeChannel[];
