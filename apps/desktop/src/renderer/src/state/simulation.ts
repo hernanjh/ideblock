@@ -3,7 +3,7 @@ import type { ComponentInput, ComponentState } from '@ideblock/simulator';
 import { create } from 'zustand';
 import { generateSimulationSketch } from '../blocks/simulation-sketch';
 import { librariesForCode } from '../build/libraries';
-import { simulatedComponents } from '../circuit/model';
+import { simulationParts } from '../circuit/model';
 import type { WorkerRequest, WorkerResponse } from '../simulator/protocol';
 import SimulationWorker from '../simulator/sim.worker?worker';
 import { useBuildStore } from './build';
@@ -67,7 +67,7 @@ function launch(firmware: string): void {
   post({
     type: 'start',
     hex: firmware,
-    components: simulatedComponents(circuit, getBoard(boardId)),
+    components: simulationParts(circuit, getBoard(boardId)),
   });
   for (const [id, input] of Object.entries(useSimulationStore.getState().inputs)) {
     post({ type: 'input', id, input });
@@ -121,6 +121,10 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
       return;
     }
 
+    // Errors from an earlier attempt no longer apply once the program compiles.
+    if (useBuildStore.getState().status === 'error') {
+      useBuildStore.setState({ status: 'idle', result: null, upload: null, resultCode: null });
+    }
     hex = result.hex;
     const serial = useSerialStore.getState();
     serial.setSource('simulator');
