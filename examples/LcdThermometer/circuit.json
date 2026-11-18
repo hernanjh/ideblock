@@ -1,0 +1,21 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "thermo1",
+      "type": "temperature-sensor",
+      "pins": {
+        "signal": "A0"
+      }
+    },
+    {
+      "id": "lcd1",
+      "type": "lcd1602",
+      "pins": {
+        "sda": "A4",
+        "scl": "A5"
+      }
+    }
+  ],
+  "connections": []
+}

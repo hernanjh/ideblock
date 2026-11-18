@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "LCD thermometer",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "LCD thermometer",
+      "es": "Termómetro con pantalla"
+    },
+    "description": {
+      "en": "Shows the temperature on the LCD screen every second.",
+      "es": "Muestra la temperatura en la pantalla LCD cada un segundo."
+    },
+    "level": 2,
+    "order": 17
+  }
+}

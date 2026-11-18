@@ -261,4 +261,16 @@ describe('new components', () => {
     const serial = frames.map((frame) => frame.serial).join('');
     expect(Number(serial.split('\r\n')[0])).toBeCloseTo(300, -1);
   });
+
+  it('shows the temperature on the LCD screen', () => {
+    const simulation = new Simulation(hex('LcdThermometer'), [
+      { id: 'thermo', type: 'temperature-sensor', pins: { signal: 'A0' } },
+      { id: 'lcd', type: 'lcd1602', pins: { sda: 'A4', scl: 'A5' } },
+    ]);
+    simulation.input('thermo', { temperature: 31 });
+    run(simulation, 1500, 50);
+    const text = String(simulation.frame().components['lcd']?.['text']);
+    expect(text.slice(0, 16).trim()).toBe('Temperatura:');
+    expect(text.slice(16)).toMatch(/^3[01]\.\d\d C/);
+  });
 });
