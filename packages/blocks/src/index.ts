@@ -1,4 +1,4 @@
-export { getActiveBoard, setActiveBoard, type PinKind } from './board-context';
+export { getActiveBoard, pinsFor, setActiveBoard, type PinKind } from './board-context';
 export { COLOURS } from './colours';
 export type { CppType } from './generator/cpp-types';
 export {
