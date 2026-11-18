@@ -94,5 +94,13 @@
   "TEXT_LETTER": "letter %1 of %2",
   "TEXT_LETTER_TOOLTIP": "The letter at that position, counting from 1.",
   "TEXT_CONTAINS": "%1 contains %2?",
-  "TEXT_CONTAINS_TOOLTIP": "True when the second text appears inside the first one."
+  "TEXT_CONTAINS_TOOLTIP": "True when the second text appears inside the first one.",
+  "SEVEN_SEGMENT": "show the number %1 on the 7-segment display (segment a on pin %2)",
+  "SEVEN_SEGMENT_TOOLTIP": "Shows a number from 0 to 9. Segments a, b, c, d, e, f and g go on consecutive pins, starting with the chosen one.",
+  "JOYSTICK_AXIS": "joystick %1 position on pin %2",
+  "JOYSTICK_X": "left/right (X)",
+  "JOYSTICK_Y": "down/up (Y)",
+  "JOYSTICK_AXIS_TOOLTIP": "A number from −100 to 100: 0 is the centre.",
+  "JOYSTICK_PRESSED": "joystick button on pin %1 is pressed",
+  "JOYSTICK_PRESSED_TOOLTIP": "True while the joystick stick is pushed down."
 }

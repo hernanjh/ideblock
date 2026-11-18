@@ -31,8 +31,24 @@ const PART_BLOCKS: Record<string, (fields: FieldMap, board: BoardDefinition) => 
   lcd_print: (_f, board) => part('lcd1602', { sda: board.i2c.sda, scl: board.i2c.scl }),
   lcd_clear: (_f, board) => part('lcd1602', { sda: board.i2c.sda, scl: board.i2c.scl }),
   neopixel_set: (f) => part('neopixel-ring', { din: f['PIN'] }),
+  seven_segment_show: (f) => segmentsFrom(f['FIRST']),
+  joystick_axis: (f) =>
+    part('joystick', f['AXIS'] === 'Y' ? { vert: f['PIN'] } : { horz: f['PIN'] }),
+  joystick_pressed: (f) => part('joystick', { sel: f['PIN'] }),
   neopixel_clear: (f) => part('neopixel-ring', { din: f['PIN'] }),
 };
+
+/** The display block drives segments a to g on consecutive pins. */
+function segmentsFrom(first: string | undefined): PartUse | null {
+  if (first === undefined || !/^\d+$/.test(first)) return null;
+  const start = Number(first);
+  return part(
+    'seven-segment',
+    Object.fromEntries(
+      ['a', 'b', 'c', 'd', 'e', 'f', 'g'].map((name, i) => [name, String(start + i)]),
+    ),
+  );
+}
 
 function part(type: string, pins: Record<string, string | undefined>): PartUse | null {
   const entries = Object.entries(pins);

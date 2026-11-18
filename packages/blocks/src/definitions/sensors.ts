@@ -78,6 +78,25 @@ export const sensorsModule: BlockModule = {
       tooltip: '%{BKY_IDEBLOCK_TEMPERATURE_TOOLTIP}',
     },
     {
+      type: 'joystick_axis',
+      message0: '%{BKY_IDEBLOCK_JOYSTICK_AXIS}',
+      args0: [
+        {
+          type: 'field_dropdown',
+          name: 'AXIS',
+          options: [
+            ['%{BKY_IDEBLOCK_JOYSTICK_X}', 'X'],
+            ['%{BKY_IDEBLOCK_JOYSTICK_Y}', 'Y'],
+          ],
+        },
+        { type: 'field_pin', name: 'PIN', pinKind: 'analog', value: 'A0' },
+      ],
+      output: 'Number',
+      colour: COLOURS.sensors,
+      tooltip: '%{BKY_IDEBLOCK_JOYSTICK_AXIS_TOOLTIP}',
+    },
+    digitalSensor('joystick_pressed', 'JOYSTICK_PRESSED', '2'),
+    {
       type: 'ultrasonic_distance',
       message0: '%{BKY_IDEBLOCK_ULTRASONIC}',
       args0: [
@@ -106,6 +125,16 @@ export const sensorsModule: BlockModule = {
       Order.POSTFIX,
     ],
     switch_on: readHigh,
+    joystick_axis: (block) => [
+      `map(analogRead(${block.getFieldValue('PIN') as string}), 0, 1023, -100, 100)`,
+      Order.POSTFIX,
+    ],
+    joystick_pressed: (block, generator) => {
+      const pin = block.getFieldValue('PIN') as string;
+      // The stick button connects the pin to GND, like a push button.
+      generator.pinMode(pin, 'INPUT_PULLUP');
+      return [`digitalRead(${pin}) == LOW`, Order.EQUALITY];
+    },
     motion_detected: readHigh,
     tilt_detected: readHigh,
     temperature_read: (block, generator) => {
@@ -127,6 +156,8 @@ export const sensorsModule: BlockModule = {
     light_sensor_read: 'int',
     ultrasonic_distance: 'long',
     switch_on: 'bool',
+    joystick_axis: 'long',
+    joystick_pressed: 'bool',
     motion_detected: 'bool',
     tilt_detected: 'bool',
     temperature_read: 'float',

@@ -18,6 +18,21 @@ const COLOUR_OPTIONS = [
 
 const LCD_ADDRESS = '0x27';
 
+// Segments a to g of the digits 0 to 9, bit 0 being segment a.
+const DIGIT_HELPER = `const byte DIGIT_SEGMENTS[10] = {
+  0b0111111, 0b0000110, 0b1011011, 0b1001111, 0b1100110,
+  0b1101101, 0b1111101, 0b0000111, 0b1111111, 0b1101111
+};
+
+void showDigit(int firstPin, int number) {
+  // Numbers outside 0 to 9 show a dash.
+  byte segments = (number >= 0 && number <= 9) ? DIGIT_SEGMENTS[number] : 0b1000000;
+  for (int segment = 0; segment < 7; segment++) {
+    pinMode(firstPin + segment, OUTPUT);
+    digitalWrite(firstPin + segment, bitRead(segments, segment) ? HIGH : LOW);
+  }
+}`;
+
 function useLcd(generator: SketchGenerator): string {
   generator.addInclude('Wire.h');
   generator.addInclude('LiquidCrystal_PCF8574.h');
@@ -105,6 +120,19 @@ export const displaysModule: BlockModule = {
       tooltip: '%{BKY_IDEBLOCK_LCD_CLEAR_TOOLTIP}',
     },
     {
+      type: 'seven_segment_show',
+      message0: '%{BKY_IDEBLOCK_SEVEN_SEGMENT}',
+      args0: [
+        { type: 'input_value', name: 'NUMBER', check: 'Number' },
+        { type: 'field_pin', name: 'FIRST', pinKind: 'output', value: '2' },
+      ],
+      inputsInline: true,
+      previousStatement: null,
+      nextStatement: null,
+      colour: COLOURS.display,
+      tooltip: '%{BKY_IDEBLOCK_SEVEN_SEGMENT_TOOLTIP}',
+    },
+    {
       type: 'neopixel_set',
       message0: '%{BKY_IDEBLOCK_NEOPIXEL_SET}',
       args0: [
@@ -156,6 +184,11 @@ export const displaysModule: BlockModule = {
       return `${lcd}.setCursor(${zeroBased(column)}, ${zeroBased(row)});\n${lcd}.print(${text});\n`;
     },
     lcd_clear: (_block, generator) => `${useLcd(generator)}.clear();\n`,
+    seven_segment_show: (block, generator) => {
+      generator.addHelper('showDigit', DIGIT_HELPER);
+      const number = generator.valueOrDefault(block, 'NUMBER', Order.COMMA, '0');
+      return `showDigit(${block.getFieldValue('FIRST') as string}, ${number});\n`;
+    },
     neopixel_set: (block, generator) => {
       const pin = block.getFieldValue('PIN') as string;
       const strip = useStrip(generator, pin, Number(block.getFieldValue('COUNT')));
