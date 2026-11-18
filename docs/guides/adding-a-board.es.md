@@ -12,7 +12,11 @@ export const leonardo: BoardDefinition = {
   name: 'Arduino Leonardo',
   fqbn: 'arduino:avr:leonardo',
   architecture: 'avr',
+  family: 'arduino',
   core: { id: 'arduino:avr' },
+  servo: { header: 'Servo.h', library: 'Servo' },
+  drawing: 'uno',
+  pinLabelPrefix: 'D',
   digitalPins: [...range(0, 13), 'A0', 'A1', 'A2', 'A3', 'A4', 'A5'],
   analogInputPins: ['A0', 'A1', 'A2', 'A3', 'A4', 'A5'],
   pwmPins: ['3', '5', '6', '9', '10', '11', '13'],
@@ -33,9 +37,7 @@ export const leonardo: BoardDefinition = {
 Después:
 
 1. Agregá la definición a `BOARDS`, en el mismo archivo.
-2. Si el core necesita un índice de paquetes nuevo, agregá su URL en
-   `ADDITIONAL_INDEX_URLS`, en `apps/desktop/src/main/toolchain/arduino-cli.ts`.
-3. Si algunos bloques necesitan código distinto en la nueva arquitectura, usá
+2. Si algunos bloques necesitan código distinto en la nueva arquitectura, usá
    `generator.board.architecture` en sus generadores.
-4. Ejecutá `npm test`: los tests de placas verifican que cada pin PWM, analógico y
+3. Ejecutá `npm test`: los tests de placas verifican que cada pin PWM, analógico y
    de LED exista en la placa.
