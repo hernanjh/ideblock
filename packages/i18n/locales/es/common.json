@@ -7,12 +7,17 @@
     "label": "Barra de herramientas principal",
     "view": "Vista",
     "panels": "Paneles",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "board": "Placa"
   },
   "view": {
     "blocks": "Bloques",
     "split": "Bloques y código",
     "code": "Código"
+  },
+  "blocks": {
+    "allBlocks": "Todos los bloques",
+    "allBlocksHint": "Mostrar también los bloques avanzados"
   },
   "panels": {
     "blocks": "Bloques",

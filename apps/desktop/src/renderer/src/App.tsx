@@ -2,6 +2,9 @@ import { resolveLanguage } from '@ideblock/i18n';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { applyAppearance } from './appearance';
+import { BlockEditor } from './blocks/BlockEditor';
+import { BlockLevelToggle } from './blocks/BlockLevelToggle';
+import { GeneratedCode } from './blocks/GeneratedCode';
 import { Toolbar } from './components/Toolbar';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { PanelPlaceholder } from './layout/Panel';
@@ -32,8 +35,9 @@ export function App() {
     <div className="app">
       <Toolbar />
       <Workspace
-        blocks={<PanelPlaceholder />}
-        code={<PanelPlaceholder />}
+        blocks={<BlockEditor language={language} />}
+        blocksActions={<BlockLevelToggle />}
+        code={<GeneratedCode />}
         simulator={<PanelPlaceholder />}
         console={<PanelPlaceholder />}
       />

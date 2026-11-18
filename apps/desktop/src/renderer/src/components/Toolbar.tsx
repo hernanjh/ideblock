@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useShortcutHint } from '../hooks/useShortcutHint';
 import { useSettingsStore } from '../state/settings';
+import { BoardSelect } from './BoardSelect';
 import { SettingsDialog } from './SettingsDialog';
 import { ViewSwitcher } from './ViewSwitcher';
 
@@ -19,6 +20,10 @@ export function Toolbar() {
   return (
     <header className="toolbar" role="toolbar" aria-label={t('toolbar.label')}>
       <h1 className="toolbar__brand">{t('app.name')}</h1>
+
+      <div className="toolbar__group">
+        <BoardSelect />
+      </div>
 
       <div className="toolbar__group">
         <ViewSwitcher />

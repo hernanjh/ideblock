@@ -25,6 +25,8 @@
   },
   "devDependencies": {
     "@fontsource/atkinson-hyperlegible": "5.3.0",
+    "@ideblock/blocks": "0.0.0",
+    "@ideblock/boards": "0.0.0",
     "@ideblock/i18n": "0.0.0",
     "@ideblock/shared": "0.0.0",
     "@playwright/test": "1.65.1",

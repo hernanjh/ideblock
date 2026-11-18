@@ -1,4 +1,6 @@
-import { resolve } from 'node:path';
+import { createReadStream, readdirSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join, resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'electron-vite';
 import type { Plugin } from 'vite';
@@ -30,6 +32,35 @@ function contentSecurityPolicy(): Plugin {
   };
 }
 
+const BLOCKLY_MEDIA_URL = 'blockly-media';
+const blocklyMediaDir = join(dirname(createRequire(import.meta.url).resolve('blockly')), 'media');
+
+/**
+ * Blockly loads its cursors and icons from a media folder that defaults to a
+ * remote URL. Serving a local copy keeps the editor working offline.
+ */
+function blocklyMedia(): Plugin {
+  return {
+    name: 'ideblock-blockly-media',
+    configureServer(server) {
+      server.middlewares.use(`/${BLOCKLY_MEDIA_URL}`, (req, res, next) => {
+        const file = (req.url ?? '').split('?')[0]?.replace(/^\//, '') ?? '';
+        if (!readdirSync(blocklyMediaDir).includes(file)) return next();
+        createReadStream(join(blocklyMediaDir, file)).pipe(res);
+      });
+    },
+    generateBundle() {
+      for (const file of readdirSync(blocklyMediaDir)) {
+        this.emitFile({
+          type: 'asset',
+          fileName: `${BLOCKLY_MEDIA_URL}/${file}`,
+          source: readFileSync(join(blocklyMediaDir, file)),
+        });
+      }
+    },
+  };
+}
+
 export default defineConfig({
   main: {
     build: {
@@ -52,7 +83,7 @@ export default defineConfig({
   },
   renderer: {
     root: resolve(import.meta.dirname, 'src/renderer'),
-    plugins: [react(), contentSecurityPolicy()],
+    plugins: [react(), contentSecurityPolicy(), blocklyMedia()],
     build: {
       rollupOptions: {
         input: resolve(import.meta.dirname, 'src/renderer/index.html'),

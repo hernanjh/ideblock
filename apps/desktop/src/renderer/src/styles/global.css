@@ -365,3 +365,39 @@ button:disabled {
     animation: none !important;
   }
 }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.toggle-button--small {
+  min-height: 2rem;
+  padding: 0 var(--space-2);
+  font-size: 0.875rem;
+}
+
+.block-editor {
+  position: absolute;
+  inset: 0;
+}
+
+.generated-code {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-family: 'Cascadia Mono', 'Consolas', 'DejaVu Sans Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.toolbar__field select {
+  max-width: 16rem;
+}

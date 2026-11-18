@@ -8,6 +8,7 @@ import { Splitter } from './Splitter';
 
 interface WorkspaceProps {
   blocks: ReactNode;
+  blocksActions?: ReactNode;
   code: ReactNode;
   simulator: ReactNode;
   console: ReactNode;
@@ -15,7 +16,7 @@ interface WorkspaceProps {
 
 const percent = (fraction: number): string => `${fraction * 100}%`;
 
-export function Workspace({ blocks, code, simulator, console }: WorkspaceProps) {
+export function Workspace({ blocks, blocksActions, code, simulator, console }: WorkspaceProps) {
   const { t } = useTranslation();
   const settings = useSettingsStore((state) => state.settings);
   const preview = useSettingsStore((state) => state.preview);
@@ -43,6 +44,7 @@ export function Workspace({ blocks, code, simulator, console }: WorkspaceProps) 
               id="blocks"
               title={blocksTitle}
               icon={<Blocks aria-hidden="true" size="1.1em" />}
+              actions={blocksActions}
               style={showCode ? { flex: `0 0 ${percent(settings.editorSplit)}` } : undefined}
             >
               {blocks}

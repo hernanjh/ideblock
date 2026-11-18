@@ -7,12 +7,17 @@
     "label": "Main toolbar",
     "view": "View",
     "panels": "Panels",
-    "settings": "Settings"
+    "settings": "Settings",
+    "board": "Board"
   },
   "view": {
     "blocks": "Blocks",
     "split": "Blocks and code",
     "code": "Code"
+  },
+  "blocks": {
+    "allBlocks": "All blocks",
+    "allBlocksHint": "Also show advanced blocks"
   },
   "panels": {
     "blocks": "Blocks",
