@@ -1,0 +1,196 @@
+import { describe, expect, it } from 'vitest';
+import { chain, generate, num, program, str } from './helpers';
+
+const led = (state: 'HIGH' | 'LOW', pin = '13') => ({
+  type: 'led_set',
+  fields: { PIN: pin, STATE: state },
+});
+const waitSeconds = (seconds: number) => ({
+  type: 'time_delay_seconds',
+  inputs: { SECONDS: num(seconds) },
+});
+
+describe('sketch generator', () => {
+  it('generates an empty sketch', () => {
+    expect(generate(program([], [])).code).toBe('void setup() {\n}\n\nvoid loop() {\n}\n');
+  });
+
+  it('generates the blink sketch', () => {
+    const { code, libraries } = generate(
+      program([], [led('HIGH'), waitSeconds(1), led('LOW'), waitSeconds(0.5)]),
+    );
+    expect(code).toBe(
+      [
+        'void setup() {',
+        '  pinMode(13, OUTPUT);',
+        '}',
+        '',
+        'void loop() {',
+        '  digitalWrite(13, HIGH);',
+        '  delay(1000);',
+        '  digitalWrite(13, LOW);',
+        '  delay(500);',
+        '}',
+        '',
+      ].join('\n'),
+    );
+    expect(libraries).toEqual([]);
+  });
+
+  it('declares pin modes once and before user setup code', () => {
+    const { code } = generate(
+      program(
+        [{ type: 'serial_print', fields: { NEWLINE: 'TRUE' }, inputs: { TEXT: str('Hi') } }],
+        [led('HIGH'), led('LOW')],
+      ),
+    );
+    expect(code).toContain(
+      'void setup() {\n  Serial.begin(9600);\n  pinMode(13, OUTPUT);\n  Serial.println("Hi");\n}',
+    );
+    expect(code.match(/pinMode/g)).toHaveLength(1);
+  });
+
+  it('reads a button with the internal pull-up', () => {
+    const { code } = generate(
+      program(
+        [],
+        [
+          {
+            type: 'controls_if',
+            extraState: { hasElse: true },
+            inputs: {
+              IF0: { block: { type: 'button_pressed', fields: { PIN: '2' } } },
+              DO0: { block: led('HIGH') },
+              ELSE: { block: led('LOW') },
+            },
+          },
+        ],
+      ),
+    );
+    expect(code).toContain('pinMode(2, INPUT_PULLUP);');
+    expect(code).toContain(
+      '  if (digitalRead(2) == LOW) {\n    digitalWrite(13, HIGH);\n  } else {\n    digitalWrite(13, LOW);\n  }\n',
+    );
+  });
+
+  it('uses the right servo library for each architecture', () => {
+    const servo = program(
+      [],
+      [{ type: 'servo_write', fields: { PIN: '9' }, inputs: { ANGLE: num(45) } }],
+    );
+    const avr = generate(servo);
+    expect(avr.code).toContain('#include <Servo.h>');
+    expect(avr.code).toContain('Servo servo_9;');
+    expect(avr.code).toContain('servo_9.attach(9);');
+    expect(avr.code).toContain('servo_9.write(constrain(45, 0, 180));');
+    expect(avr.libraries).toEqual(['Servo']);
+
+    const esp32Servo = program(
+      [],
+      [{ type: 'servo_write', fields: { PIN: '13' }, inputs: { ANGLE: num(45) } }],
+    );
+    const esp32 = generate(esp32Servo, { board: 'esp32-devkit' });
+    expect(esp32.code).toContain('#include <ESP32Servo.h>');
+    expect(esp32.libraries).toEqual(['ESP32Servo']);
+  });
+
+  it('ignores blocks that are not inside the program', () => {
+    const { code } = generate(program([], []), { extraTopBlocks: [led('HIGH', '7')] });
+    expect(code).not.toContain('7');
+  });
+
+  it('adds helper functions once', () => {
+    const distance = { block: { type: 'ultrasonic_distance', fields: { TRIG: '9', ECHO: '10' } } };
+    const { code } = generate(
+      program(
+        [],
+        [
+          { type: 'serial_print', fields: { NEWLINE: 'TRUE' }, inputs: { TEXT: distance } },
+          { type: 'serial_print', fields: { NEWLINE: 'TRUE' }, inputs: { TEXT: distance } },
+        ],
+      ),
+    );
+    expect(code.match(/long readDistanceCm/g)).toHaveLength(1);
+    expect(code).toContain('Serial.println(readDistanceCm(9, 10));');
+  });
+
+  it('escapes text', () => {
+    const { code } = generate(
+      program(
+        [],
+        [
+          {
+            type: 'serial_print',
+            fields: { NEWLINE: 'FALSE' },
+            inputs: { TEXT: str('say "hi"\\') },
+          },
+        ],
+      ),
+    );
+    expect(code).toContain('Serial.print("say \\"hi\\"\\\\");');
+  });
+
+  it('keeps operator precedence', () => {
+    const arithmetic = (op: string, a: unknown, b: unknown) => ({
+      block: { type: 'math_arithmetic', fields: { OP: op }, inputs: { A: a, B: b } },
+    });
+    const value = arithmetic(
+      'MULTIPLY',
+      arithmetic('ADD', num(1), num(2)),
+      arithmetic('MINUS', num(3), arithmetic('MINUS', num(4), num(5))),
+    );
+    const { code } = generate(
+      program([], [{ type: 'serial_print', fields: { NEWLINE: 'TRUE' }, inputs: { TEXT: value } }]),
+    );
+    expect(code).toContain('Serial.println((1 + 2) * (3 - (4 - 5)));');
+  });
+
+  it('generates loops', () => {
+    const { code } = generate(
+      program(
+        [],
+        [
+          {
+            type: 'controls_repeat_ext',
+            inputs: { TIMES: num(3), DO: { block: led('HIGH') } },
+          },
+          {
+            type: 'controls_for',
+            fields: { VAR: { id: 'v1' } },
+            inputs: { FROM: num(10), TO: num(0), BY: num(2), DO: { block: waitSeconds(1) } },
+          },
+        ],
+      ),
+      { variables: [{ id: 'v1', name: 'step' }] },
+    );
+    expect(code).toContain('for (int i = 0; i < 3; i++) {');
+    expect(code).toContain('for (step = 10; step >= 0; step -= 2) {');
+  });
+
+  it('generates statement trace calls when requested', async () => {
+    const { getBoard } = await import('@ideblock/boards');
+    const { createSketchGenerator, applyBlockMessages } = await import('../src');
+    const Blockly = await import('blockly/core');
+    applyBlockMessages('en');
+    const generator = createSketchGenerator(getBoard('uno'));
+    generator.configure({ board: getBoard('uno'), traceStatement: (index) => `trace(${index});` });
+    const workspace = new Blockly.Workspace();
+    Blockly.serialization.workspaces.load(
+      { blocks: { languageVersion: 0, blocks: [program([], [led('HIGH'), led('LOW')])] } },
+      workspace,
+    );
+    const result = generator.generate(workspace);
+    expect(result.code).toContain('  trace(0);\n  digitalWrite(13, HIGH);\n  trace(1);\n');
+    expect(result.tracedBlocks).toHaveLength(2);
+    workspace.dispose();
+  });
+});
+
+describe('chain helper', () => {
+  it('links blocks in order', () => {
+    expect(chain({ type: 'a' }, { type: 'b' })).toEqual({
+      type: 'a',
+      next: { block: { type: 'b' } },
+    });
+  });
+});

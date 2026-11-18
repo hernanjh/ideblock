@@ -1,0 +1,16 @@
+{
+  "name": "@ideblock/blocks",
+  "version": "0.0.0",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "blockly": "13.4.0"
+  }
+}
