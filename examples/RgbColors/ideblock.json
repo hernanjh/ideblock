@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Colour changing LED",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "Colour changing LED",
+      "es": "LED que cambia de color"
+    },
+    "description": {
+      "en": "An RGB LED shows red, green and blue in turn.",
+      "es": "Un LED RGB muestra rojo, verde y azul por turnos."
+    },
+    "level": 1,
+    "order": 10
+  }
+}

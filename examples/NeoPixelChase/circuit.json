@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "ring1",
+      "type": "neopixel-ring",
+      "pins": {
+        "din": "6"
+      },
+      "props": {
+        "pixels": 8
+      }
+    }
+  ],
+  "connections": []
+}

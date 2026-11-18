@@ -1,0 +1,15 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "rgb1",
+      "type": "rgb-led",
+      "pins": {
+        "red": "9",
+        "green": "10",
+        "blue": "11"
+      }
+    }
+  ],
+  "connections": []
+}
