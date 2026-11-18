@@ -12,4 +12,5 @@ export { BLOCK_MODULES } from './modules';
 export { createSketchGenerator, registerBlocks } from './register';
 export { buildToolbox, toolboxBlock, toolboxBlockTypes, type ToolboxLevel } from './toolbox';
 export type { BlockGenerator, BlockJson, BlockModule } from './types';
+export { partsUsedBy, type PartUse } from './parts';
 export { emptyWorkspaceState } from './workspace';
