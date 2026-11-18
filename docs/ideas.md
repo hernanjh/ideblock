@@ -30,6 +30,15 @@ New notes from user tests and from comparing with Tinkercad and mBlock:
 - **More parts from wokwi-elements (medium).** Joystick, 7-segment display, LED
   bar, sound, flame and gas sensors and an OLED screen have drawings and fit the
   current models.
+- **Simulating the remaining boards.** Uno, Nano, Mega, Leonardo, Micro and Pico
+  run in the simulator. Still missing:
+  - Pico servos, tones and NeoPixels: arduino-pico drives them from PIO, which
+    rp2040js runs apart from the simulated clock. Reading the PIO FIFOs at a
+    higher level (pulse widths, tone periods, pixel colours) would work.
+  - Leonardo and Micro PWM on pins 6 and 13 (timer 4) and the USB serial port;
+    simulation builds send Serial to USART1 instead.
+  - Nano Every (ATmega4809): avr8js does not emulate the megaAVR 0-series.
+  - ESP8266: no open source emulator fits; ESP32 is planned for Phase 4.
 - **Timed blocks (done in part).** "Turn on the LED for N seconds" exists; tones
   and RGB colours could get the same form.
 
