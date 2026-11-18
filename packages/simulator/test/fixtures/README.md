@@ -15,3 +15,8 @@ and copy `<dir>/<Name>.ino.hex` here.
 
 `Traced.ino.hex` is a blink sketch that calls `ideblockTrace()` with the
 indices 0, 1, 300 and 3, as the block generator does for simulator builds.
+
+`LcdCounter.ino.hex` also includes LiquidCrystal_PCF8574 2.3.0 (BSD-3-Clause,
+<https://github.com/mathertel/LiquidCrystal_PCF8574>) and `NeoPixelChase.ino.hex`
+includes Adafruit NeoPixel 1.15.5 (LGPL-3.0,
+<https://github.com/adafruit/Adafruit_NeoPixel>).

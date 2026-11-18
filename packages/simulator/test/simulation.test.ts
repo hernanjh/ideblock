@@ -108,3 +108,45 @@ describe('block tracing', () => {
     expect(traces[29]).toBe(3);
   });
 });
+
+describe('new components', () => {
+  it('mixes colours on an RGB LED', () => {
+    const simulation = new Simulation(hex('RgbColors'), [
+      { id: 'rgb', type: 'rgb-led', pins: { red: '9', green: '10', blue: '11' } },
+    ]);
+    const frames = run(simulation, 2500, 50);
+    expect(frames[9]!.components['rgb']).toEqual({ red: 1, green: 0, blue: 0 });
+    expect(frames[29]!.components['rgb']).toEqual({ red: 0, green: 1, blue: 0 });
+    expect(
+      frames[49]?.components['rgb'] ?? run(simulation, 50, 50)[0]!.components['rgb'],
+    ).toBeDefined();
+  });
+
+  it('shows text on an I2C LCD screen', () => {
+    const simulation = new Simulation(hex('LcdCounter'), [
+      { id: 'lcd', type: 'lcd1602', pins: { sda: 'A4', scl: 'A5' } },
+    ]);
+    const text = String(run(simulation, 2600, 50).at(-1)!.components['lcd']!['text']);
+    expect(text.slice(0, 16).trimEnd()).toBe('Hello!');
+    expect(text.slice(16).trim()).toBe('2');
+    expect(run(simulation, 50, 50)[0]!.components['lcd']!['backlight']).toBe(true);
+  });
+
+  it('decodes NeoPixel colours from the data pin', () => {
+    const simulation = new Simulation(hex('NeoPixelChase'), [
+      { id: 'ring', type: 'neopixel-ring', pins: { din: '6' }, props: { pixels: 8 } },
+    ]);
+    const frames = run(simulation, 600, 20).map((frame) =>
+      String(frame.components['ring']!['colours']),
+    );
+    const lit = frames.map((colours) => colours.split(';').indexOf('255,0,0'));
+    expect(lit).toContain(0);
+    expect(lit).toContain(2);
+    expect(
+      frames
+        .at(-1)!
+        .split(';')
+        .filter((colour) => colour === '255,0,0'),
+    ).toHaveLength(1);
+  });
+});

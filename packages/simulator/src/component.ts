@@ -1,5 +1,7 @@
+import type { I2CDevice } from './avr-runner';
+
 /** How a component pin connects to the board, which limits the pins offered. */
-export type ComponentPinKind = 'output' | 'digital' | 'analog' | 'pwm';
+export type ComponentPinKind = 'output' | 'digital' | 'analog' | 'pwm' | 'sda' | 'scl';
 
 export interface ComponentPinSpec {
   name: string;
@@ -26,6 +28,7 @@ export interface SimulationContext {
   setDigitalInput(pin: string, high: boolean): void;
   setAnalogInput(pin: string, volts: number): void;
   schedule(callback: () => void, delayCycles: number): void;
+  addI2CDevice(address: number, device: I2CDevice): void;
 }
 
 export type ComponentState = Record<string, number | boolean | string>;

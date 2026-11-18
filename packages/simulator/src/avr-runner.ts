@@ -1,5 +1,6 @@
 import {
   AVRADC,
+  AVRTWI,
   AVRClock,
   AVRIOPort,
   AVRTimer,
@@ -14,7 +15,9 @@ import {
   timer0Config,
   timer1Config,
   timer2Config,
+  twiConfig,
   usart0Config,
+  type TWIEventHandler,
 } from 'avr8js';
 import { loadHex } from './hex';
 import { atmega328Pin, pinNameFor, type PortName } from './pins';
@@ -29,6 +32,45 @@ const GPIOR1 = 0x4a;
 
 export type PinListener = (pin: string, high: boolean, cycles: number) => void;
 
+/** A device on the I2C bus, as seen from the microcontroller acting as master. */
+export interface I2CDevice {
+  /** Returns true to acknowledge the byte. */
+  write(value: number): boolean;
+  read(): number;
+  stop?(): void;
+}
+
+/** Routes the TWI peripheral's bus activity to the simulated devices by address. */
+class I2CBus implements TWIEventHandler {
+  readonly devices = new Map<number, I2CDevice>();
+  private current: I2CDevice | null = null;
+
+  constructor(private readonly twi: AVRTWI) {}
+
+  start(): void {
+    this.twi.completeStart();
+  }
+
+  stop(): void {
+    this.current?.stop?.();
+    this.current = null;
+    this.twi.completeStop();
+  }
+
+  connectToSlave(address: number): void {
+    this.current = this.devices.get(address) ?? null;
+    this.twi.completeConnect(this.current !== null);
+  }
+
+  writeByte(value: number): void {
+    this.twi.completeWrite(this.current?.write(value) ?? false);
+  }
+
+  readByte(): void {
+    this.twi.completeRead(this.current?.read() ?? 0xff);
+  }
+}
+
 /**
  * Runs compiled ATmega328P firmware. Only the peripherals used by beginner
  * sketches are wired: GPIO, timers, ADC and the serial port.
@@ -39,6 +81,7 @@ export class AvrRunner {
   private readonly ports: Record<PortName, AVRIOPort>;
   private readonly adc: AVRADC;
   private readonly usart: AVRUSART;
+  private readonly i2c: I2CBus;
   private readonly pinListeners: PinListener[] = [];
   private traceHigh = 0;
 
@@ -57,6 +100,9 @@ export class AvrRunner {
     this.adc = new AVRADC(this.cpu, adcConfig);
     this.usart = new AVRUSART(this.cpu, usart0Config, this.frequency);
     this.usart.onByteTransmit = (byte) => this.onSerialByte?.(byte);
+    const twi = new AVRTWI(this.cpu, twiConfig, this.frequency);
+    this.i2c = new I2CBus(twi);
+    twi.eventHandler = this.i2c;
 
     this.ports = {
       B: new AVRIOPort(this.cpu, portBConfig),
@@ -116,6 +162,10 @@ export class AvrRunner {
     this.adc.channelValues[location.adc] = volts;
     // Analog pins also read as digital inputs.
     if (location.bit >= 0) this.ports[location.port].setPin(location.bit, volts > 2.5);
+  }
+
+  addI2CDevice(address: number, device: I2CDevice): void {
+    this.i2c.devices.set(address, device);
   }
 
   writeSerial(byte: number): void {

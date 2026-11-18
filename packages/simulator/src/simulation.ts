@@ -54,6 +54,7 @@ export class Simulation {
       setDigitalInput: (pin, high) => runner.setDigitalInput(pin, high),
       setAnalogInput: (pin, volts) => runner.setAnalogInput(pin, volts),
       schedule: (callback, delay) => runner.schedule(callback, delay),
+      addI2CDevice: (address, device) => runner.addI2CDevice(address, device),
     };
     for (const instance of components) {
       const definition = findComponent(instance.type);
