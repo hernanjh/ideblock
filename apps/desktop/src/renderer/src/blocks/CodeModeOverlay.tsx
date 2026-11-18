@@ -6,9 +6,7 @@ import { useProjectStore } from '../state/project';
 export function CodeModeOverlay() {
   const { t } = useTranslation();
   const mode = useProjectStore((state) => state.mode);
-  const unchanged = useProjectStore(
-    (state) => state.codeAtSwitch !== null && state.code === state.codeAtSwitch,
-  );
+  const unchanged = useProjectStore((state) => state.code === (state.sketch?.code ?? ''));
   const switchToBlocks = useProjectStore((state) => state.switchToBlocks);
 
   if (mode !== 'code') return null;

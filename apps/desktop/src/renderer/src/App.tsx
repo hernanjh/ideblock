@@ -7,15 +7,19 @@ import { BlockLevelToggle } from './blocks/BlockLevelToggle';
 import { CodeModeOverlay } from './blocks/CodeModeOverlay';
 import { CodeEditor } from './code/CodeEditor';
 import { Toolbar } from './components/Toolbar';
+import { SaveStatus } from './files/SaveStatus';
+import { useAutosave } from './hooks/useAutosave';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { PanelPlaceholder } from './layout/Panel';
 import { Workspace } from './layout/Workspace';
+import { useProjectStore } from './state/project';
 import { useSettingsStore } from './state/settings';
 
 export function App() {
   const { t, i18n } = useTranslation();
   const settings = useSettingsStore((state) => state.settings);
   const appInfo = useSettingsStore((state) => state.appInfo);
+  const loadId = useProjectStore((state) => state.loadId);
 
   const language = resolveLanguage(settings.language, appInfo?.systemLanguages ?? []);
 
@@ -31,6 +35,7 @@ export function App() {
   }, [t]);
 
   useKeyboardShortcuts();
+  useAutosave();
 
   return (
     <div className="app">
@@ -38,7 +43,7 @@ export function App() {
       <Workspace
         blocks={
           <>
-            <BlockEditor language={language} />
+            <BlockEditor key={loadId} language={language} />
             <CodeModeOverlay />
           </>
         }
@@ -48,7 +53,7 @@ export function App() {
         console={<PanelPlaceholder />}
       />
       <footer className="status-bar">
-        <span>{t('app.tagline')}</span>
+        <SaveStatus />
         {appInfo && (
           <span data-testid="app-version">{t('status.version', { version: appInfo.version })}</span>
         )}

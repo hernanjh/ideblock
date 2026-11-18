@@ -86,11 +86,10 @@ export function BlockEditor({ language }: BlockEditorProps) {
     resizeObserver.observe(container);
 
     return () => {
+      // The store already holds the latest state from the change listener;
+      // saving here could overwrite a project that has just been loaded.
       clearTimeout(timer);
       resizeObserver.disconnect();
-      useProjectStore
-        .getState()
-        .setWorkspaceState(Blockly.serialization.workspaces.save(workspace));
       workspace.dispose();
       workspaceRef.current = null;
     };

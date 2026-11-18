@@ -8,6 +8,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { applyAppearance } from './appearance';
 import { initI18n } from './i18n';
+import { useProjectStore } from './state/project';
 import { useSettingsStore } from './state/settings';
 
 async function bootstrap(): Promise<void> {
@@ -19,7 +20,14 @@ async function bootstrap(): Promise<void> {
 
   const language = resolveLanguage(settings.language, appInfo.systemLanguages);
   applyAppearance(settings, language);
-  await initI18n(language);
+  const i18n = await initI18n(language);
+
+  const session = await window.ideblock.invoke('session:load');
+  if (session) {
+    useProjectStore.getState().load(session.project, session.path);
+  } else {
+    useProjectStore.getState().newProject(i18n.t('files.untitled'));
+  }
 
   window.ideblock.on('settings:changed', (updated) => {
     useSettingsStore.getState().receive(updated);

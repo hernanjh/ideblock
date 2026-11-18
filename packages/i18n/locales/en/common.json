@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "IdeBlock",
-    "tagline": "Program your boards with blocks or code"
+    "name": "IdeBlock"
   },
   "toolbar": {
     "label": "Main toolbar",
@@ -80,5 +79,46 @@
     "Serial_begin": "Starts serial communication at a speed in bauds.",
     "Serial_print": "Sends a value to the serial monitor.",
     "Serial_println": "Sends a value and starts a new line."
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "ok": "OK"
+  },
+  "files": {
+    "group": "Project",
+    "new": "New",
+    "open": "Open",
+    "save": "Save",
+    "examples": "Examples",
+    "export": "Export .ino",
+    "projectName": "Project name",
+    "untitled": "My project",
+    "openTitle": "Open a project",
+    "saveAsTitle": "Save the project in a folder",
+    "exportTitle": "Export the sketch",
+    "projectFilter": "Projects and sketches",
+    "sketchFilter": "Sketches",
+    "examplesTitle": "Examples",
+    "level": "Level {{level}}",
+    "unsavedTitle": "This project is not saved in a folder",
+    "unsavedBody": "If you continue without saving, the changes in this project will be lost.",
+    "discard": "Don't save",
+    "saveFirst": "Save first",
+    "problemTitle": "Something went wrong",
+    "status": {
+      "notInFolder": "Not saved in a folder yet",
+      "saving": "Saving…",
+      "saved": "Saved in {{path}}",
+      "error": "The project could not be saved"
+    },
+    "errors": {
+      "unsupported-version": "This project was made with a newer version of IdeBlock. Update the application to open it.",
+      "invalid-manifest": "The project file ideblock.json is damaged.",
+      "invalid-file": "A project file is damaged and cannot be read.",
+      "missing-sketch": "There is no project or sketch in that folder.",
+      "not-found": "The project could not be found.",
+      "write-failed": "The project could not be saved. Check that the folder exists and you can write to it."
+    }
   }
 }

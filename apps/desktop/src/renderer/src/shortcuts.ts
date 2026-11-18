@@ -5,7 +5,10 @@ export type ShortcutId =
   | 'toggleConsole'
   | 'fontIncrease'
   | 'fontDecrease'
-  | 'fontReset';
+  | 'fontReset'
+  | 'newProject'
+  | 'openProject'
+  | 'saveProject';
 
 interface ShortcutDefinition {
   keys: readonly string[];
@@ -22,6 +25,9 @@ export const SHORTCUTS: Record<ShortcutId, ShortcutDefinition> = {
   fontIncrease: { keys: ['+', '='], display: '+' },
   fontDecrease: { keys: ['-', '_'], display: '−' },
   fontReset: { keys: ['0'], display: '0' },
+  newProject: { keys: ['n', 'N'], display: 'N' },
+  openProject: { keys: ['o', 'O'], display: 'O' },
+  saveProject: { keys: ['s', 'S'], display: 'S' },
 };
 
 export function matchShortcut(event: KeyboardEvent): ShortcutId | null {

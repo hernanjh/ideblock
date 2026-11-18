@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "IdeBlock",
-    "tagline": "Programá tus placas con bloques o con código"
+    "name": "IdeBlock"
   },
   "toolbar": {
     "label": "Barra de herramientas principal",
@@ -80,5 +79,46 @@
     "Serial_begin": "Inicia la comunicación serie a una velocidad en baudios.",
     "Serial_print": "Envía un valor al monitor serie.",
     "Serial_println": "Envía un valor y pasa a otra línea."
+  },
+  "common": {
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "ok": "Aceptar"
+  },
+  "files": {
+    "group": "Proyecto",
+    "new": "Nuevo",
+    "open": "Abrir",
+    "save": "Guardar",
+    "examples": "Ejemplos",
+    "export": "Exportar .ino",
+    "projectName": "Nombre del proyecto",
+    "untitled": "Mi proyecto",
+    "openTitle": "Abrir un proyecto",
+    "saveAsTitle": "Guardar el proyecto en una carpeta",
+    "exportTitle": "Exportar el sketch",
+    "projectFilter": "Proyectos y sketches",
+    "sketchFilter": "Sketches",
+    "examplesTitle": "Ejemplos",
+    "level": "Nivel {{level}}",
+    "unsavedTitle": "Este proyecto no está guardado en una carpeta",
+    "unsavedBody": "Si seguís sin guardar, se pierden los cambios de este proyecto.",
+    "discard": "No guardar",
+    "saveFirst": "Guardar primero",
+    "problemTitle": "Algo salió mal",
+    "status": {
+      "notInFolder": "Todavía no está guardado en una carpeta",
+      "saving": "Guardando…",
+      "saved": "Guardado en {{path}}",
+      "error": "No se pudo guardar el proyecto"
+    },
+    "errors": {
+      "unsupported-version": "Este proyecto se hizo con una versión más nueva de IdeBlock. Actualizá la aplicación para abrirlo.",
+      "invalid-manifest": "El archivo del proyecto ideblock.json está dañado.",
+      "invalid-file": "Un archivo del proyecto está dañado y no se puede leer.",
+      "missing-sketch": "En esa carpeta no hay ningún proyecto ni sketch.",
+      "not-found": "No se encontró el proyecto.",
+      "write-failed": "No se pudo guardar el proyecto. Revisá que la carpeta exista y que tengas permiso para escribir."
+    }
   }
 }

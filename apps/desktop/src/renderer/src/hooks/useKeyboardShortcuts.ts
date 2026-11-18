@@ -8,19 +8,21 @@ export function useKeyboardShortcuts(): void {
     const onKeyDown = (event: KeyboardEvent): void => {
       const shortcut = matchShortcut(event);
       if (!shortcut) return;
-      event.preventDefault();
       const { settings, update, changeFontScale } = useSettingsStore.getState();
       const panel = (Object.keys(PANEL_VISIBILITY) as PanelId[]).find(
         (id) => PANEL_VISIBILITY[id].shortcut === shortcut,
       );
       if (panel) {
+        event.preventDefault();
         const setting = PANEL_VISIBILITY[panel].setting;
         void update({ [setting]: !settings[setting] });
         return;
       }
-      if (shortcut === 'fontIncrease') void changeFontScale(1);
-      if (shortcut === 'fontDecrease') void changeFontScale(-1);
-      if (shortcut === 'fontReset') void changeFontScale(0);
+      const fontDirection = { fontIncrease: 1, fontDecrease: -1, fontReset: 0 } as const;
+      if (shortcut in fontDirection) {
+        event.preventDefault();
+        void changeFontScale(fontDirection[shortcut as keyof typeof fontDirection]);
+      }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
