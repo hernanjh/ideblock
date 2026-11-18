@@ -11,5 +11,5 @@ export type {
 } from './component';
 export { COMPONENTS, findComponent } from './components';
 export { loadHex } from './hex';
-export { atmega328Pin } from './pins';
+export { atmega2560Pin, atmega328Pin, isSimulatedMcu, type McuName } from './mcu';
 export { Simulation, type SimulationFrame } from './simulation';

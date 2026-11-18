@@ -6,24 +6,14 @@ import {
   AVRTimer,
   AVRUSART,
   CPU,
-  adcConfig,
   avrInstruction,
   clockConfig,
-  portBConfig,
-  portCConfig,
-  portDConfig,
-  timer0Config,
-  timer1Config,
-  timer2Config,
-  twiConfig,
-  usart0Config,
   type TWIEventHandler,
 } from 'avr8js';
 import { loadHex } from './hex';
-import { atmega328Pin, pinNameFor, type PortName } from './pins';
+import { MCUS, type McuName, type McuProfile } from './mcu';
 
 export const ATMEGA328_FREQUENCY = 16_000_000;
-const FLASH_BYTES = 0x8000;
 
 // General purpose I/O registers in data space; the sketch writes the running
 // block index here when built for simulation.
@@ -72,13 +62,14 @@ class I2CBus implements TWIEventHandler {
 }
 
 /**
- * Runs compiled ATmega328P firmware. Only the peripherals used by beginner
- * sketches are wired: GPIO, timers, ADC and the serial port.
+ * Runs compiled ATmega328P or ATmega2560 firmware. Only the peripherals used by
+ * beginner sketches are wired: GPIO, timers, ADC, I2C and the serial port.
  */
 export class AvrRunner {
   readonly cpu: CPU;
   readonly frequency = ATMEGA328_FREQUENCY;
-  private readonly ports: Record<PortName, AVRIOPort>;
+  private readonly mcu: McuProfile;
+  private readonly ports: Record<string, AVRIOPort>;
   private readonly adc: AVRADC;
   private readonly usart: AVRUSART;
   private readonly i2c: I2CBus;
@@ -88,34 +79,35 @@ export class AvrRunner {
   onSerialByte: ((byte: number) => void) | null = null;
   onTrace: ((index: number) => void) | null = null;
 
-  constructor(hex: string) {
-    const flash = new Uint8Array(FLASH_BYTES);
+  constructor(hex: string, mcuName: McuName = 'atmega328p') {
+    this.mcu = MCUS[mcuName];
+    const flash = new Uint8Array(this.mcu.flashBytes);
     loadHex(hex, flash);
-    this.cpu = new CPU(new Uint16Array(flash.buffer));
+    this.cpu = new CPU(new Uint16Array(flash.buffer), this.mcu.sramBytes);
 
-    new AVRTimer(this.cpu, timer0Config);
-    new AVRTimer(this.cpu, timer1Config);
-    new AVRTimer(this.cpu, timer2Config);
+    for (const timer of this.mcu.timers) new AVRTimer(this.cpu, timer);
     new AVRClock(this.cpu, this.frequency, clockConfig);
-    this.adc = new AVRADC(this.cpu, adcConfig);
-    this.usart = new AVRUSART(this.cpu, usart0Config, this.frequency);
+    this.adc = new AVRADC(this.cpu, this.mcu.adc);
+    this.usart = new AVRUSART(this.cpu, this.mcu.usart, this.frequency);
     this.usart.onByteTransmit = (byte) => this.onSerialByte?.(byte);
-    const twi = new AVRTWI(this.cpu, twiConfig, this.frequency);
+    const twi = new AVRTWI(this.cpu, this.mcu.twi, this.frequency);
     this.i2c = new I2CBus(twi);
     twi.eventHandler = this.i2c;
 
-    this.ports = {
-      B: new AVRIOPort(this.cpu, portBConfig),
-      C: new AVRIOPort(this.cpu, portCConfig),
-      D: new AVRIOPort(this.cpu, portDConfig),
-    };
-    for (const [name, port] of Object.entries(this.ports) as [PortName, AVRIOPort][]) {
+    this.ports = Object.fromEntries(
+      Object.entries(this.mcu.ports).map(([name, config]) => [
+        name,
+        new AVRIOPort(this.cpu, config),
+      ]),
+    );
+    for (const [name, port] of Object.entries(this.ports)) {
       port.addListener((value, oldValue) => {
         const changed = value ^ oldValue;
         if (changed === 0) return;
         for (let bit = 0; bit < 8; bit++) {
           if (changed & (1 << bit)) {
-            const pin = pinNameFor(name, bit);
+            const pin = this.mcu.pinName(name, bit);
+            if (pin === null) continue;
             const high = (value & (1 << bit)) !== 0;
             for (const listener of this.pinListeners) listener(pin, high, this.cpu.cycles);
           }
@@ -143,25 +135,26 @@ export class AvrRunner {
 
   /** Output level of a pin as driven by the program. */
   readPin(name: string): boolean {
-    const location = atmega328Pin(name);
-    if (!location || location.bit < 0) return false;
-    const state = this.ports[location.port].pinState(location.bit);
+    const location = this.mcu.pin(name);
+    const port = location ? this.ports[location.port] : undefined;
+    if (!location || !port || location.bit < 0) return false;
+    const state = port.pinState(location.bit);
     // PinState: Low = 0, High = 1, Input = 2, InputPullUp = 3.
     return state === 1 || state === 3;
   }
 
   setDigitalInput(name: string, high: boolean): void {
-    const location = atmega328Pin(name);
+    const location = this.mcu.pin(name);
     if (!location || location.bit < 0) return;
-    this.ports[location.port].setPin(location.bit, high);
+    this.ports[location.port]?.setPin(location.bit, high);
   }
 
   setAnalogInput(name: string, volts: number): void {
-    const location = atmega328Pin(name);
+    const location = this.mcu.pin(name);
     if (location?.adc === undefined) return;
     this.adc.channelValues[location.adc] = volts;
     // Analog pins also read as digital inputs.
-    if (location.bit >= 0) this.ports[location.port].setPin(location.bit, volts > 2.5);
+    if (location.bit >= 0) this.ports[location.port]?.setPin(location.bit, volts > 2.5);
   }
 
   addI2CDevice(address: number, device: I2CDevice): void {

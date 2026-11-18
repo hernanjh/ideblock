@@ -23,3 +23,6 @@ includes Adafruit NeoPixel 1.15.5 (LGPL-3.0,
 
 `Thermometer.ino.hex`, `MotionAlarm.ino.hex`, `Dice.ino.hex` and `Joystick.ino.hex`
 use only the Arduino AVR core.
+
+`MegaCheck.ino.hex` is `MegaCheck.ino` in this folder, compiled for the Arduino Mega
+(`arduino:avr:mega`). It uses only the Arduino AVR core.

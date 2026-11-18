@@ -237,4 +237,28 @@ describe('new components', () => {
     expect(lines.at(-1)).toBe('100 -100');
     expect(simulation.frame().components['led']).toEqual({ brightness: 1 });
   });
+
+  it('runs Arduino Mega firmware', () => {
+    const simulation = new Simulation(
+      hex('MegaCheck'),
+      [
+        led('13'),
+        { id: 'port-a', type: 'led', pins: { anode: '22' } },
+        { id: 'pwm3', type: 'led', pins: { anode: '2' } },
+        { id: 'pwm2', type: 'led', pins: { anode: '9' } },
+        { id: 'knob', type: 'potentiometer', pins: { signal: 'A0' } },
+      ],
+      'atmega2560',
+    );
+    simulation.input('knob', { value: 300 });
+    const frames = run(simulation, 1100, 50);
+    expect(frames[5]!.components['led']).toEqual({ brightness: 1 });
+    expect(frames[5]!.components['port-a']).toEqual({ brightness: 1 });
+    expect(frames[15]!.components['led']).toEqual({ brightness: 0 });
+    // analogWrite on timers 3 and 2 sets the duty cycle.
+    expect(frames[15]!.components['pwm3']?.['brightness']).toBeCloseTo(64 / 255, 1);
+    expect(frames[15]!.components['pwm2']?.['brightness']).toBeCloseTo(192 / 255, 1);
+    const serial = frames.map((frame) => frame.serial).join('');
+    expect(Number(serial.split('\r\n')[0])).toBeCloseTo(300, -1);
+  });
 });

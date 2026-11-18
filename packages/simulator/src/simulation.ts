@@ -7,6 +7,7 @@ import type {
   SimulationContext,
 } from './component';
 import { findComponent } from './components';
+import type { McuName } from './mcu';
 
 export interface SimulationFrame {
   /** Simulated time since the program started, in milliseconds. */
@@ -38,8 +39,8 @@ export class Simulation {
   private ran = new Set<number>();
   private lastSpeed = 1;
 
-  constructor(hex: string, components: readonly ComponentInstance[]) {
-    this.runner = new AvrRunner(hex);
+  constructor(hex: string, components: readonly ComponentInstance[], mcu: McuName = 'atmega328p') {
+    this.runner = new AvrRunner(hex, mcu);
     this.runner.onPinChange((pin, high, cycles) => {
       for (const listener of this.pinListeners.get(pin) ?? []) listener(high, cycles);
     });
