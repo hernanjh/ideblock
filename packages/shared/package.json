@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ideblock/compiler": "0.0.0",
     "@ideblock/project": "0.0.0",
     "zod": "4.6.7"
   }

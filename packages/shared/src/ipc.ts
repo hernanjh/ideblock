@@ -1,3 +1,4 @@
+import type { CompilerDiagnostic } from '@ideblock/compiler';
 import type { ProjectDocument } from '@ideblock/project';
 import type { Settings, SettingsPatch } from './settings';
 
@@ -43,6 +44,45 @@ export type ProjectErrorReason =
 
 export type ProjectResult<T> = { ok: true; value: T } | { ok: false; reason: ProjectErrorReason };
 
+export interface CompileRequest {
+  code: string;
+  boardId: string;
+  /** Used as sketch folder and file name. */
+  sketchName: string;
+  libraries: string[];
+}
+
+export type CompileFailure = 'tool-missing' | 'core-install' | 'library-install' | 'compile';
+
+export interface MemoryUsage {
+  used: number;
+  max: number;
+}
+
+export interface CompileResult {
+  ok: boolean;
+  failure?: CompileFailure;
+  diagnostics: CompilerDiagnostic[];
+  /** Raw compiler output, shown to users who want the details. */
+  output: string;
+  program?: MemoryUsage;
+  data?: MemoryUsage;
+  /** Build folder holding the firmware, used for upload and simulation. */
+  buildPath?: string;
+  /** Intel HEX firmware for AVR boards, read by the simulator. */
+  hex?: string;
+}
+
+export type ToolchainStage = 'index' | 'core' | 'library' | 'compile' | 'upload';
+
+export interface ToolchainProgress {
+  stage: ToolchainStage;
+  /** Name of the core or library being installed. */
+  subject?: string;
+  /** Latest line printed by the tool. */
+  detail: string;
+}
+
 /**
  * Request/response channels handled by the main process. Adding a channel here
  * makes it type-checked end to end: main handler, preload bridge and renderer.
@@ -67,11 +107,13 @@ export interface InvokeContract {
   'project:recent': { args: []; result: RecentProject[] };
   'session:load': { args: []; result: OpenedProject | null };
   'session:save': { args: [session: OpenedProject]; result: void };
+  'toolchain:compile': { args: [request: CompileRequest]; result: CompileResult };
 }
 
 /** Events pushed from the main process to the renderer. */
 export interface EventContract {
   'settings:changed': Settings;
+  'toolchain:progress': ToolchainProgress;
 }
 
 export type InvokeChannel = keyof InvokeContract;
@@ -94,9 +136,11 @@ const invokeChannelSet: Record<InvokeChannel, true> = {
   'project:recent': true,
   'session:load': true,
   'session:save': true,
+  'toolchain:compile': true,
 };
 const eventChannelSet: Record<EventChannel, true> = {
   'settings:changed': true,
+  'toolchain:progress': true,
 };
 
 export const INVOKE_CHANNELS = Object.keys(invokeChannelSet) as InvokeChannel[];
