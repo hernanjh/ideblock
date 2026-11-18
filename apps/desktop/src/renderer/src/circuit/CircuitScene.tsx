@@ -1,4 +1,4 @@
-import type { BoardDefinition } from '@ideblock/boards';
+import { pinLabel, type BoardDefinition } from '@ideblock/boards';
 import type { ComponentInput, ComponentState } from '@ideblock/simulator';
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,8 +17,8 @@ const SIGNAL_COLOURS = ['#1e88e5', '#2fa84f', '#f59f00', '#8e24aa', '#00897b', '
 const GROUND_COLOUR = '#20242b';
 const SUPPLY_COLOUR = '#e53935';
 
-const usesAnalogPin = (item: CircuitItem): boolean =>
-  Object.values(item.pins).some((pin) => pin.startsWith('A'));
+const usesAnalogPin = (item: CircuitItem, board: BoardDefinition): boolean =>
+  Object.values(item.pins).some((pin) => board.analogInputPins.includes(pin));
 
 /**
  * Components without a saved position are lined up next to the header they
@@ -33,7 +33,7 @@ export function defaultPositions(items: CircuitItem[], board: BoardDefinition): 
   for (const item of items) {
     if (item.x !== undefined && item.y !== undefined) {
       positions.set(item.id, { x: item.x, y: item.y });
-    } else if (usesAnalogPin(item) && board.architecture !== 'esp32') {
+    } else if (usesAnalogPin(item, board) && board.drawing !== 'esp32') {
       positions.set(item.id, {
         x: BOARD_ORIGIN.x + below++ * COLUMN_WIDTH,
         y: BOARD_ORIGIN.y + layout.height + WIRE_ROOM + 30,
@@ -51,11 +51,6 @@ interface Wire {
   colour: string;
   resistorAt?: Point;
   label?: { at: Point; text: string };
-}
-
-function pinLabel(pin: string, board: BoardDefinition): string {
-  if (!/^\d+$/.test(pin)) return pin;
-  return board.architecture === 'esp32' ? `GPIO ${pin}` : `D${pin}`;
 }
 
 interface CircuitSceneProps {
@@ -173,7 +168,7 @@ export function CircuitScene({
               x: from.x + labelOffset[from.side]!.x,
               y: from.y + labelOffset[from.side]!.y,
             },
-            text: pinLabel(boardPin, board),
+            text: pinLabel(board, boardPin),
           },
         });
       }

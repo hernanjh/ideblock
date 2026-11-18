@@ -118,8 +118,47 @@ function esp32Layout(): BoardLayout {
   };
 }
 
+/**
+ * Boards without a dedicated drawing: their pins in one row along the top and
+ * analog pins, power and ground along the bottom.
+ */
+function genericLayout(
+  board: BoardDefinition,
+): BoardLayout & { top: HeaderPin[]; bottom: HeaderPin[] } {
+  const analog = new Set(board.analogInputPins);
+  const top: HeaderPin[] = [
+    { name: 'GND.top', label: 'GND' },
+    ...board.digitalPins.filter((pin) => !analog.has(pin)).map((name) => ({ name, label: name })),
+  ];
+  const bottom: HeaderPin[] = [
+    { name: '5V', label: board.architecture === 'avr' ? '5V' : '3V3' },
+    { name: 'GND', label: 'GND' },
+    ...board.analogInputPins.map((name) => ({ name, label: name })),
+  ];
+  const width = Math.max(240, 120 + Math.max(top.length, bottom.length) * PIN_STEP + 30);
+  const anchors: Record<string, Anchor> = {};
+  top.forEach((pin, index) => {
+    anchors[pin.name] = { x: 110 + index * PIN_STEP, y: 30, side: 'top' };
+  });
+  bottom.forEach((pin, index) => {
+    anchors[pin.name] = { x: 110 + index * PIN_STEP, y: 222, side: 'bottom' };
+  });
+  return {
+    width,
+    height: 250,
+    anchors,
+    grounds: [anchors['GND']!, anchors['GND.top']!],
+    supply: anchors['5V']!,
+    supplyLabel: bottom[0]!.label,
+    top,
+    bottom,
+  };
+}
+
 export function boardLayout(board: BoardDefinition): BoardLayout {
-  return board.architecture === 'esp32' ? esp32Layout() : unoLayout(board);
+  if (board.drawing === 'esp32') return esp32Layout();
+  if (board.drawing === 'generic') return genericLayout(board);
+  return unoLayout(board);
 }
 
 interface BoardDrawingProps {
@@ -132,11 +171,10 @@ interface BoardDrawingProps {
 
 /** Generic board drawings: they show where each pin is but carry no brand marks. */
 export function BoardDrawing({ board, caption, powered }: BoardDrawingProps) {
-  return board.architecture === 'esp32' ? (
-    <Esp32Drawing board={board} caption={caption} powered={powered} />
-  ) : (
-    <UnoDrawing board={board} caption={caption} powered={powered} />
-  );
+  if (board.drawing === 'esp32') {
+    return <Esp32Drawing board={board} caption={caption} powered={powered} />;
+  }
+  return <UnoDrawing board={board} caption={caption} powered={powered} />;
 }
 
 const shortName = (board: BoardDefinition): string =>
@@ -161,8 +199,22 @@ function UnoDrawing({ board, caption, powered }: BoardDrawingProps) {
       />
       <rect x="-8" y="44" width="56" height="48" rx="4" fill="#c9ced6" stroke="#8b939f" />
       <rect x="-4" y="150" width="44" height="42" rx="6" fill="#2b2f36" />
-      <rect x="110" y="22" width="230" height="16" rx="2" fill="#20242b" />
-      <rect x="110" y="214" width="166" height="16" rx="2" fill="#20242b" />
+      <rect
+        x="100"
+        y="22"
+        width={layout.top.length * PIN_STEP + 30}
+        height="16"
+        rx="2"
+        fill="#20242b"
+      />
+      <rect
+        x="100"
+        y="214"
+        width={layout.bottom.length * PIN_STEP + 60}
+        height="16"
+        rx="2"
+        fill="#20242b"
+      />
       {[...layout.top, ...layout.bottom].map((pin) => {
         const anchor = layout.anchors[pin.name]!;
         const labelY = anchor.side === 'top' ? 52 : 204;

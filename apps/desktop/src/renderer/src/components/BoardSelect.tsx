@@ -1,7 +1,9 @@
-import { BOARDS } from '@ideblock/boards';
+import { BOARDS, type BoardFamily } from '@ideblock/boards';
 import { CircuitBoard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useProjectStore } from '../state/project';
+
+const FAMILIES: BoardFamily[] = ['arduino', 'esp32', 'esp8266', 'raspberry-pi'];
 
 export function BoardSelect() {
   const { t } = useTranslation();
@@ -18,10 +20,14 @@ export function BoardSelect() {
         title={t('toolbar.board')}
         onChange={(event) => setBoard(event.target.value)}
       >
-        {BOARDS.map((board) => (
-          <option key={board.id} value={board.id}>
-            {board.name}
-          </option>
+        {FAMILIES.map((family) => (
+          <optgroup key={family} label={t(`boardFamily.${family}`)}>
+            {BOARDS.filter((board) => board.family === family).map((board) => (
+              <option key={board.id} value={board.id}>
+                {board.name}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </select>
     </label>

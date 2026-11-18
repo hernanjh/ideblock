@@ -1,6 +1,7 @@
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { BOARD_INDEX_URLS } from '@ideblock/boards';
 
 export interface RunResult {
   code: number;
@@ -15,9 +16,7 @@ export interface ArduinoCliPaths {
 }
 
 /** Board package indexes needed beyond the default one. */
-export const ADDITIONAL_INDEX_URLS = [
-  'https://espressif.github.io/arduino-esp32/package_esp32_index.json',
-];
+export const ADDITIONAL_INDEX_URLS = BOARD_INDEX_URLS;
 
 /**
  * The configuration keeps everything inside the app's own folder, so an
