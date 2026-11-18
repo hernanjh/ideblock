@@ -8,9 +8,9 @@ import type { CircuitItem, WiringMode } from '../simulator/circuit';
 import { WokwiElement } from '../simulator/WokwiElement';
 import { BOARD_ORIGIN, WIRE_ROOM, defaultPositions } from './layout';
 import { BoardDrawing, boardLayout, type BoardLayout } from './boards';
-import { BREADBOARD_HOLES, BREADBOARD_SIZE, describeHole } from './breadboard';
+import { BREADBOARD_HOLES, BREADBOARD_SIZE } from './breadboard';
 import { BreadboardDrawing } from './BreadboardDrawing';
-import { legName } from './legs';
+import { describeTerminal } from './terminals';
 import {
   pinSide,
   shapeOf,
@@ -351,21 +351,7 @@ export function CircuitScene({
     setDraft(null);
   };
 
-  const describeTerminal = (id: string): string => {
-    const [owner, part] = [id.slice(0, id.indexOf(':')), id.slice(id.indexOf(':') + 1)];
-    if (owner === 'board')
-      return t('circuit.boardPin', { pin: pinLabel(board, part.split('.')[0]!) });
-    const hole = describeHole(part);
-    if (hole && items.find((item) => item.id === owner)?.type === 'breadboard') {
-      return /^[a-j]$/.test(hole.row)
-        ? t('circuit.hole', { column: hole.column, row: hole.row })
-        : t(hole.row.endsWith('p') ? 'circuit.railPlus' : 'circuit.railMinus');
-    }
-    return t('circuit.leg', {
-      name: names[owner] ?? owner,
-      leg: legName(t, items.find((item) => item.id === owner)?.type ?? '', part),
-    });
-  };
+  const describe = (id: string): string => describeTerminal(t, board, items, names, id);
 
   const highlighted = useMemo(() => {
     const focus = draft?.from ?? hovered;
@@ -682,7 +668,7 @@ export function CircuitScene({
             role="tooltip"
             style={{ left: hoveredAt.x + 12, top: hoveredAt.y + 10 }}
           >
-            {describeTerminal(hovered)}
+            {describe(hovered)}
           </div>
         )}
       </div>

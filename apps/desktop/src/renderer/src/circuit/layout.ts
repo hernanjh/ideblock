@@ -1,6 +1,6 @@
 import type { BoardDefinition } from '@ideblock/boards';
 import type { CircuitItem } from '../simulator/circuit';
-import { boardLayout } from './boards';
+import { boardLayout } from './board-layout';
 import type { Point } from './geometry';
 
 export const BOARD_ORIGIN: Point = { x: 60, y: 200 };
