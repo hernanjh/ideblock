@@ -19,7 +19,7 @@ import {
   type ComponentShape,
   type Point,
 } from './geometry';
-import { analyse, visibleParts } from './model';
+import { BOARD_LED_ID, analyse, visibleParts } from './model';
 import { snapToHoles, type CircuitAnalysis, type CircuitWire } from './netlist';
 
 const MARGIN = 40;
@@ -428,7 +428,12 @@ export function CircuitScene({
         }}
       >
         <div className="scene__board" style={{ left: BOARD_ORIGIN.x, top: BOARD_ORIGIN.y }}>
-          <BoardDrawing board={board} caption={t('circuit.compatibleBoard')} powered={running} />
+          <BoardDrawing
+            board={board}
+            caption={t('circuit.compatibleBoard')}
+            powered={running}
+            builtinLed={running ? Number(states[BOARD_LED_ID]?.['brightness'] ?? 0) : 0}
+          />
         </div>
 
         {placed.map(({ item, position, shape }) => {

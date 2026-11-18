@@ -72,7 +72,10 @@ export function circuitAnalysis(
   return analyse(board, items, defaultPositions(items, board), circuitWires(circuit));
 }
 
-/** Components handed to the simulator, with the pins their wiring reaches. */
+/** Id of the LED soldered on the board, simulated alongside the circuit. */
+export const BOARD_LED_ID = '__board-led';
+
+/** Components wired in the circuit, with the pins their wiring reaches. */
 export function simulatedComponents(
   circuit: CircuitDocument,
   board: BoardDefinition,
@@ -80,6 +83,13 @@ export function simulatedComponents(
   const analysis = circuitAnalysis(circuit, board);
   if (analysis) return analysis.components;
   return circuitComponents(circuit).filter((item) => findComponent(item.type));
+}
+
+/** What the simulator runs: the circuit plus the board's own LED, like on real hardware. */
+export function simulationParts(circuit: CircuitDocument, board: BoardDefinition): CircuitItem[] {
+  const parts = simulatedComponents(circuit, board);
+  if (!board.builtinLedPin) return parts;
+  return [...parts, { id: BOARD_LED_ID, type: 'led', pins: { anode: board.builtinLedPin } }];
 }
 
 /** Removes a part and every wire attached to it. */

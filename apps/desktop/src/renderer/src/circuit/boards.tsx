@@ -167,14 +167,47 @@ interface BoardDrawingProps {
   caption: string;
   /** Lit while the program runs, like the power LED on a real board. */
   powered: boolean;
+  /** Brightness of the LED wired to the built-in LED pin, from 0 to 1. */
+  builtinLed?: number;
 }
 
 /** Generic board drawings: they show where each pin is but carry no brand marks. */
-export function BoardDrawing({ board, caption, powered }: BoardDrawingProps) {
-  if (board.drawing === 'esp32') {
-    return <Esp32Drawing board={board} caption={caption} powered={powered} />;
-  }
-  return <UnoDrawing board={board} caption={caption} powered={powered} />;
+export function BoardDrawing(props: BoardDrawingProps) {
+  if (props.board.drawing === 'esp32') return <Esp32Drawing {...props} />;
+  return <UnoDrawing {...props} />;
+}
+
+/** The small LED most boards carry on one pin, labelled L on Uno-style boards. */
+function BuiltinLed({
+  x,
+  y,
+  brightness,
+  colour,
+}: {
+  x: number;
+  y: number;
+  brightness: number;
+  colour: string;
+}) {
+  return (
+    <g>
+      {brightness > 0 && (
+        <circle cx={x + 7} cy={y + 4} r="9" fill={colour} opacity={0.35 * brightness} />
+      )}
+      <rect
+        x={x}
+        y={y}
+        width="14"
+        height="8"
+        rx="2"
+        fill={brightness > 0 ? colour : '#5b4a2a'}
+        opacity={brightness > 0 ? 0.5 + brightness / 2 : 1}
+      />
+      <text x={x + 18} y={y + 8} fill="#fff" fontSize="9" fontWeight="700">
+        L
+      </text>
+    </g>
+  );
 }
 
 const shortName = (board: BoardDefinition): string =>
@@ -183,7 +216,7 @@ const shortName = (board: BoardDefinition): string =>
     .replace(/\s*\(.*\)$/, '')
     .toUpperCase();
 
-function UnoDrawing({ board, caption, powered }: BoardDrawingProps) {
+function UnoDrawing({ board, caption, powered, builtinLed = 0 }: BoardDrawingProps) {
   const layout = unoLayout(board);
   return (
     <svg width={layout.width} height={layout.height} className="board-drawing" aria-hidden="true">
@@ -243,12 +276,13 @@ function UnoDrawing({ board, caption, powered }: BoardDrawingProps) {
         {shortName(board)}
       </text>
       <rect x="66" y="70" width="14" height="8" rx="2" fill={powered ? '#7cfc00' : '#3c5a3c'} />
+      <BuiltinLed x={66} y={100} brightness={builtinLed} colour="#ffb300" />
       <rect x="58" y="20" width="22" height="16" rx="3" fill="#d23" />
     </svg>
   );
 }
 
-function Esp32Drawing({ caption, powered }: BoardDrawingProps) {
+function Esp32Drawing({ caption, powered, builtinLed = 0 }: BoardDrawingProps) {
   const layout = esp32Layout();
   return (
     <svg width={layout.width} height={layout.height} className="board-drawing" aria-hidden="true">
@@ -276,6 +310,7 @@ function Esp32Drawing({ caption, powered }: BoardDrawingProps) {
       ))}
       <rect x="70" y="262" width="50" height="32" rx="6" fill="#c9ced6" stroke="#8b939f" />
       <rect x="60" y="140" width="14" height="8" rx="2" fill={powered ? '#ff5252' : '#5a2a2a'} />
+      <BuiltinLed x={110} y={140} brightness={builtinLed} colour="#4fa3ff" />
     </svg>
   );
 }

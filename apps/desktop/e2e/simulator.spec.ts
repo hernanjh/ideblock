@@ -30,16 +30,6 @@ test.describe('circuit', () => {
 
     await window.getByTestId('rail-program').click();
     await expect(window.getByTestId('component-led1')).toBeVisible();
-
-    // A part wired to another pin is moved instead of added twice.
-    await window.getByTestId('file-examples').click();
-    await window.getByTestId('example-NeoPixelChase').click();
-    await window.getByTestId('rail-circuit').click();
-    await window.getByTestId('scene-item-ring1').click();
-    await window.getByTestId('pin-ring1-din').selectOption('7');
-    await window.getByTestId('rail-program').click();
-    await window.getByTestId('mismatch-move-neopixel-ring').click();
-    await expect(window.getByTestId('mismatches')).toHaveCount(0);
   });
 
   test('moves components by dragging them', async ({ launchApp }) => {
@@ -70,6 +60,17 @@ test.describe('circuit', () => {
     await window.getByTestId('mismatch-add-led').click();
     await expect(window.getByTestId('mismatches')).toHaveCount(0);
     await expect(window.getByTestId('component-led1')).toBeVisible();
+
+    // A part wired to another pin is moved instead of added twice.
+    await window.getByTestId('file-examples').click();
+    await window.getByTestId('example-NeoPixelChase').click();
+    await window.getByTestId('confirm-discard').click();
+    await window.getByTestId('rail-circuit').click();
+    await window.getByTestId('scene-item-ring1').click();
+    await window.getByTestId('pin-ring1-din').selectOption('7');
+    await window.getByTestId('rail-program').click();
+    await window.getByTestId('mismatch-move-neopixel-ring').click();
+    await expect(window.getByTestId('mismatches')).toHaveCount(0);
   });
 
   test('explains boards that cannot be simulated yet', async ({ launchApp }) => {
