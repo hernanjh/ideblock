@@ -1,0 +1,34 @@
+appId: io.github.hernanjh.ideblock
+productName: IdeBlock
+executableName: ideblock
+copyright: Copyright © 2026 Hernan Hegykozi
+directories:
+  output: release
+  buildResources: build
+files:
+  - out/**
+  - package.json
+extraResources:
+  - from: ../../LICENSE
+    to: LICENSE
+asar: true
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  license: ../../LICENSE
+linux:
+  target: [AppImage, deb]
+  category: Development
+  maintainer: Hernan Hegykozi <hernanjh@gmail.com>
+  synopsis: Program microcontroller boards with blocks or code
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+  category: public.app-category.education

@@ -1,0 +1,44 @@
+{
+  "name": "@ideblock/desktop",
+  "productName": "IdeBlock",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open source IDE for programming Arduino-compatible and ESP32 boards with blocks or code",
+  "license": "GPL-3.0-only",
+  "author": "Hernan Hegykozi <hernanjh@gmail.com>",
+  "homepage": "https://github.com/hernanjh/ideblock",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hernanjh/ideblock.git",
+    "directory": "apps/desktop"
+  },
+  "type": "module",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "package": "electron-vite build && electron-builder --publish never",
+    "package:dir": "electron-vite build && electron-builder --dir --publish never",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test:e2e": "electron-vite build && playwright test"
+  },
+  "devDependencies": {
+    "@fontsource/atkinson-hyperlegible": "5.3.0",
+    "@ideblock/i18n": "0.0.0",
+    "@ideblock/shared": "0.0.0",
+    "@playwright/test": "1.65.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "electron": "45.3.4",
+    "electron-builder": "26.18.0",
+    "electron-vite": "6.0.0",
+    "i18next": "27.1.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-i18next": "18.0.2",
+    "vite": "8.3.8",
+    "zustand": "5.1.0"
+  }
+}
