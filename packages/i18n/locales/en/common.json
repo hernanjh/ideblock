@@ -25,7 +25,6 @@
     "hide": "Hide {{panel}}",
     "close": "Close {{panel}}",
     "resize": "Resize {{panel}}",
-    "comingSoon": "Coming soon",
     "allHidden": "All panels are hidden. Choose what you want to see."
   },
   "settings": {
@@ -214,5 +213,40 @@
     "error": "The serial port closed:",
     "fromSimulator": "From the simulator",
     "plotHint": "Print numbers, one line at a time, to see them in the graph. For example: 12 34 or temp:21.5"
+  },
+  "simulator": {
+    "start": "Simulate",
+    "stop": "Stop",
+    "restart": "Restart the simulation",
+    "preparing": "Preparing…",
+    "unsupported": "The simulator does not support {{board}} yet. Choose Arduino Uno or Nano to simulate.",
+    "crashed": "The simulation stopped because of an unexpected error. Press Simulate to try again.",
+    "time": "Time: {{seconds}} s",
+    "slow": "Running slower than real time",
+    "outdated": "The program changed. Restart to try it.",
+    "empty": "Add the components of your circuit to see them working.",
+    "add": "Add a component",
+    "remove": "Remove {{name}}",
+    "press": "Hold to press",
+    "distance": "Distance: {{value}} cm",
+    "level": {
+      "potentiometer": "Knob position: {{value}}",
+      "photoresistor": "Light level: {{value}}"
+    }
+  },
+  "components": {
+    "led": "LED",
+    "pushbutton": "Button",
+    "potentiometer": "Potentiometer",
+    "photoresistor": "Light sensor (LDR)",
+    "servo": "Servo motor",
+    "buzzer": "Buzzer",
+    "hc-sr04": "Ultrasonic sensor"
+  },
+  "componentPins": {
+    "anode": "Pin",
+    "signal": "Pin",
+    "trig": "Trig pin",
+    "echo": "Echo pin"
   }
 }

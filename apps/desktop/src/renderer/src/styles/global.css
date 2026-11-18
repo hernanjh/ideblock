@@ -779,3 +779,89 @@ button:disabled {
   flex: 1 1 0;
   min-height: 0;
 }
+
+.simulator {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.simulator__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.simulator__components {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.component-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.component-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.component-card__pin,
+.component-card__slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 0.875rem;
+}
+
+.wokwi-host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 5rem;
+  /* The drawings are light; a fixed light card keeps them visible in every theme. */
+  background: #f3f4f7;
+  border-radius: var(--radius);
+  padding: var(--space-2);
+}
+
+.press-button[aria-pressed='true'] {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.simulator__add {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.simulator__catalog {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blocklyHighlightedConnectionPath,
+.blocklySelected > .blocklyPath {
+  stroke-width: 3px;
+}

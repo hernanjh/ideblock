@@ -12,6 +12,7 @@ import * as Blockly from 'blockly/core';
 import { useEffect, useRef } from 'react';
 import { useProjectStore } from '../state/project';
 import { useSettingsStore } from '../state/settings';
+import { useSimulationStore } from '../state/simulation';
 import { blocklyTheme, currentAppearance } from './theme';
 
 const MEDIA_PATH = './blockly-media/';
@@ -33,6 +34,7 @@ export function BlockEditor({ language }: BlockEditorProps) {
   const fontScale = useSettingsStore((state) => state.settings.fontScale);
   const blockLevel = useSettingsStore((state) => state.settings.blockLevel);
   const boardId = useProjectStore((state) => state.boardId);
+  const activeBlockId = useSimulationStore((state) => state.activeBlockId);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -61,6 +63,9 @@ export function BlockEditor({ language }: BlockEditorProps) {
     } finally {
       Blockly.Events.enable();
     }
+    // Files may omit block ids; keeping the generated ones lets the simulator
+    // refer to the same blocks shown on screen.
+    useProjectStore.getState().syncWorkspaceState(Blockly.serialization.workspaces.save(workspace));
 
     let timer: ReturnType<typeof setTimeout> | undefined;
     const regenerate = (): void => {
@@ -110,6 +115,12 @@ export function BlockEditor({ language }: BlockEditorProps) {
     setActiveBoard(board);
     useProjectStore.getState().setSketch(createSketchGenerator(board).generate(workspace));
   }, [boardId]);
+
+  useEffect(() => {
+    const workspace = workspaceRef.current;
+    // Shows which block the simulated board is running right now.
+    workspace?.highlightBlock(activeBlockId);
+  }, [activeBlockId]);
 
   return <div ref={containerRef} className="block-editor" data-testid="block-editor" />;
 }

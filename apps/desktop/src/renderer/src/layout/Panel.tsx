@@ -48,8 +48,3 @@ export function Panel({ id, title, icon, actions, onClose, style, children }: Pa
     </section>
   );
 }
-
-export function PanelPlaceholder() {
-  const { t } = useTranslation();
-  return <p className="panel__placeholder">{t('panels.comingSoon')}</p>;
-}

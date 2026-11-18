@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePortsStore } from '../state/ports';
 import { BAUD_RATES, useSerialStore } from '../state/serial';
+import { useSimulationStore } from '../state/simulation';
 import { SerialPlotter } from './SerialPlotter';
 
 type View = 'text' | 'plot';
@@ -36,7 +37,8 @@ export function SerialMonitor() {
 
   const send = (): void => {
     if (!message || (!open && !fromSimulator)) return;
-    void window.ideblock.invoke('serial:write', `${message}\n`);
+    if (fromSimulator) useSimulationStore.getState().sendSerial(`${message}\n`);
+    else void window.ideblock.invoke('serial:write', `${message}\n`);
     setMessage('');
   };
 

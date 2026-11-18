@@ -8,11 +8,12 @@ import { CodeModeOverlay } from './blocks/CodeModeOverlay';
 import { CodeEditor } from './code/CodeEditor';
 import { ConsolePanel } from './console/ConsolePanel';
 import { SerialMonitor } from './serial/SerialMonitor';
+import { SimulatorControls } from './simulator/SimulatorControls';
+import { SimulatorPanel } from './simulator/SimulatorPanel';
 import { Toolbar } from './components/Toolbar';
 import { SaveStatus } from './files/SaveStatus';
 import { useAutosave } from './hooks/useAutosave';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { PanelPlaceholder } from './layout/Panel';
 import { Workspace } from './layout/Workspace';
 import { useProjectStore } from './state/project';
 import { useSettingsStore } from './state/settings';
@@ -51,7 +52,8 @@ export function App() {
         }
         blocksActions={<BlockLevelToggle />}
         code={<CodeEditor />}
-        simulator={<PanelPlaceholder />}
+        simulator={<SimulatorPanel />}
+        simulatorActions={<SimulatorControls />}
         console={<ConsolePanel serial={<SerialMonitor />} />}
       />
       <footer className="status-bar">

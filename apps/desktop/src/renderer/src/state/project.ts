@@ -57,6 +57,8 @@ interface ProjectState {
   setName: (name: string) => void;
   setBoard: (boardId: string) => void;
   setWorkspaceState: (state: WorkspaceState) => void;
+  /** Stores the workspace as loaded, with block ids, without counting it as an edit. */
+  syncWorkspaceState: (state: WorkspaceState) => void;
   setSketch: (sketch: SketchResult) => void;
   setCode: (code: string) => void;
   switchToCode: () => void;
@@ -66,6 +68,7 @@ interface ProjectState {
   markSaved: (revision: number, path: string | null) => void;
   setSaveStatus: (status: SaveStatus) => void;
   revealLine: (line: number, column: number) => void;
+  setCircuit: (circuit: CircuitDocument) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => {
@@ -114,6 +117,7 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     setName: (name) => change({ name }),
     setBoard: (boardId) => change({ boardId }),
     setWorkspaceState: (workspaceState) => change({ workspaceState }),
+    syncWorkspaceState: (workspaceState) => set({ workspaceState }),
     setSketch: (sketch) => set({ sketch }),
     setCode: (code) => change({ code }),
     switchToCode: () => change({ mode: 'code', code: get().sketch?.code ?? '' }),
@@ -127,6 +131,7 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     markSaved: (revision, path) =>
       set({ savedRevision: revision, path, saveStatus: path ? 'saved' : 'idle' }),
     setSaveStatus: (saveStatus) => set({ saveStatus }),
+    setCircuit: (circuit) => change({ circuit }),
     revealLine: (line, column) =>
       set((state) => ({ reveal: { line, column, id: (state.reveal?.id ?? 0) + 1 } })),
   };

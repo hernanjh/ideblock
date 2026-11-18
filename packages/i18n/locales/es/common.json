@@ -25,7 +25,6 @@
     "hide": "Ocultar {{panel}}",
     "close": "Cerrar {{panel}}",
     "resize": "Cambiar el tamaño de {{panel}}",
-    "comingSoon": "Próximamente",
     "allHidden": "Todos los paneles están ocultos. Elegí qué querés ver."
   },
   "settings": {
@@ -214,5 +213,40 @@
     "error": "Se cerró el puerto serie:",
     "fromSimulator": "Desde el simulador",
     "plotHint": "Mostrá números, uno por línea, para verlos en el gráfico. Por ejemplo: 12 34 o temp:21.5"
+  },
+  "simulator": {
+    "start": "Simular",
+    "stop": "Detener",
+    "restart": "Reiniciar la simulación",
+    "preparing": "Preparando…",
+    "unsupported": "El simulador todavía no funciona con {{board}}. Elegí Arduino Uno o Nano para simular.",
+    "crashed": "La simulación se detuvo por un error inesperado. Tocá Simular para probar de nuevo.",
+    "time": "Tiempo: {{seconds}} s",
+    "slow": "Va más lento que el tiempo real",
+    "outdated": "El programa cambió. Reiniciá para probarlo.",
+    "empty": "Agregá los componentes de tu circuito para verlos funcionar.",
+    "add": "Agregar un componente",
+    "remove": "Quitar {{name}}",
+    "press": "Mantené para presionar",
+    "distance": "Distancia: {{value}} cm",
+    "level": {
+      "potentiometer": "Posición de la perilla: {{value}}",
+      "photoresistor": "Nivel de luz: {{value}}"
+    }
+  },
+  "components": {
+    "led": "LED",
+    "pushbutton": "Botón",
+    "potentiometer": "Potenciómetro",
+    "photoresistor": "Sensor de luz (LDR)",
+    "servo": "Servomotor",
+    "buzzer": "Buzzer",
+    "hc-sr04": "Sensor ultrasónico"
+  },
+  "componentPins": {
+    "anode": "Pin",
+    "signal": "Pin",
+    "trig": "Pin trig",
+    "echo": "Pin echo"
   }
 }
