@@ -23,6 +23,15 @@ export interface ComponentShape {
   supply: string[];
   /** Draw a series resistor on each signal wire, as LEDs need one. */
   resistors?: boolean;
+  /** Legs joined inside the part, such as both legs on one side of a push button. */
+  bridges?: string[][];
+  /** Signal and ground legs work either way round, as in a push button. */
+  swappable?: boolean;
+  /**
+   * Quarter turns applied to the element. `width`, `height` and `pins` already
+   * describe the turned part; `element` keeps the element's own size.
+   */
+  rotation?: { turns: 1; element: { width: number; height: number } };
 }
 
 const MM = 3.7795;
@@ -81,13 +90,34 @@ export const SHAPES: Record<string, ComponentShape> = {
     ground: ['GND'],
     supply: ['VCC'],
   },
+  // Turned a quarter so its legs straddle the breadboard gap, like a real one.
   pushbutton: {
     tag: 'wokwi-pushbutton',
-    width: 17.802 * MM,
-    height: 12 * MM,
-    pins: { '1.l': { x: 0, y: 13 }, '2.l': { x: 0, y: 32 } },
+    width: 12 * MM,
+    height: 17.802 * MM,
+    pins: {
+      '1.l': { x: 12 * MM - 13, y: 0 },
+      '2.l': { x: 12 * MM - 32, y: 0 },
+      '1.r': { x: 12 * MM - 13, y: 67 },
+      '2.r': { x: 12 * MM - 32, y: 67 },
+    },
     signals: { signal: '1.l' },
     ground: ['2.l'],
+    supply: [],
+    bridges: [
+      ['1.l', '1.r'],
+      ['2.l', '2.r'],
+    ],
+    swappable: true,
+    rotation: { turns: 1, element: { width: 17.802 * MM, height: 12 * MM } },
+  },
+  resistor: {
+    tag: 'wokwi-resistor',
+    width: 15.645 * MM,
+    height: 3 * MM,
+    pins: { '1': { x: 0, y: 5.65 }, '2': { x: 58.8, y: 5.65 } },
+    signals: {},
+    ground: [],
     supply: [],
   },
   potentiometer: {
@@ -125,6 +155,7 @@ export const SHAPES: Record<string, ComponentShape> = {
     signals: { signal: '1' },
     ground: ['2'],
     supply: [],
+    swappable: true,
   },
   'hc-sr04': {
     tag: 'wokwi-hc-sr04',
