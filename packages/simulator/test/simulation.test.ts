@@ -205,4 +205,36 @@ describe('new components', () => {
     run(simulation, 500);
     expect(simulation.frame().components['led']).toEqual({ brightness: 0 });
   });
+
+  it('shows a rolled number on the 7-segment display', () => {
+    const pins = Object.fromEntries([...'abcdefg'].map((segment, i) => [segment, String(2 + i)]));
+    const simulation = new Simulation(hex('Dice'), [
+      { id: 'display', type: 'seven-segment', pins },
+      { id: 'button', type: 'pushbutton', pins: { signal: '12' } },
+    ]);
+    run(simulation, 200);
+    expect(simulation.frame().components['display']).toEqual({ segments: '00000000' });
+    simulation.input('button', { pressed: true });
+    run(simulation, 200);
+    simulation.input('button', { pressed: false });
+    run(simulation, 400);
+    // Segments a to g of the digits 1 to 6.
+    const digits = ['01100000', '11011010', '11110010', '01100110', '10110110', '10111110'];
+    expect(digits).toContain(simulation.frame().components['display']?.['segments']);
+  });
+
+  it('reads both joystick axes and its button', () => {
+    const simulation = new Simulation(hex('Joystick'), [
+      { id: 'stick', type: 'joystick', pins: { horz: 'A0', vert: 'A1', sel: '2' } },
+      led('13'),
+    ]);
+    simulation.input('stick', { x: 100, y: -100, pressed: true });
+    const lines = run(simulation, 500, 50)
+      .map((frame) => frame.serial)
+      .join('')
+      .split('\r\n')
+      .filter((line) => line !== '');
+    expect(lines.at(-1)).toBe('100 -100');
+    expect(simulation.frame().components['led']).toEqual({ brightness: 1 });
+  });
 });

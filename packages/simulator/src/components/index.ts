@@ -1,11 +1,13 @@
 import type { ComponentDefinition } from '../component';
 import { photoresistor, potentiometer } from './analog-input';
 import { buzzer } from './buzzer';
+import { joystick } from './joystick';
 import { lcd1602 } from './lcd';
 import { led, rgbLed } from './led';
 import { neopixelRing } from './neopixel';
 import { pushbutton } from './pushbutton';
 import { servo } from './servo';
+import { sevenSegment } from './seven-segment';
 import { pirSensor, slideSwitch, tiltSwitch } from './switches';
 import { temperatureSensor } from './temperature';
 import { ultrasonic } from './ultrasonic';
@@ -21,10 +23,12 @@ export const COMPONENTS: readonly ComponentDefinition[] = [
   temperatureSensor,
   pirSensor,
   tiltSwitch,
+  joystick,
   servo,
   buzzer,
   ultrasonic,
   lcd1602,
+  sevenSegment,
   neopixelRing,
 ];
 
