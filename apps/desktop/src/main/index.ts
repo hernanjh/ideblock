@@ -1,11 +1,28 @@
 import { join } from 'node:path';
 import { app, BrowserWindow } from 'electron';
+import { z } from 'zod';
 import { broadcast, registerInvokeHandlers } from './ipc';
 import { installApplicationMenu } from './menu';
 import { examplesDirectory, projectHandlers } from './project-ipc';
 import { ProjectService } from './project-service';
 import { SettingsStore } from './settings-store';
+import { ArduinoCli } from './toolchain/arduino-cli';
+import { ToolchainService } from './toolchain/toolchain-service';
 import { createMainWindow } from './window';
+
+const compileRequestSchema = z.object({
+  code: z.string(),
+  boardId: z.string(),
+  sketchName: z.string(),
+  libraries: z.array(z.string()),
+});
+
+function arduinoCliBinary(): string {
+  const name = process.platform === 'win32' ? 'arduino-cli.exe' : 'arduino-cli';
+  return app.isPackaged
+    ? join(process.resourcesPath, 'bin', name)
+    : join(app.getAppPath(), 'resources', 'bin', name);
+}
 
 const isDev = !app.isPackaged && Boolean(process.env['ELECTRON_RENDERER_URL']);
 
@@ -32,6 +49,17 @@ if (!app.requestSingleInstanceLock()) {
     const settings = new SettingsStore(join(app.getPath('userData'), 'settings.json'));
     await settings.load();
     const projects = new ProjectService(app.getPath('userData'), examplesDirectory());
+    const cli = new ArduinoCli({
+      binary: arduinoCliBinary(),
+      // Tests and classroom setups can share one folder of installed cores.
+      dataRoot:
+        process.env['IDEBLOCK_ARDUINO_DATA_DIR'] ?? join(app.getPath('userData'), 'arduino'),
+    });
+    const toolchain = new ToolchainService(
+      cli,
+      join(app.getPath('userData'), 'build'),
+      (progress) => broadcast('toolchain:progress', progress),
+    );
 
     registerInvokeHandlers({
       'app:get-info': () => ({
@@ -48,6 +76,8 @@ if (!app.requestSingleInstanceLock()) {
         return updated;
       },
       ...projectHandlers(projects),
+      'toolchain:compile': (_event, request) =>
+        toolchain.compile(compileRequestSchema.parse(request)),
     });
 
     installApplicationMenu();
