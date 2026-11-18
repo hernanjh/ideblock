@@ -4,12 +4,16 @@
     {
       "id": "ldr1",
       "type": "photoresistor",
-      "pin": "A0"
+      "pins": {
+        "signal": "A0"
+      }
     },
     {
       "id": "led1",
       "type": "led",
-      "pin": "13"
+      "pins": {
+        "anode": "13"
+      }
     }
   ],
   "connections": []

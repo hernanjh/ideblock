@@ -4,12 +4,16 @@
     {
       "id": "button1",
       "type": "pushbutton",
-      "pin": "2"
+      "pins": {
+        "signal": "2"
+      }
     },
     {
       "id": "led1",
       "type": "led",
-      "pin": "13"
+      "pins": {
+        "anode": "13"
+      }
     }
   ],
   "connections": []

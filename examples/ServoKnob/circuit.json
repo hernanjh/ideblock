@@ -4,12 +4,16 @@
     {
       "id": "pot1",
       "type": "potentiometer",
-      "pin": "A0"
+      "pins": {
+        "signal": "A0"
+      }
     },
     {
       "id": "servo1",
       "type": "servo",
-      "pin": "9"
+      "pins": {
+        "signal": "9"
+      }
     }
   ],
   "connections": []

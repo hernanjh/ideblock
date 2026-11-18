@@ -4,9 +4,9 @@
     {
       "id": "led1",
       "type": "led",
-      "pin": "13",
-      "x": 200,
-      "y": 60
+      "pins": {
+        "anode": "13"
+      }
     }
   ],
   "connections": []

@@ -4,7 +4,9 @@
     {
       "id": "buzzer1",
       "type": "buzzer",
-      "pin": "8"
+      "pins": {
+        "signal": "8"
+      }
     }
   ],
   "connections": []

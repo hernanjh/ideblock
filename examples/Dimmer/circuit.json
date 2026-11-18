@@ -4,12 +4,16 @@
     {
       "id": "pot1",
       "type": "potentiometer",
-      "pin": "A0"
+      "pins": {
+        "signal": "A0"
+      }
     },
     {
       "id": "led1",
       "type": "led",
-      "pin": "9"
+      "pins": {
+        "anode": "9"
+      }
     }
   ],
   "connections": []

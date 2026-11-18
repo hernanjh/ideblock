@@ -4,13 +4,17 @@
     {
       "id": "sonar1",
       "type": "hc-sr04",
-      "trigPin": "9",
-      "echoPin": "10"
+      "pins": {
+        "trig": "9",
+        "echo": "10"
+      }
     },
     {
       "id": "buzzer1",
       "type": "buzzer",
-      "pin": "8"
+      "pins": {
+        "signal": "8"
+      }
     }
   ],
   "connections": []

@@ -4,20 +4,32 @@
     {
       "id": "red",
       "type": "led",
-      "pin": "10",
-      "color": "red"
+      "pins": {
+        "anode": "10"
+      },
+      "props": {
+        "color": "red"
+      }
     },
     {
       "id": "yellow",
       "type": "led",
-      "pin": "9",
-      "color": "yellow"
+      "pins": {
+        "anode": "9"
+      },
+      "props": {
+        "color": "yellow"
+      }
     },
     {
       "id": "green",
       "type": "led",
-      "pin": "8",
-      "color": "green"
+      "pins": {
+        "anode": "8"
+      },
+      "props": {
+        "color": "green"
+      }
     }
   ],
   "connections": []
