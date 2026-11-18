@@ -4,9 +4,11 @@ import { COMPONENTS, findComponent } from '@ideblock/simulator';
 import {
   CircleCheck,
   Maximize,
+  Redo2,
   Search,
   Trash2,
   TriangleAlert,
+  Undo2,
   Waypoints,
   X,
   ZoomIn,
@@ -61,6 +63,8 @@ export function CircuitView({ console }: { console: ReactNode }) {
   const circuit = useProjectStore((state) => state.circuit);
   const boardId = useProjectStore((state) => state.boardId);
   const setCircuit = useProjectStore((state) => state.setCircuit);
+  const canUndo = useProjectStore((state) => state.circuitPast.length > 0);
+  const canRedo = useProjectStore((state) => state.circuitFuture.length > 0);
   const selected = useUiStore((state) => state.selectedComponent);
   const select = useUiStore((state) => state.selectComponent);
   const consoleVisible = useSettingsStore((state) => state.settings.consoleVisible);
@@ -105,6 +109,23 @@ export function CircuitView({ console }: { console: ReactNode }) {
     setSelectedWire(null);
     setCircuit(next === 'manual' ? toManualWiring(circuit, board) : toAutoWiring(circuit, board));
   };
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent): void => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+      if (!(event.ctrlKey || event.metaKey)) return;
+      const key = event.key.toLowerCase();
+      const project = useProjectStore.getState();
+      if (key === 'z' && !event.shiftKey) project.undoCircuit();
+      else if (key === 'y' || (key === 'z' && event.shiftKey)) project.redoCircuit();
+      else return;
+      event.preventDefault();
+      setSelectedWire(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   useEffect(() => {
     if (!selectedWire) return;
@@ -183,6 +204,28 @@ export function CircuitView({ console }: { console: ReactNode }) {
                 ))}
               </div>
             )}
+            <button
+              type="button"
+              className="icon-button icon-button--framed"
+              aria-label={t('circuit.undo')}
+              title={t('circuit.undo')}
+              disabled={!canUndo || running}
+              data-testid="circuit-undo"
+              onClick={() => useProjectStore.getState().undoCircuit()}
+            >
+              <Undo2 aria-hidden="true" size="1.1em" />
+            </button>
+            <button
+              type="button"
+              className="icon-button icon-button--framed"
+              aria-label={t('circuit.redo')}
+              title={t('circuit.redo')}
+              disabled={!canRedo || running}
+              data-testid="circuit-redo"
+              onClick={() => useProjectStore.getState().redoCircuit()}
+            >
+              <Redo2 aria-hidden="true" size="1.1em" />
+            </button>
             <button
               type="button"
               className="icon-button icon-button--framed"
@@ -285,8 +328,8 @@ export function CircuitView({ console }: { console: ReactNode }) {
         name={selectedItem ? (names[selectedItem.id] ?? '') : ''}
         onClose={() => select(null)}
         onRemove={remove}
-        onChange={(change) =>
-          selectedItem && setCircuit(updateComponent(circuit, selectedItem.id, change))
+        onChange={(change, mergeKey) =>
+          selectedItem && setCircuit(updateComponent(circuit, selectedItem.id, change), mergeKey)
         }
         boardName={board.name}
         pinOptions={(kind) => [...pinsFor(board, kind)]}
@@ -366,7 +409,7 @@ interface PropertiesProps {
   boardName: string;
   supplyLabel: string;
   pinOptions: (kind: PinKind) => string[];
-  onChange: (change: (item: CircuitItem) => CircuitItem) => void;
+  onChange: (change: (item: CircuitItem) => CircuitItem, mergeKey?: string) => void;
   onRemove: (id: string) => void;
   onClose: () => void;
   /** Wiring analysis with hand wiring, null with automatic wiring. */
@@ -501,10 +544,13 @@ function Properties({
             placeholder={name}
             data-testid="property-name"
             onChange={(event) =>
-              onChange((current) => ({
-                ...current,
-                props: { ...current.props, name: event.target.value },
-              }))
+              onChange(
+                (current) => ({
+                  ...current,
+                  props: { ...current.props, name: event.target.value },
+                }),
+                `name:${item.id}`,
+              )
             }
           />
         </label>

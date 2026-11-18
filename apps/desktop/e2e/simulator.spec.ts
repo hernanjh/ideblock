@@ -32,6 +32,27 @@ test.describe('circuit', () => {
     await expect(window.getByTestId('component-led1')).toBeVisible();
   });
 
+  test('undoes and redoes circuit changes', async ({ launchApp }) => {
+    const { window } = await launchApp();
+    await window.getByTestId('rail-circuit').click();
+    await expect(window.getByTestId('circuit-undo')).toBeDisabled();
+    await window.getByTestId('add-led').click();
+    await window.getByTestId('add-buzzer').click();
+    await expect(window.getByTestId('scene-item-buzzer1')).toBeVisible();
+
+    await window.getByTestId('circuit-undo').click();
+    await expect(window.getByTestId('scene-item-buzzer1')).toHaveCount(0);
+    await expect(window.getByTestId('scene-item-led1')).toBeVisible();
+    await window.keyboard.press('Control+z');
+    await expect(window.getByTestId('scene-item-led1')).toHaveCount(0);
+
+    await window.getByTestId('circuit-redo').click();
+    await expect(window.getByTestId('scene-item-led1')).toBeVisible();
+    await window.keyboard.press('Control+y');
+    await expect(window.getByTestId('scene-item-buzzer1')).toBeVisible();
+    await expect(window.getByTestId('circuit-redo')).toBeDisabled();
+  });
+
   test('moves components by dragging them', async ({ launchApp }) => {
     const { window } = await launchApp();
     await window.getByTestId('rail-circuit').click();

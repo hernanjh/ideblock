@@ -401,7 +401,9 @@
       "short": "Short circuit! {{pins}} are joined directly."
     },
     "ohms": "{{value}} Ω",
-    "fixedBus": "SDA and SCL form the I2C bus: on {{board}} they always use the same pins, so they cannot be chosen."
+    "fixedBus": "SDA and SCL form the I2C bus: on {{board}} they always use the same pins, so they cannot be chosen.",
+    "undo": "Undo (Ctrl+Z)",
+    "redo": "Redo (Ctrl+Y)"
   },
   "colors": {
     "red": "Red",

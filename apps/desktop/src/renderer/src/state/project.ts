@@ -36,6 +36,9 @@ interface ProjectState {
   /** Hand-written code, used in "code" mode. */
   code: string;
   circuit: CircuitDocument;
+  /** Earlier circuits for undo, oldest first, and undone ones for redo. */
+  circuitPast: CircuitDocument[];
+  circuitFuture: CircuitDocument[];
   /** Fields from ideblock.json this version does not use, kept on save. */
   extraManifest: Record<string, unknown>;
   /** Project folder; null until the project is saved somewhere. */
@@ -56,6 +59,8 @@ interface ProjectState {
   load: (project: ProjectDocument, path: string | null) => void;
   newProject: (name: string) => void;
   setName: (name: string) => void;
+  undoCircuit: () => void;
+  redoCircuit: () => void;
   setBoard: (boardId: string) => void;
   setWorkspaceState: (state: WorkspaceState) => void;
   /** Stores the workspace as loaded, with block ids, without counting it as an edit. */
@@ -69,8 +74,14 @@ interface ProjectState {
   markSaved: (revision: number, path: string | null) => void;
   setSaveStatus: (status: SaveStatus) => void;
   revealLine: (line: number, column: number) => void;
-  setCircuit: (circuit: CircuitDocument) => void;
+  /** `mergeKey` groups consecutive edits of one field into a single undo step. */
+  setCircuit: (circuit: CircuitDocument, mergeKey?: string) => void;
 }
+
+const HISTORY_LIMIT = 100;
+const MERGE_MS = 1500;
+let lastCircuitChange = 0;
+let lastMergeKey: string | undefined;
 
 export const useProjectStore = create<ProjectState>((set, get) => {
   const change = (patch: Partial<ProjectState>): void =>
@@ -83,6 +94,8 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     workspaceState: null,
     code: '',
     circuit: EMPTY_CIRCUIT,
+    circuitPast: [],
+    circuitFuture: [],
     extraManifest: {},
     path: null,
     sketch: null,
@@ -103,6 +116,8 @@ export const useProjectStore = create<ProjectState>((set, get) => {
         workspaceState: project.blocks,
         code: mode === 'code' ? project.code : '',
         circuit: project.circuit,
+        circuitPast: [],
+        circuitFuture: [],
         extraManifest: extra,
         path,
         sketch: null,
@@ -133,7 +148,43 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     markSaved: (revision, path) =>
       set({ savedRevision: revision, path, saveStatus: path ? 'saved' : 'idle' }),
     setSaveStatus: (saveStatus) => set({ saveStatus }),
-    setCircuit: (circuit) => change({ circuit }),
+    setCircuit: (circuit, mergeKey) => {
+      const { circuit: previous, circuitPast } = get();
+      if (circuit === previous) return;
+      // Typing a name changes the circuit on every key; those changes are
+      // undone together when they come one after another.
+      const now = Date.now();
+      const merge =
+        mergeKey !== undefined &&
+        mergeKey === lastMergeKey &&
+        now - lastCircuitChange < MERGE_MS &&
+        circuitPast.length > 0;
+      lastCircuitChange = now;
+      lastMergeKey = mergeKey;
+      change({
+        circuit,
+        circuitPast: merge ? circuitPast : [...circuitPast, previous].slice(-HISTORY_LIMIT),
+        circuitFuture: [],
+      });
+    },
+    undoCircuit: () => {
+      const { circuit, circuitPast, circuitFuture } = get();
+      const previous = circuitPast.at(-1);
+      if (!previous) return;
+      lastCircuitChange = 0;
+      change({
+        circuit: previous,
+        circuitPast: circuitPast.slice(0, -1),
+        circuitFuture: [circuit, ...circuitFuture],
+      });
+    },
+    redoCircuit: () => {
+      const { circuit, circuitPast, circuitFuture } = get();
+      const [next, ...rest] = circuitFuture;
+      if (!next) return;
+      lastCircuitChange = 0;
+      change({ circuit: next, circuitPast: [...circuitPast, circuit], circuitFuture: rest });
+    },
     revealLine: (line, column) =>
       set((state) => ({ reveal: { line, column, id: (state.reveal?.id ?? 0) + 1 } })),
   };
