@@ -24,6 +24,23 @@ describe('project files', () => {
     expect(filesToProject(files, 'Traffic_light')).toEqual(project);
   });
 
+  it('keeps hand wiring: the mode, positions, breadboards and wires', () => {
+    const wired = {
+      ...project,
+      circuit: {
+        formatVersion: 1,
+        wiring: 'manual',
+        components: [
+          { id: 'breadboard1', type: 'breadboard', pins: {}, x: 500, y: 200 },
+          { id: 'led1', type: 'led', pins: { anode: '13' }, x: 520.4, y: 210 },
+          { id: 'resistor1', type: 'resistor', pins: {} },
+        ],
+        connections: [{ id: 'wire1', from: 'board:13', to: 'breadboard1:a10', color: '#1e88e5' }],
+      },
+    };
+    expect(filesToProject(projectToFiles(wired, 'Wired'), 'Wired')).toEqual(wired);
+  });
+
   it('writes readable, diff-friendly JSON', () => {
     const files = projectToFiles(project, 'Traffic_light');
     expect(files[MANIFEST_FILE]).toBe(
