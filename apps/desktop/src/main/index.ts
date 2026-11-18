@@ -113,6 +113,7 @@ if (!app.requestSingleInstanceLock()) {
       'serial:open': (_event, request) => serial.open(serialOpenSchema.parse(request)),
       'serial:close': () => serial.close(),
       'serial:write': (_event, text) => serial.write(z.string().max(4096).parse(text)),
+      'app:focus-main': () => mainWindow?.focus(),
       'simulator:detach': () => simulatorWindow.open(),
       'simulator:attach': () => simulatorWindow.close(),
       'simulator:sync': (_event, snapshot) => simulatorWindow.sync(snapshot),

@@ -42,6 +42,17 @@ export function runSimulatorAction(action: SimulatorAction): void {
     case 'stop':
       simulation.stop();
       break;
+    case 'pause':
+      simulation.pause();
+      break;
+    case 'resume':
+      simulation.resume();
+      break;
+    case 'openCircuit':
+      useUiStore.getState().setView('circuit');
+      useUiStore.getState().selectComponent(action.componentId);
+      void window.ideblock.invoke('app:focus-main');
+      break;
     case 'input':
       simulation.input(action.id, action.input);
       break;

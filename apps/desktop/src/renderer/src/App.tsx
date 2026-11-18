@@ -3,26 +3,32 @@ import { useTranslation } from 'react-i18next';
 import { BlockEditor } from './blocks/BlockEditor';
 import { BlockLevelToggle } from './blocks/BlockLevelToggle';
 import { CodeModeOverlay } from './blocks/CodeModeOverlay';
+import { CircuitView } from './circuit/CircuitView';
 import { CodeEditor } from './code/CodeEditor';
+import { SettingsDialog } from './components/SettingsDialog';
 import { ConsolePanel } from './console/ConsolePanel';
-import { SerialMonitor } from './serial/SerialMonitor';
-import { LocalSimulator } from './simulator/LocalSimulator';
-import { SimulatorControls } from './simulator/SimulatorControls';
-import { SimulatorPanel } from './simulator/SimulatorPanel';
-import { Toolbar } from './components/Toolbar';
-import { SaveStatus } from './files/SaveStatus';
+import { ProjectCommandsProvider } from './files/ProjectCommands';
 import { useAppearance } from './hooks/useAppearance';
 import { useAutosave } from './hooks/useAutosave';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { Workspace } from './layout/Workspace';
+import { ProgramView } from './layout/ProgramView';
+import { SerialMonitor } from './serial/SerialMonitor';
+import { AboutDialog } from './shell/AboutDialog';
+import { AppHeader } from './shell/AppHeader';
+import { MainToolbar } from './shell/MainToolbar';
+import { SideRail } from './shell/SideRail';
+import { StatusBar } from './shell/StatusBar';
+import { LocalSimulator } from './simulator/LocalSimulator';
+import { SimulatorPanel } from './simulator/SimulatorPanel';
 import { useProjectStore } from './state/project';
-import { useSettingsStore } from './state/settings';
+import { useUiStore } from './state/ui';
 
 export function App() {
   const { t } = useTranslation();
-  const appInfo = useSettingsStore((state) => state.appInfo);
   const loadId = useProjectStore((state) => state.loadId);
-
+  const view = useUiStore((state) => state.view);
+  const dialog = useUiStore((state) => state.dialog);
+  const openDialog = useUiStore((state) => state.openDialog);
   const language = useAppearance();
 
   useEffect(() => {
@@ -32,30 +38,38 @@ export function App() {
   useKeyboardShortcuts();
   useAutosave();
 
+  const consolePanel = <ConsolePanel serial={<SerialMonitor />} />;
+
   return (
-    <div className="app">
-      <Toolbar />
+    <ProjectCommandsProvider>
       <LocalSimulator>
-        <Workspace
-          blocks={
-            <>
-              <BlockEditor key={loadId} language={language} />
-              <CodeModeOverlay />
-            </>
-          }
-          blocksActions={<BlockLevelToggle />}
-          code={<CodeEditor />}
-          simulator={<SimulatorPanel />}
-          simulatorActions={<SimulatorControls />}
-          console={<ConsolePanel serial={<SerialMonitor />} />}
-        />
+        <div className="app">
+          <AppHeader />
+          <MainToolbar />
+          <div className="app__main">
+            <SideRail />
+            {view === 'program' ? (
+              <ProgramView
+                blocks={
+                  <>
+                    <BlockEditor key={loadId} language={language} />
+                    <CodeModeOverlay />
+                  </>
+                }
+                blocksActions={<BlockLevelToggle />}
+                code={<CodeEditor />}
+                simulator={<SimulatorPanel />}
+                console={consolePanel}
+              />
+            ) : (
+              <CircuitView console={consolePanel} />
+            )}
+          </div>
+          <StatusBar />
+          <SettingsDialog open={dialog === 'settings'} onClose={() => openDialog(null)} />
+          <AboutDialog open={dialog === 'about'} onClose={() => openDialog(null)} />
+        </div>
       </LocalSimulator>
-      <footer className="status-bar">
-        <SaveStatus />
-        {appInfo && (
-          <span data-testid="app-version">{t('status.version', { version: appInfo.version })}</span>
-        )}
-      </footer>
-    </div>
+    </ProjectCommandsProvider>
   );
 }

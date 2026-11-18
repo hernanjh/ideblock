@@ -20,6 +20,9 @@ export interface SimulatorSnapshot {
 export type SimulatorAction =
   | { type: 'start' }
   | { type: 'stop' }
+  | { type: 'pause' }
+  | { type: 'resume' }
+  | { type: 'openCircuit'; componentId: string | null }
   | { type: 'input'; id: string; input: ComponentInput }
   | { type: 'setCircuit'; circuit: CircuitDocument };
 

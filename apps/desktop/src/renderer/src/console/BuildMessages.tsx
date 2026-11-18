@@ -20,8 +20,6 @@ export function BuildMessages() {
   const upload = useBuildStore((state) => state.upload);
   const noBoard = useBuildStore((state) => state.noBoard);
   const boardId = useProjectStore((state) => state.boardId);
-  const revealLine = useProjectStore((state) => state.revealLine);
-  const update = useSettingsStore((state) => state.update);
 
   if (noBoard && status !== 'working') return <NoBoardHelp />;
 
@@ -111,9 +109,28 @@ export function BuildMessages() {
     );
   }
 
-  const errors = result.diagnostics.filter((item) => item.severity === 'error');
   return (
     <div className="build-result" data-testid="build-errors">
+      <DiagnosticsList />
+      <RawOutput output={result.output} />
+    </div>
+  );
+}
+
+/** Compiler errors with plain-language help and links to their lines. */
+export function DiagnosticsList() {
+  const { t } = useTranslation();
+  const result = useBuildStore((state) => state.result);
+  const revealLine = useProjectStore((state) => state.revealLine);
+  const update = useSettingsStore((state) => state.update);
+  const errors = result?.diagnostics.filter((item) => item.severity === 'error') ?? [];
+
+  if (!result || result.ok) {
+    return <p className="console__empty">{t('build.noErrors')}</p>;
+  }
+
+  return (
+    <>
       <p className="build-result__title build-result__title--error">
         <CircleX aria-hidden="true" size="1.2em" />
         {t('build.errors', { count: Math.max(errors.length, 1) })}
@@ -153,8 +170,7 @@ export function BuildMessages() {
           );
         })}
       </ul>
-      <RawOutput output={result.output} />
-    </div>
+    </>
   );
 }
 

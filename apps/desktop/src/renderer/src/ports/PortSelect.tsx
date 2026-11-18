@@ -21,10 +21,10 @@ export function PortSelect() {
   const suggestBoard = detected && detected.id !== boardId && !boardId.startsWith(detected.id);
 
   return (
-    <div className="toolbar__field">
-      <label className="toolbar__field">
+    <div className="field-inline">
+      <label className="field-inline">
+        <span className="field-inline__label">{t('ports.short')}</span>
         <Usb aria-hidden="true" size="1.2em" />
-        <span className="visually-hidden">{t('ports.label')}</span>
         <select
           data-testid="port-select"
           title={t('ports.label')}

@@ -1,16 +1,14 @@
-import { ChartLine, Eraser, Plug, Send, Unplug, Text } from 'lucide-react';
+import { ChartLine, Eraser, Plug, Send, Unplug } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePortsStore } from '../state/ports';
 import { BAUD_RATES, useSerialStore } from '../state/serial';
+import { useSettingsStore } from '../state/settings';
 import { useSimulationStore } from '../state/simulation';
 import { SerialPlotter } from './SerialPlotter';
 
-type View = 'text' | 'plot';
-
 export function SerialMonitor() {
   const { t } = useTranslation();
-  const [view, setView] = useState<View>('text');
   const [message, setMessage] = useState('');
   const outputRef = useRef<HTMLPreElement>(null);
 
@@ -23,7 +21,10 @@ export function SerialMonitor() {
   const setBaudRate = useSerialStore((state) => state.setBaudRate);
   const clear = useSerialStore((state) => state.clear);
   const port = usePortsStore((state) => state.selected);
+  const graphVisible = useSettingsStore((state) => state.settings.consoleGraphVisible);
+  const update = useSettingsStore((state) => state.update);
   const fromSimulator = source === 'simulator';
+  const canSend = open || fromSimulator;
 
   useEffect(() => {
     const output = outputRef.current;
@@ -36,7 +37,7 @@ export function SerialMonitor() {
   };
 
   const send = (): void => {
-    if (!message || (!open && !fromSimulator)) return;
+    if (!message || !canSend) return;
     if (fromSimulator) useSimulationStore.getState().sendSerial(`${message}\n`);
     else void window.ideblock.invoke('serial:write', `${message}\n`);
     setMessage('');
@@ -45,31 +46,35 @@ export function SerialMonitor() {
   return (
     <div className="serial">
       <div className="serial__toolbar">
-        {!fromSimulator &&
-          (open ? (
-            <button
-              type="button"
-              data-testid="serial-disconnect"
-              onClick={() => void window.ideblock.invoke('serial:close')}
-            >
-              <Unplug aria-hidden="true" size="1.1em" />
-              {t('serial.disconnect')}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="button--primary"
-              data-testid="serial-connect"
-              disabled={!port}
-              title={port ? undefined : t('serial.noPort')}
-              onClick={() => void connect()}
-            >
-              <Plug aria-hidden="true" size="1.1em" />
-              {t('serial.connect')}
-            </button>
-          ))}
-        <label className="toolbar__field">
-          <span>{t('serial.speed')}</span>
+        {fromSimulator ? (
+          <span className="chip" data-testid="serial-source">
+            <span className="status-dot status-dot--running" aria-hidden="true" />
+            {t('serial.fromSimulator')}
+          </span>
+        ) : open ? (
+          <button
+            type="button"
+            data-testid="serial-disconnect"
+            onClick={() => void window.ideblock.invoke('serial:close')}
+          >
+            <Unplug aria-hidden="true" size="1.1em" />
+            {t('serial.disconnect')}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="button--primary"
+            data-testid="serial-connect"
+            disabled={!port}
+            title={port ? undefined : t('serial.noPort')}
+            onClick={() => void connect()}
+          >
+            <Plug aria-hidden="true" size="1.1em" />
+            {t('serial.connect')}
+          </button>
+        )}
+        <label className="field-inline">
+          <span className="visually-hidden">{t('serial.speed')}</span>
           <select
             value={baudRate}
             disabled={open || fromSimulator}
@@ -78,37 +83,25 @@ export function SerialMonitor() {
           >
             {BAUD_RATES.map((rate) => (
               <option key={rate} value={rate}>
-                {rate}
+                {t('serial.baud', { rate })}
               </option>
             ))}
           </select>
         </label>
-        <div className="toolbar__group" role="group" aria-label={t('serial.view')}>
-          <button
-            type="button"
-            className="toggle-button toggle-button--small"
-            aria-pressed={view === 'text'}
-            onClick={() => setView('text')}
-          >
-            <Text aria-hidden="true" size="1.1em" />
-            {t('serial.text')}
-          </button>
-          <button
-            type="button"
-            className="toggle-button toggle-button--small"
-            aria-pressed={view === 'plot'}
-            data-testid="serial-plot-view"
-            onClick={() => setView('plot')}
-          >
-            <ChartLine aria-hidden="true" size="1.1em" />
-            {t('serial.plot')}
-          </button>
-        </div>
-        <button type="button" className="toggle-button--small" onClick={clear}>
+        <button type="button" onClick={clear} title={t('serial.clear')}>
           <Eraser aria-hidden="true" size="1.1em" />
           {t('serial.clear')}
         </button>
-        {fromSimulator && <span className="chip">{t('serial.fromSimulator')}</span>}
+        <button
+          type="button"
+          className="toggle-button"
+          aria-pressed={graphVisible}
+          data-testid="serial-plot-view"
+          onClick={() => void update({ consoleGraphVisible: !graphVisible })}
+        >
+          <ChartLine aria-hidden="true" size="1.1em" />
+          {t('console.graph')}
+        </button>
       </div>
 
       {error && (
@@ -117,40 +110,44 @@ export function SerialMonitor() {
         </p>
       )}
 
-      {view === 'text' ? (
-        <pre
-          ref={outputRef}
-          className="serial__output"
-          data-testid="serial-output"
-          aria-live="polite"
-        >
-          {lines.join('\n')}
-          {lines.length > 0 && partial ? '\n' : ''}
-          {partial}
-        </pre>
-      ) : (
-        <SerialPlotter />
-      )}
-
-      <form
-        className="serial__input"
-        onSubmit={(event) => {
-          event.preventDefault();
-          send();
-        }}
-      >
-        <input
-          value={message}
-          aria-label={t('serial.message')}
-          placeholder={t('serial.messagePlaceholder')}
-          data-testid="serial-message"
-          onChange={(event) => setMessage(event.target.value)}
-        />
-        <button type="submit" disabled={!open && !fromSimulator}>
-          <Send aria-hidden="true" size="1.1em" />
-          {t('serial.send')}
-        </button>
-      </form>
+      <div className={graphVisible ? 'serial__views serial__views--split' : 'serial__views'}>
+        <div className="serial__text">
+          <pre
+            ref={outputRef}
+            className="serial__output"
+            data-testid="serial-output"
+            aria-live="polite"
+          >
+            {lines.join('\n')}
+            {lines.length > 0 && partial ? '\n' : ''}
+            {partial}
+          </pre>
+          <form
+            className="serial__input"
+            onSubmit={(event) => {
+              event.preventDefault();
+              send();
+            }}
+          >
+            <input
+              value={message}
+              aria-label={t('serial.message')}
+              placeholder={t('serial.messagePlaceholder')}
+              data-testid="serial-message"
+              onChange={(event) => setMessage(event.target.value)}
+            />
+            <button
+              type="submit"
+              disabled={!canSend}
+              aria-label={t('serial.send')}
+              title={t('serial.send')}
+            >
+              <Send aria-hidden="true" size="1.1em" />
+            </button>
+          </form>
+        </div>
+        {graphVisible && <SerialPlotter />}
+      </div>
     </div>
   );
 }

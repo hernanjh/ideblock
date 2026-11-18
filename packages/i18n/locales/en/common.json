@@ -4,7 +4,6 @@
   },
   "toolbar": {
     "label": "Main toolbar",
-    "panels": "Panels",
     "settings": "Settings",
     "board": "Board"
   },
@@ -14,7 +13,12 @@
     "codeModeTitle": "You are programming with code",
     "codeModeBody": "The blocks no longer change the program. They are kept as they were.",
     "backToBlocks": "Go back to blocks",
-    "backToBlocksUnavailable": "The code was edited, so going back to blocks would lose those changes."
+    "backToBlocksUnavailable": "The code was edited, so going back to blocks would lose those changes.",
+    "search": "Search blocks…",
+    "clearSearch": "Clear the search",
+    "results_one": "{{count}} result",
+    "results_other": "{{count}} results",
+    "noResults": "No blocks match"
   },
   "panels": {
     "blocks": "Blocks",
@@ -25,7 +29,8 @@
     "hide": "Hide {{panel}}",
     "close": "Close {{panel}}",
     "resize": "Resize {{panel}}",
-    "allHidden": "All panels are hidden. Choose what you want to see."
+    "allHidden": "All panels are hidden. Choose what you want to see.",
+    "editor": "Program editor"
   },
   "settings": {
     "title": "Settings",
@@ -54,7 +59,10 @@
     "high-contrast": "High contrast"
   },
   "status": {
-    "version": "Version {{version}}"
+    "version": "Version {{version}}",
+    "simulating": "Simulation running",
+    "ready": "Ready",
+    "board": "Board: {{board}}"
   },
   "code": {
     "lockedTitle": "The blocks write this code",
@@ -118,7 +126,15 @@
       "missing-sketch": "There is no project or sketch in that folder.",
       "not-found": "The project could not be found.",
       "write-failed": "The project could not be saved. Check that the folder exists and you can write to it."
-    }
+    },
+    "openMenu": "Open…",
+    "recentMenu": "Recent projects…",
+    "examplesMenu": "Examples…",
+    "saveAsMenu": "Save as…",
+    "exportMenu": "Export sketch (.ino)…",
+    "recentTitle": "Recent projects",
+    "browse": "Find a project on the computer",
+    "noRecent": "No projects have been saved yet."
   },
   "compilerHelp": {
     "notDeclared": "The name \"{{name}}\" is used but was never created. Check that it is spelled exactly the same everywhere, including capital letters, or declare it first.",
@@ -141,7 +157,9 @@
   },
   "console": {
     "messages": "Messages",
-    "serial": "Serial monitor"
+    "serial": "Serial monitor",
+    "graph": "Graph",
+    "errors": "Errors"
   },
   "build": {
     "group": "Program",
@@ -173,7 +191,8 @@
     "uploadHint": "Send the program to the board",
     "uploaded": "Done! The program is on the board.",
     "uploadFailed": "The program could not be uploaded.",
-    "uploadFailedGeneric": "Check the cable, the port and that the right board is selected."
+    "uploadFailedGeneric": "Check the cable, the port and that the right board is selected.",
+    "noErrors": "No errors. Press Verify to check the program."
   },
   "uploadHelp": {
     "linuxPermission": "Your user is not allowed to use the USB port. On Linux, add your user to the \"dialout\" group and sign in again.",
@@ -196,23 +215,22 @@
       "drivers": "Low-cost boards may need a driver (CH340 or CP210x).",
       "driver": "A board with a {{chip}} chip is connected but its driver is missing.",
       "downloadDriver": "Download the {{chip}} driver"
-    }
+    },
+    "short": "Port"
   },
   "serial": {
     "connect": "Connect",
     "disconnect": "Disconnect",
     "noPort": "Connect a board first",
     "speed": "Speed",
-    "view": "View",
-    "text": "Text",
-    "plot": "Graph",
     "clear": "Clear",
     "message": "Message to send",
     "messagePlaceholder": "Write a message for the board",
     "send": "Send",
     "error": "The serial port closed:",
     "fromSimulator": "From the simulator",
-    "plotHint": "Print numbers, one line at a time, to see them in the graph. For example: 12 34 or temp:21.5"
+    "plotHint": "Print numbers, one line at a time, to see them in the graph. For example: 12 34 or temp:21.5",
+    "baud": "{{rate}} baud"
   },
   "simulator": {
     "start": "Simulate",
@@ -234,7 +252,16 @@
       "photoresistor": "Light level: {{value}}"
     },
     "detach": "Open in a separate window",
-    "attach": "Bring back to the main window"
+    "attach": "Bring back to the main window",
+    "running": "Running",
+    "paused": "Paused",
+    "stopped": "Stopped",
+    "pause": "Pause",
+    "resume": "Continue",
+    "components": "Circuit components",
+    "componentsHint": "Choose one to change its pins",
+    "pinList": "pin {{pins}}",
+    "startHint": "Try the program on the simulated board"
   },
   "components": {
     "led": "LED",
@@ -250,5 +277,79 @@
     "signal": "Pin",
     "trig": "Trig pin",
     "echo": "Echo pin"
+  },
+  "menu": {
+    "label": "Menu",
+    "file": "File",
+    "view": "View",
+    "help": "Help"
+  },
+  "about": {
+    "menu": "About IdeBlock",
+    "title": "About IdeBlock",
+    "description": "Free and open source environment to program Arduino-compatible and ESP32 boards with blocks or code.",
+    "license": "Licensed under the GNU General Public License v3.0.",
+    "trademark": "Arduino is a trademark of Arduino SA. IdeBlock is an independent project and is not affiliated with or endorsed by Arduino SA. ESP32 is a trademark of Espressif Systems."
+  },
+  "rail": {
+    "label": "Views",
+    "program": "Program",
+    "circuit": "Circuit",
+    "projects": "Projects",
+    "examples": "Examples"
+  },
+  "editor": {
+    "synced": "The code follows the blocks",
+    "handWritten": "Hand-written code",
+    "focus": "Hide the simulator and the console",
+    "restore": "Show the simulator and the console",
+    "writtenByBlocks": "Written by the blocks"
+  },
+  "circuit": {
+    "compatibleBoard": "Compatible board",
+    "title": "Circuit · {{board}}",
+    "delete": "Delete the selected component",
+    "zoomOut": "Zoom out",
+    "zoomIn": "Zoom in",
+    "fit": "Fit",
+    "fitAll": "Fit the whole circuit",
+    "palette": "Components",
+    "search": "Search components…",
+    "basic": "Basic",
+    "addHint": "Add to the circuit",
+    "paletteHint": "Click a component to add it. Drag it in the drawing to move it.",
+    "properties": "Properties",
+    "selectHint": "Select a component in the drawing to see and change its connections.",
+    "propertiesTitle": "Properties",
+    "name": "Name",
+    "color": "Color",
+    "connections": "Connections",
+    "ground": "Ground (−)",
+    "supply": "Power (+)",
+    "sharedPin": "Another component uses the same pin. Check that this is what you want.",
+    "ledResistor": "Wired with a resistor, so the LED does not burn out.",
+    "about": "What is it?",
+    "remove": "Remove {{name}}"
+  },
+  "colors": {
+    "red": "Red",
+    "green": "Green",
+    "yellow": "Yellow",
+    "blue": "Blue",
+    "white": "White"
+  },
+  "componentInfo": {
+    "led": "A light that turns on when its pin is HIGH. The long leg goes to the pin and the short one to GND, always through a resistor.",
+    "pushbutton": "Connects the pin to GND while it is pressed. The program reads it as pressed when the pin is LOW.",
+    "potentiometer": "A knob that changes a voltage. analogRead() returns from 0 to 1023 depending on its position.",
+    "photoresistor": "Measures light. analogRead() returns a higher value when there is more light.",
+    "servo": "A motor that turns to an angle from 0 to 180 degrees. It needs a PWM pin.",
+    "buzzer": "Makes sounds. The tone() function chooses the note.",
+    "hc-sr04": "Measures distance with ultrasound, from 2 to 400 cm. It uses one pin to send the pulse (trig) and another to hear the echo."
+  },
+  "languageShort": {
+    "system": "Auto",
+    "en": "EN",
+    "es": "ES"
   }
 }

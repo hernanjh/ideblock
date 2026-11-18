@@ -4,7 +4,6 @@
   },
   "toolbar": {
     "label": "Barra de herramientas principal",
-    "panels": "Paneles",
     "settings": "Ajustes",
     "board": "Placa"
   },
@@ -14,7 +13,12 @@
     "codeModeTitle": "Estás programando con código",
     "codeModeBody": "Los bloques ya no cambian el programa. Quedan guardados como estaban.",
     "backToBlocks": "Volver a los bloques",
-    "backToBlocksUnavailable": "Cambiaste el código, así que volver a los bloques perdería esos cambios."
+    "backToBlocksUnavailable": "Cambiaste el código, así que volver a los bloques perdería esos cambios.",
+    "search": "Buscar bloques…",
+    "clearSearch": "Borrar la búsqueda",
+    "results_one": "{{count}} resultado",
+    "results_other": "{{count}} resultados",
+    "noResults": "Ningún bloque coincide"
   },
   "panels": {
     "blocks": "Bloques",
@@ -25,7 +29,8 @@
     "hide": "Ocultar {{panel}}",
     "close": "Cerrar {{panel}}",
     "resize": "Cambiar el tamaño de {{panel}}",
-    "allHidden": "Todos los paneles están ocultos. Elegí qué querés ver."
+    "allHidden": "Todos los paneles están ocultos. Elegí qué querés ver.",
+    "editor": "Editor del programa"
   },
   "settings": {
     "title": "Ajustes",
@@ -54,7 +59,10 @@
     "high-contrast": "Alto contraste"
   },
   "status": {
-    "version": "Versión {{version}}"
+    "version": "Versión {{version}}",
+    "simulating": "Simulación en curso",
+    "ready": "Listo",
+    "board": "Placa: {{board}}"
   },
   "code": {
     "lockedTitle": "Este código lo escriben los bloques",
@@ -118,7 +126,15 @@
       "missing-sketch": "En esa carpeta no hay ningún proyecto ni sketch.",
       "not-found": "No se encontró el proyecto.",
       "write-failed": "No se pudo guardar el proyecto. Revisá que la carpeta exista y que tengas permiso para escribir."
-    }
+    },
+    "openMenu": "Abrir…",
+    "recentMenu": "Proyectos recientes…",
+    "examplesMenu": "Ejemplos…",
+    "saveAsMenu": "Guardar como…",
+    "exportMenu": "Exportar sketch (.ino)…",
+    "recentTitle": "Proyectos recientes",
+    "browse": "Buscar un proyecto en la computadora",
+    "noRecent": "Todavía no se guardó ningún proyecto."
   },
   "compilerHelp": {
     "notDeclared": "Se usa el nombre \"{{name}}\" pero nunca se creó. Revisá que esté escrito igual en todos lados, incluidas las mayúsculas, o declaralo antes.",
@@ -141,7 +157,9 @@
   },
   "console": {
     "messages": "Mensajes",
-    "serial": "Monitor serie"
+    "serial": "Monitor serie",
+    "graph": "Gráfico",
+    "errors": "Errores"
   },
   "build": {
     "group": "Programa",
@@ -173,7 +191,8 @@
     "uploadHint": "Enviar el programa a la placa",
     "uploaded": "¡Listo! El programa ya está en la placa.",
     "uploadFailed": "No se pudo subir el programa.",
-    "uploadFailedGeneric": "Revisá el cable, el puerto y que esté elegida la placa correcta."
+    "uploadFailedGeneric": "Revisá el cable, el puerto y que esté elegida la placa correcta.",
+    "noErrors": "No hay errores. Tocá Verificar para revisar el programa."
   },
   "uploadHelp": {
     "linuxPermission": "Tu usuario no tiene permiso para usar el puerto USB. En Linux, agregá tu usuario al grupo \"dialout\" y volvé a iniciar sesión.",
@@ -196,23 +215,22 @@
       "drivers": "Las placas económicas pueden necesitar un driver (CH340 o CP210x).",
       "driver": "Hay una placa con chip {{chip}} conectada, pero le falta el driver.",
       "downloadDriver": "Descargar el driver {{chip}}"
-    }
+    },
+    "short": "Puerto"
   },
   "serial": {
     "connect": "Conectar",
     "disconnect": "Desconectar",
     "noPort": "Primero conectá una placa",
     "speed": "Velocidad",
-    "view": "Vista",
-    "text": "Texto",
-    "plot": "Gráfico",
     "clear": "Borrar",
     "message": "Mensaje para enviar",
     "messagePlaceholder": "Escribí un mensaje para la placa",
     "send": "Enviar",
     "error": "Se cerró el puerto serie:",
     "fromSimulator": "Desde el simulador",
-    "plotHint": "Mostrá números, uno por línea, para verlos en el gráfico. Por ejemplo: 12 34 o temp:21.5"
+    "plotHint": "Mostrá números, uno por línea, para verlos en el gráfico. Por ejemplo: 12 34 o temp:21.5",
+    "baud": "{{rate}} baudios"
   },
   "simulator": {
     "start": "Simular",
@@ -234,7 +252,16 @@
       "photoresistor": "Nivel de luz: {{value}}"
     },
     "detach": "Abrir en una ventana aparte",
-    "attach": "Volver a la ventana principal"
+    "attach": "Volver a la ventana principal",
+    "running": "Ejecutando",
+    "paused": "En pausa",
+    "stopped": "Detenido",
+    "pause": "Pausar",
+    "resume": "Continuar",
+    "components": "Componentes del circuito",
+    "componentsHint": "Elegí uno para cambiar sus pines",
+    "pinList": "pin {{pins}}",
+    "startHint": "Probar el programa en la placa simulada"
   },
   "components": {
     "led": "LED",
@@ -250,5 +277,79 @@
     "signal": "Pin",
     "trig": "Pin trig",
     "echo": "Pin echo"
+  },
+  "menu": {
+    "label": "Menú",
+    "file": "Archivo",
+    "view": "Ver",
+    "help": "Ayuda"
+  },
+  "about": {
+    "menu": "Acerca de IdeBlock",
+    "title": "Acerca de IdeBlock",
+    "description": "Entorno libre y gratuito para programar placas compatibles con Arduino y ESP32 con bloques o con código.",
+    "license": "Se distribuye bajo la Licencia Pública General de GNU v3.0.",
+    "trademark": "Arduino es una marca registrada de Arduino SA. IdeBlock es un proyecto independiente, sin relación ni aval de Arduino SA. ESP32 es una marca registrada de Espressif Systems."
+  },
+  "rail": {
+    "label": "Vistas",
+    "program": "Programa",
+    "circuit": "Circuito",
+    "projects": "Proyectos",
+    "examples": "Ejemplos"
+  },
+  "editor": {
+    "synced": "El código sigue a los bloques",
+    "handWritten": "Código escrito a mano",
+    "focus": "Ocultar el simulador y la consola",
+    "restore": "Mostrar el simulador y la consola",
+    "writtenByBlocks": "Lo escriben los bloques"
+  },
+  "circuit": {
+    "compatibleBoard": "Placa compatible",
+    "title": "Circuito · {{board}}",
+    "delete": "Borrar el componente elegido",
+    "zoomOut": "Alejar",
+    "zoomIn": "Acercar",
+    "fit": "Ajustar",
+    "fitAll": "Ver todo el circuito",
+    "palette": "Componentes",
+    "search": "Buscar componentes…",
+    "basic": "Básicos",
+    "addHint": "Agregar al circuito",
+    "paletteHint": "Tocá un componente para agregarlo. Arrastralo en el dibujo para moverlo.",
+    "properties": "Propiedades",
+    "selectHint": "Elegí un componente en el dibujo para ver y cambiar sus conexiones.",
+    "propertiesTitle": "Propiedades",
+    "name": "Nombre",
+    "color": "Color",
+    "connections": "Conexiones",
+    "ground": "Tierra (−)",
+    "supply": "Alimentación (+)",
+    "sharedPin": "Otro componente usa el mismo pin. Revisá que sea lo que querés.",
+    "ledResistor": "Conectado con una resistencia, así el LED no se quema.",
+    "about": "¿Qué es?",
+    "remove": "Quitar {{name}}"
+  },
+  "colors": {
+    "red": "Rojo",
+    "green": "Verde",
+    "yellow": "Amarillo",
+    "blue": "Azul",
+    "white": "Blanco"
+  },
+  "componentInfo": {
+    "led": "Una luz que se enciende cuando su pin está en ALTO (HIGH). La pata larga va al pin y la corta a GND, siempre con una resistencia.",
+    "pushbutton": "Conecta el pin a GND mientras está presionado. El programa lo lee como presionado cuando el pin está en BAJO (LOW).",
+    "potentiometer": "Una perilla que cambia un voltaje. analogRead() devuelve de 0 a 1023 según su posición.",
+    "photoresistor": "Mide la luz. analogRead() devuelve un valor más alto cuando hay más luz.",
+    "servo": "Un motor que gira a un ángulo entre 0 y 180 grados. Necesita un pin PWM.",
+    "buzzer": "Hace sonidos. La función tone() elige la nota.",
+    "hc-sr04": "Mide distancias con ultrasonido, de 2 a 400 cm. Usa un pin para enviar el pulso (trig) y otro para escuchar el eco (echo)."
+  },
+  "languageShort": {
+    "system": "Auto",
+    "en": "EN",
+    "es": "ES"
   }
 }

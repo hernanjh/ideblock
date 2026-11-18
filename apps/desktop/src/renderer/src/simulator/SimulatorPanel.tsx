@@ -1,44 +1,67 @@
 import { getBoard } from '@ideblock/boards';
-import { pinsFor } from '@ideblock/blocks';
-import {
-  COMPONENTS,
-  findComponent,
-  type ComponentInput,
-  type ComponentInstance,
-} from '@ideblock/simulator';
-import { Plus, Trash2 } from 'lucide-react';
+import { COMPONENTS, findComponent, type ComponentInput } from '@ideblock/simulator';
+import { Pause, Play, Plus, RotateCcw, Square } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CircuitScene } from '../circuit/CircuitScene';
+import { ComponentIcon } from '../circuit/ComponentIcon';
 import { BuzzerAudio } from './buzzer-audio';
 import { VISUALS } from './catalog';
-import { circuitComponents, newComponent } from './circuit';
+import { circuitComponents, newComponent, type CircuitItem } from './circuit';
 import { useSimulatorModel } from './model';
-import { WokwiElement } from './WokwiElement';
+import { componentNames } from './names';
+
+const formatTime = (ms: number): string => {
+  const total = Math.floor(ms / 1000);
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${pad(Math.floor(total / 3600))}:${pad(Math.floor(total / 60) % 60)}:${pad(total % 60)}`;
+};
 
 export function SimulatorPanel() {
   const { t } = useTranslation();
   const { snapshot, dispatch } = useSimulatorModel();
-  const { circuit, boardId, status, timeMs, speed, error, outdated } = snapshot;
-  const [adding, setAdding] = useState(false);
-
+  const {
+    circuit,
+    boardId,
+    status,
+    timeMs,
+    speed,
+    error,
+    outdated,
+    components: states,
+    inputs,
+  } = snapshot;
   const board = getBoard(boardId);
-  const components = useMemo(() => circuitComponents(circuit), [circuit]);
-
-  const update = (next: ComponentInstance[]): void =>
-    dispatch({
-      type: 'setCircuit',
-      // Component instances are plain JSON objects, which is what circuit.json stores.
-      circuit: { ...circuit, components: next as unknown as typeof circuit.components },
-    });
-
-  const add = (type: string): void => {
-    const component = newComponent(type, circuit, board);
-    setAdding(false);
-    if (component) update([...components, component]);
-  };
+  const items = useMemo(() => circuitComponents(circuit), [circuit]);
+  const names = useMemo(() => componentNames(items, t), [items, t]);
+  const running = status === 'running' || status === 'paused';
+  const sendInput = (id: string, input: ComponentInput): void =>
+    dispatch({ type: 'input', id, input });
 
   return (
     <div className="simulator" data-testid="simulator">
+      <CircuitScene
+        board={board}
+        items={items}
+        states={states}
+        inputs={inputs}
+        running={running}
+        fit
+        names={names}
+        onInput={sendInput}
+        onSelect={(id) => id && dispatch({ type: 'openCircuit', componentId: id })}
+      />
+
+      <SimulationBar
+        status={status}
+        timeMs={timeMs}
+        speed={speed}
+        outdated={outdated}
+        onStart={() => dispatch({ type: 'start' })}
+        onStop={() => dispatch({ type: 'stop' })}
+        onPause={() => dispatch({ type: status === 'paused' ? 'resume' : 'pause' })}
+      />
+
       {status === 'unsupported' && (
         <p className="notice" role="status">
           {t('simulator.unsupported', { board: board.name })}
@@ -49,217 +72,296 @@ export function SimulatorPanel() {
           {t('simulator.crashed')}
         </p>
       )}
-      {status === 'running' && (
-        <div className="simulator__status" data-testid="simulator-status">
-          <span>{t('simulator.time', { seconds: (timeMs / 1000).toFixed(1) })}</span>
-          {speed < 0.9 && <span className="chip">{t('simulator.slow')}</span>}
-          {outdated && (
-            <span className="chip" data-testid="simulator-outdated">
-              {t('simulator.outdated')}
-            </span>
-          )}
-        </div>
-      )}
 
-      {components.length === 0 && <p className="console__empty">{t('simulator.empty')}</p>}
-
-      <ul className="simulator__components">
-        {components.map((component) => (
-          <ComponentCard
-            key={component.id}
-            component={component}
-            boardId={boardId}
-            onChange={(changed) =>
-              update(components.map((item) => (item.id === changed.id ? changed : item)))
-            }
-            onRemove={() => update(components.filter((item) => item.id !== component.id))}
-          />
-        ))}
-      </ul>
-
-      <div className="simulator__add">
-        <button
-          type="button"
-          aria-expanded={adding}
-          data-testid="simulator-add"
-          onClick={() => setAdding((value) => !value)}
-        >
-          <Plus aria-hidden="true" size="1.1em" />
-          {t('simulator.add')}
-        </button>
-        {adding && (
-          <ul className="simulator__catalog" data-testid="simulator-catalog">
-            {COMPONENTS.map((definition) => (
-              <li key={definition.type}>
-                <button
-                  type="button"
-                  data-testid={`add-${definition.type}`}
-                  onClick={() => add(definition.type)}
-                >
-                  {t(`components.${definition.type}` as never)}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <ComponentStrip
+        items={items}
+        names={names}
+        states={states}
+        inputs={inputs}
+        onInput={sendInput}
+        onOpen={(id) => dispatch({ type: 'openCircuit', componentId: id })}
+        onAdd={(type) => {
+          const component = newComponent(type, circuit, board);
+          if (!component) return;
+          dispatch({
+            type: 'setCircuit',
+            circuit: {
+              ...circuit,
+              components: [
+                ...circuit.components,
+                component as unknown as (typeof circuit.components)[number],
+              ],
+            },
+          });
+        }}
+      />
       <BuzzerSound />
     </div>
   );
 }
 
-interface ComponentCardProps {
-  component: ComponentInstance;
-  boardId: string;
-  onChange: (component: ComponentInstance) => void;
-  onRemove: () => void;
+export interface SimulationBarProps {
+  status: string;
+  timeMs: number;
+  speed: number;
+  outdated: boolean;
+  onStart: () => void;
+  onStop: () => void;
+  onPause: () => void;
 }
 
-function useComponentIo(id: string) {
-  const { snapshot, dispatch } = useSimulatorModel();
-  return {
-    state: snapshot.components[id],
-    input: snapshot.inputs[id],
-    sendInput: (componentId: string, input: ComponentInput) =>
-      dispatch({ type: 'input', id: componentId, input }),
-  };
-}
-
-function ComponentCard({ component, boardId, onChange, onRemove }: ComponentCardProps) {
+export function SimulationBar({
+  status,
+  timeMs,
+  speed,
+  outdated,
+  onStart,
+  onStop,
+  onPause,
+}: SimulationBarProps) {
   const { t } = useTranslation();
-  const definition = findComponent(component.type);
-  const visual = VISUALS[component.type];
-  const { state, input, sendInput } = useComponentIo(component.id);
-  const name = t(`components.${component.type}` as never);
-
-  const events = useMemo(
-    () =>
-      visual?.control === 'press'
-        ? {
-            'button-press': () => sendInput(component.id, { pressed: true }),
-            'button-release': () => sendInput(component.id, { pressed: false }),
-          }
-        : visual?.control === 'slider' && component.type === 'potentiometer'
-          ? {
-              input: (event: Event) =>
-                sendInput(component.id, { value: Number((event as CustomEvent).detail) }),
-            }
-          : undefined,
-    [visual?.control, component.id, component.type, sendInput],
-  );
-
-  if (!definition || !visual) return null;
-  const board = getBoard(boardId);
+  const running = status === 'running' || status === 'paused';
+  const statusText =
+    status === 'compiling'
+      ? t('simulator.preparing')
+      : status === 'running'
+        ? t('simulator.running')
+        : status === 'paused'
+          ? t('simulator.paused')
+          : t('simulator.stopped');
 
   return (
-    <li
-      className="component-card"
-      data-testid={`component-${component.id}`}
-      data-state={state ? JSON.stringify(state) : undefined}
-    >
-      <div className="component-card__header">
-        <strong>{name}</strong>
+    <div className="sim-bar" data-testid="simulator-status">
+      {running ? (
         <button
           type="button"
-          className="icon-button"
-          aria-label={t('simulator.remove', { name })}
-          title={t('simulator.remove', { name })}
-          onClick={onRemove}
+          className="sim-bar__main sim-bar__main--stop"
+          aria-label={t('simulator.stop')}
+          title={t('simulator.stop')}
+          data-testid="simulator-stop"
+          onClick={onStop}
         >
-          <Trash2 aria-hidden="true" size="1em" />
+          <Square aria-hidden="true" size="1.1em" />
         </button>
-      </div>
-      <WokwiElement
-        tag={visual.tag}
-        label={name}
-        properties={visual.properties(state, input, component.props)}
-        {...(events ? { events } : {})}
-      />
-      {definition.pins.map((spec) => {
-        const options = [...pinsFor(board, spec.kind)];
-        const value = component.pins[spec.name] ?? '';
-        if (value && !options.includes(value)) options.push(value);
-        return (
-          <label key={spec.name} className="component-card__pin">
-            <span>{t(`componentPins.${spec.name}` as never)}</span>
-            <select
-              value={value}
-              data-testid={`pin-${component.id}-${spec.name}`}
-              onChange={(event) =>
-                onChange({
-                  ...component,
-                  pins: { ...component.pins, [spec.name]: event.target.value },
-                })
-              }
-            >
-              {options.map((pin) => (
-                <option key={pin} value={pin}>
-                  {pin}
-                </option>
-              ))}
-            </select>
-          </label>
-        );
-      })}
-      <Control component={component} name={name} />
-    </li>
+      ) : (
+        <button
+          type="button"
+          className="sim-bar__main"
+          aria-label={t('simulator.start')}
+          title={t('simulator.start')}
+          data-testid="simulator-start"
+          disabled={status === 'compiling'}
+          onClick={onStart}
+        >
+          <Play aria-hidden="true" size="1.1em" />
+        </button>
+      )}
+      <button
+        type="button"
+        className="icon-button icon-button--framed"
+        aria-label={status === 'paused' ? t('simulator.resume') : t('simulator.pause')}
+        title={status === 'paused' ? t('simulator.resume') : t('simulator.pause')}
+        aria-pressed={status === 'paused'}
+        data-testid="simulator-pause"
+        disabled={!running}
+        onClick={onPause}
+      >
+        <Pause aria-hidden="true" size="1.1em" />
+      </button>
+      <button
+        type="button"
+        className="icon-button icon-button--framed"
+        aria-label={t('simulator.restart')}
+        title={t('simulator.restart')}
+        data-testid="simulator-restart"
+        disabled={!running}
+        onClick={onStart}
+      >
+        <RotateCcw aria-hidden="true" size="1.1em" />
+      </button>
+      <span className={`status-dot status-dot--${status}`} aria-hidden="true" />
+      <strong>{statusText}</strong>
+      {running && speed < 0.9 && <span className="chip">{t('simulator.slow')}</span>}
+      {outdated && (
+        <span className="chip" data-testid="simulator-outdated">
+          {t('simulator.outdated')}
+        </span>
+      )}
+      <span className="sim-bar__time mono">{formatTime(timeMs)}</span>
+    </div>
   );
 }
 
-function Control({ component, name }: { component: ComponentInstance; name: string }) {
+interface ComponentStripProps {
+  items: CircuitItem[];
+  names: Record<string, string>;
+  states: Record<string, Record<string, number | boolean | string>>;
+  inputs: Record<string, ComponentInput>;
+  onInput: (id: string, input: ComponentInput) => void;
+  onOpen: (id: string) => void;
+  onAdd: (type: string) => void;
+}
+
+function ComponentStrip({
+  items,
+  names,
+  states,
+  inputs,
+  onInput,
+  onOpen,
+  onAdd,
+}: ComponentStripProps) {
   const { t } = useTranslation();
-  const visual = VISUALS[component.type];
-  const definition = findComponent(component.type);
-  const { state, input, sendInput } = useComponentIo(component.id);
+  const [adding, setAdding] = useState(false);
 
-  if (visual?.control === 'press') {
-    const pressed = Boolean(state?.['pressed']);
-    return (
-      <button
-        type="button"
-        className="press-button"
-        aria-pressed={pressed}
-        data-testid={`press-${component.id}`}
-        onPointerDown={() => sendInput(component.id, { pressed: true })}
-        onPointerUp={() => sendInput(component.id, { pressed: false })}
-        onPointerLeave={() => pressed && sendInput(component.id, { pressed: false })}
-        onKeyDown={(event) => {
-          if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
-            sendInput(component.id, { pressed: true });
-          }
-        }}
-        onKeyUp={() => sendInput(component.id, { pressed: false })}
-      >
-        {t('simulator.press')}
+  return (
+    <section className="components" aria-label={t('simulator.components')}>
+      <h3 className="components__title">
+        {t('simulator.components')}
+        <span className="components__hint">{t('simulator.componentsHint')}</span>
+      </h3>
+      {items.length === 0 && <p className="console__empty">{t('simulator.empty')}</p>}
+      <ul className="components__grid">
+        {items.map((item) => (
+          <li key={item.id}>
+            <ComponentCard
+              item={item}
+              name={names[item.id] ?? item.type}
+              state={states[item.id]}
+              input={inputs[item.id]}
+              onInput={onInput}
+              onOpen={() => onOpen(item.id)}
+            />
+          </li>
+        ))}
+        <li>
+          <button
+            type="button"
+            className="component-card component-card--add"
+            aria-expanded={adding}
+            data-testid="simulator-add"
+            onClick={() => setAdding((value) => !value)}
+          >
+            <Plus aria-hidden="true" size="1.6em" />
+            <span>{t('simulator.add')}</span>
+          </button>
+        </li>
+      </ul>
+      {adding && (
+        <ul className="simulator__catalog" data-testid="simulator-catalog">
+          {COMPONENTS.map((definition) => (
+            <li key={definition.type}>
+              <button
+                type="button"
+                data-testid={`add-${definition.type}`}
+                onClick={() => {
+                  setAdding(false);
+                  onAdd(definition.type);
+                }}
+              >
+                {t(`components.${definition.type}` as never)}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+interface ComponentCardProps {
+  item: CircuitItem;
+  name: string;
+  state: Record<string, number | boolean | string> | undefined;
+  input: ComponentInput | undefined;
+  onInput: (id: string, input: ComponentInput) => void;
+  onOpen: () => void;
+}
+
+function ComponentCard({ item, name, state, input, onInput, onOpen }: ComponentCardProps) {
+  const { t } = useTranslation();
+  const visual = VISUALS[item.type];
+  const definition = findComponent(item.type);
+  const pins = Object.values(item.pins).join(', ');
+
+  return (
+    <div
+      className="component-card"
+      data-testid={`component-${item.id}`}
+      data-state={state ? JSON.stringify(state) : undefined}
+    >
+      <button type="button" className="component-card__open" onClick={onOpen}>
+        <ComponentIcon type={item.type} size={30} />
+        <strong>{name}</strong>
+        <span className="pin-chip">{t('simulator.pinList', { pins })}</span>
       </button>
-    );
-  }
-
-  if (visual?.control === 'slider' || visual?.control === 'distance') {
-    const key = visual.control === 'distance' ? 'distance' : 'value';
-    const initial = Number(definition?.initialInput?.[key] ?? 0);
-    const value = Number(input?.[key] ?? initial);
-    const [min, max] = visual.control === 'distance' ? [2, 400] : [0, 1023];
-    return (
-      <label className="component-card__slider">
-        <span>
-          {visual.control === 'distance'
-            ? t('simulator.distance', { value })
-            : t(`simulator.level.${component.type}` as never, { value })}
-        </span>
-        <input
-          type="range"
-          min={min}
-          max={max}
-          value={value}
-          aria-label={name}
-          data-testid={`slider-${component.id}`}
-          onChange={(event) => sendInput(component.id, { [key]: Number(event.target.value) })}
+      {visual?.control === 'press' && (
+        <button
+          type="button"
+          className="press-button"
+          aria-pressed={Boolean(state?.['pressed'])}
+          data-testid={`press-${item.id}`}
+          onPointerDown={() => onInput(item.id, { pressed: true })}
+          onPointerUp={() => onInput(item.id, { pressed: false })}
+          onPointerLeave={() => state?.['pressed'] && onInput(item.id, { pressed: false })}
+          onKeyDown={(event) => {
+            if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
+              onInput(item.id, { pressed: true });
+            }
+          }}
+          onKeyUp={() => onInput(item.id, { pressed: false })}
+        >
+          {t('simulator.press')}
+        </button>
+      )}
+      {(visual?.control === 'slider' || visual?.control === 'distance') && (
+        <Slider
+          item={item}
+          name={name}
+          distance={visual.control === 'distance'}
+          initial={Number(
+            definition?.initialInput?.[visual.control === 'distance' ? 'distance' : 'value'] ?? 0,
+          )}
+          input={input}
+          onInput={onInput}
         />
-      </label>
-    );
-  }
-  return null;
+      )}
+    </div>
+  );
+}
+
+interface SliderProps {
+  item: CircuitItem;
+  name: string;
+  distance: boolean;
+  initial: number;
+  input: ComponentInput | undefined;
+  onInput: (id: string, input: ComponentInput) => void;
+}
+
+function Slider({ item, name, distance, initial, input, onInput }: SliderProps) {
+  const { t } = useTranslation();
+  const key = distance ? 'distance' : 'value';
+  const value = Number(input?.[key] ?? initial);
+  const [min, max] = distance ? [2, 400] : [0, 1023];
+  return (
+    <label className="component-card__slider">
+      <span>
+        {distance
+          ? t('simulator.distance', { value })
+          : t(`simulator.level.${item.type}` as never, { value })}
+      </span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        aria-label={name}
+        data-testid={`slider-${item.id}`}
+        onChange={(event) => onInput(item.id, { [key]: Number(event.target.value) })}
+      />
+    </label>
+  );
 }
 
 function BuzzerSound() {

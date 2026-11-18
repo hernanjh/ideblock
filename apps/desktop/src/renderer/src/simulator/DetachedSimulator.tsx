@@ -52,9 +52,9 @@ export function DetachedSimulator() {
   return (
     <SimulatorModelContext.Provider value={model}>
       <div className="detached-simulator" data-testid="detached-simulator">
-        <header className="panel__header">
-          <h1 className="panel__title">{t('panels.simulator')}</h1>
-          <div className="panel__actions">
+        <header className="card__header detached-simulator__header">
+          <h1 className="card__title">{t('panels.simulator')}</h1>
+          <div className="card__end">
             <SimulatorControls />
           </div>
         </header>

@@ -111,6 +111,16 @@ export function useProjectActions() {
     [guard, reportError, i18n],
   );
 
+  const openPath = useCallback(
+    (path: string) =>
+      guard(async () => {
+        const result = await window.ideblock.invoke('project:open-path', path);
+        if (!result.ok) return reportError(result.reason);
+        loadDocument(result.value.project, result.value.path);
+      }),
+    [guard, reportError],
+  );
+
   const exportSketch = useCallback(async () => {
     const state = useProjectStore.getState();
     const document = toDocument(state);
@@ -129,6 +139,7 @@ export function useProjectActions() {
     save,
     saveAs,
     openExample,
+    openPath,
     exportSketch,
     confirmOpen: pending !== null,
     resolvePending,

@@ -9,9 +9,9 @@ export function BoardSelect() {
   const setBoard = useProjectStore((state) => state.setBoard);
 
   return (
-    <label className="toolbar__field">
+    <label className="field-inline">
+      <span className="field-inline__label">{t('toolbar.board')}</span>
       <CircuitBoard aria-hidden="true" size="1.2em" />
-      <span className="visually-hidden">{t('toolbar.board')}</span>
       <select
         data-testid="board-select"
         value={boardId}
