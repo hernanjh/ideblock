@@ -69,8 +69,11 @@ export interface CompileResult {
   data?: MemoryUsage;
   /** Build folder holding the firmware, used for upload and simulation. */
   buildPath?: string;
-  /** Intel HEX firmware for AVR boards, read by the simulator. */
-  hex?: string;
+  /**
+   * Firmware for the simulator: Intel HEX text for AVR boards, or the flash
+   * image in base64 for the RP2040.
+   */
+  firmware?: string;
 }
 
 export type ToolchainStage = 'index' | 'core' | 'library' | 'compile' | 'upload';

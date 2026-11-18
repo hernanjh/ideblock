@@ -203,7 +203,11 @@ export class ToolchainService {
     if (program) result.program = program;
     if (data) result.data = data;
     if (response.success && board.architecture === 'avr') {
-      result.hex = await readFile(join(buildPath, `${sketchName}.ino.hex`), 'utf8');
+      result.firmware = await readFile(join(buildPath, `${sketchName}.ino.hex`), 'utf8');
+    } else if (response.success && board.architecture === 'rp2040') {
+      result.firmware = (await readFile(join(buildPath, `${sketchName}.ino.bin`))).toString(
+        'base64',
+      );
     }
     return result;
   }

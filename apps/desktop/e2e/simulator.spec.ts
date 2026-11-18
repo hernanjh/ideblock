@@ -128,6 +128,22 @@ test.describe('running the simulator', () => {
     await expect.poll(async () => (await componentState(led))['brightness']).toBe(0);
   });
 
+  test('simulates the Raspberry Pi Pico', async ({ launchApp }) => {
+    const { window } = await launchApp();
+    await window.getByTestId('file-examples').click();
+    await window.getByTestId('example-Dimmer').click();
+    await expect(window.getByTestId('project-name')).toHaveValue('LED dimmer');
+    await window.getByTestId('board-select').selectOption('pico');
+    await window.getByTestId('simulator-start').click();
+    await expect(window.getByTestId('simulator-stop')).toBeVisible({ timeout: 280_000 });
+
+    const led = window.getByTestId('component-led1');
+    await window.getByTestId('slider-pot1').fill('1023');
+    await expect
+      .poll(async () => Number((await componentState(led))['brightness']), { timeout: 10_000 })
+      .toBeGreaterThan(0.9);
+  });
+
   test('shows simulated serial output in the serial monitor', async ({ launchApp }) => {
     const { window } = await launchApp();
     await window.getByTestId('file-examples').click();

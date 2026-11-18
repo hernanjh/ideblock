@@ -60,7 +60,7 @@ describe.runIf(integration)('ToolchainService with arduino-cli', () => {
       libraries: ['Servo'],
     });
     expect(ok.ok).toBe(true);
-    expect(ok.hex).toMatch(/^:/);
+    expect(ok.firmware).toMatch(/^:/);
     expect(ok.program?.max).toBe(32256);
 
     const broken = await service.compile({

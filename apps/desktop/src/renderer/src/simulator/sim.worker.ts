@@ -30,7 +30,7 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
   if (message.type === 'start') {
     clearInterval(timer);
     try {
-      simulation = new Simulation(message.hex, message.components, message.mcu);
+      simulation = new Simulation(message.firmware, message.components, message.mcu);
     } catch (error) {
       post({ type: 'error', message: String(error) });
       return;

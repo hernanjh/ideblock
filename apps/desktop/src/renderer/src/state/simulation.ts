@@ -87,7 +87,7 @@ function launch(firmware: string): void {
   const board = getBoard(boardId);
   const mcu = board.simulation?.mcu;
   if (!isSimulatedMcu(mcu)) return;
-  post({ type: 'start', hex: firmware, components: simulationParts(circuit, board), mcu });
+  post({ type: 'start', firmware, components: simulationParts(circuit, board), mcu });
   for (const [id, input] of Object.entries(useSimulationStore.getState().inputs)) {
     post({ type: 'input', id, input });
   }
@@ -132,7 +132,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
       libraries,
     });
     if (get().status !== 'compiling') return;
-    if (!result.ok || !result.hex) {
+    if (!result.ok || !result.firmware) {
       // Errors are explained in the console, with the same help as Verify.
       useBuildStore.setState({ status: 'error', action: 'verify', result, noBoard: false });
       await useSettingsStore.getState().update({ consoleVisible: true });
@@ -144,11 +144,11 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
     if (useBuildStore.getState().status === 'error') {
       useBuildStore.setState({ status: 'idle', result: null, upload: null, resultCode: null });
     }
-    hex = result.hex;
+    hex = result.firmware;
     const serial = useSerialStore.getState();
     serial.setSource('simulator');
     serial.clear();
-    launch(result.hex);
+    launch(result.firmware);
     set({ status: 'running', runningCode: visibleCode });
   },
 

@@ -255,11 +255,13 @@ export const pico: BoardDefinition = {
   drawing: 'generic',
   pinLabelPrefix: 'GP',
   digitalPins: [...PICO_PINS, '25'],
-  analogInputPins: ['26', '27', '28'],
+  // GPIO 26 to 28; arduino-pico names them A0 to A2, like the examples do.
+  analogInputPins: ['A0', 'A1', 'A2'],
   pwmPins: PICO_PINS,
   builtinLedPin: '25',
   i2c: { sda: '4', scl: '5' },
   usbIds: [{ vid: '2E8A', pid: '000A' }],
+  simulation: { mcu: 'rp2040', clockHz: 125_000_000 },
 };
 
 export const BOARDS: readonly BoardDefinition[] = [
