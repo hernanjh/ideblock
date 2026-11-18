@@ -1351,7 +1351,18 @@ button:disabled {
 .circuit-view__console {
   grid-column: 1 / 4;
   display: flex;
-  height: 14rem;
+  /* Short screens keep most of the height for the drawing. */
+  height: min(14rem, 26vh);
+}
+
+@media (width < 1500px) {
+  .circuit-view {
+    grid-template-columns: 13rem minmax(0, 1fr) 16rem;
+  }
+
+  .wiring-label {
+    display: none;
+  }
 }
 
 .circuit-canvas__body {
@@ -1502,6 +1513,9 @@ button:disabled {
 }
 
 .scene--fit .scene__canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   transform-origin: center;
 }
 

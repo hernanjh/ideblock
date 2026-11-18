@@ -419,7 +419,9 @@ export function CircuitScene({
         style={{
           width: size.width,
           height: size.height,
-          transform: `scale(${scale})`,
+          // When fitting, the canvas is taken out of the layout and centred, so
+          // its unscaled size never widens the panel around it.
+          transform: fit ? `translate(-50%, -50%) scale(${scale})` : `scale(${scale})`,
           ...(fit
             ? {}
             : { marginRight: size.width * (scale - 1), marginBottom: size.height * (scale - 1) }),
