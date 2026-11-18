@@ -400,7 +400,8 @@
       "noResistor": "{{name}} no tiene resistencia: cuando se encienda se va a quemar. Poné una resistencia entre el LED y el pin o GND.",
       "short": "¡Cortocircuito! {{pins}} están unidos directamente."
     },
-    "ohms": "{{value}} Ω"
+    "ohms": "{{value}} Ω",
+    "fixedBus": "SDA y SCL forman el bus I2C: en {{board}} siempre van a los mismos pines, por eso no se pueden elegir."
   },
   "colors": {
     "red": "Rojo",

@@ -1,6 +1,7 @@
 import type { BoardDefinition } from '@ideblock/boards';
 import * as Blockly from 'blockly/core';
 import 'blockly/blocks';
+import { registerBusPinsField } from './fields/field-bus-pins';
 import { registerPinField } from './fields/field-pin';
 import { SketchGenerator } from './generator/sketch-generator';
 import { BLOCK_MODULES } from './modules';
@@ -11,6 +12,7 @@ const registeredModules = new Set<string>();
 /** Registers block definitions once per module; safe to call repeatedly. */
 export function registerBlocks(modules: readonly BlockModule[] = BLOCK_MODULES): void {
   registerPinField();
+  registerBusPinsField();
   for (const module of modules) {
     if (registeredModules.has(module.id)) continue;
     Blockly.common.defineBlocksWithJsonArray(module.blocks);

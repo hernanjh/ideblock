@@ -400,7 +400,8 @@
       "noResistor": "{{name}} has no resistor: it will burn out when it lights up. Put a resistor between the LED and the pin or GND.",
       "short": "Short circuit! {{pins}} are joined directly."
     },
-    "ohms": "{{value}} Ω"
+    "ohms": "{{value}} Ω",
+    "fixedBus": "SDA and SCL form the I2C bus: on {{board}} they always use the same pins, so they cannot be chosen."
   },
   "colors": {
     "red": "Red",

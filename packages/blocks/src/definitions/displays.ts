@@ -104,6 +104,7 @@ export const displaysModule: BlockModule = {
         { type: 'input_value', name: 'TEXT' },
         { type: 'input_value', name: 'ROW', check: 'Number' },
         { type: 'input_value', name: 'COLUMN', check: 'Number' },
+        { type: 'field_bus_pins', name: 'BUS' },
       ],
       inputsInline: true,
       previousStatement: null,
@@ -114,6 +115,7 @@ export const displaysModule: BlockModule = {
     {
       type: 'lcd_clear',
       message0: '%{BKY_IDEBLOCK_LCD_CLEAR}',
+      args0: [{ type: 'field_bus_pins', name: 'BUS' }],
       previousStatement: null,
       nextStatement: null,
       colour: COLOURS.display,
