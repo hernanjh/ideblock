@@ -17,6 +17,9 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
   botones, potenciómetros, sensores de luz, servos, buzzers y sensores
   ultrasónicos. El bloque que se está ejecutando se ilumina. El simulador puede
   abrirse en una ventana aparte.
+- **Vista de circuito.** Mirá la placa con cada componente y sus cables, mové los
+  componentes, cambiales el nombre y los pines. Aparece un aviso cuando dos
+  componentes comparten un pin.
 - **Placas reales.** Verificá, subí el programa y usá el monitor serie y el
   gráfico con placas compatibles con Arduino Uno, Nano, Mega y ESP32. Las
   herramientas de cada placa se instalan la primera vez que hacen falta.

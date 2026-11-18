@@ -17,6 +17,9 @@ teenagers and adults who want to move on to real code.
   buttons, potentiometers, light sensors, servos, buzzers and ultrasonic
   sensors. The block that is running lights up. The simulator can open in its
   own window.
+- **Circuit view.** See the board with every component and wire, move the
+  components, rename them and change their pins. A warning appears when two
+  components share a pin.
 - **Real boards.** Verify, upload and use the serial monitor and graph with
   Arduino Uno, Nano, Mega and ESP32 compatible boards. Board tools are installed
   the first time they are needed.
