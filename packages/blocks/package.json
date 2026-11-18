@@ -12,5 +12,8 @@
   },
   "dependencies": {
     "blockly": "13.4.0"
+  },
+  "devDependencies": {
+    "@ideblock/project": "0.0.0"
   }
 }

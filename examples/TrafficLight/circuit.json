@@ -1,0 +1,24 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "red",
+      "type": "led",
+      "pin": "10",
+      "color": "red"
+    },
+    {
+      "id": "yellow",
+      "type": "led",
+      "pin": "9",
+      "color": "yellow"
+    },
+    {
+      "id": "green",
+      "type": "led",
+      "pin": "8",
+      "color": "green"
+    }
+  ],
+  "connections": []
+}

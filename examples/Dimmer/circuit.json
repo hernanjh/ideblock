@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "pot1",
+      "type": "potentiometer",
+      "pin": "A0"
+    },
+    {
+      "id": "led1",
+      "type": "led",
+      "pin": "9"
+    }
+  ],
+  "connections": []
+}

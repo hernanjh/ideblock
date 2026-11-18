@@ -1,0 +1,224 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ideblock_program",
+        "id": "program",
+        "x": 40,
+        "y": 40,
+        "deletable": false,
+        "inputs": {
+          "SETUP": {
+            "block": {
+              "type": "buzzer_tone",
+              "fields": {
+                "PIN": "8"
+              },
+              "inputs": {
+                "FREQUENCY": {
+                  "shadow": {
+                    "type": "math_number",
+                    "fields": {
+                      "NUM": 262
+                    }
+                  }
+                },
+                "DURATION": {
+                  "shadow": {
+                    "type": "math_number",
+                    "fields": {
+                      "NUM": 300
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "buzzer_tone",
+                  "fields": {
+                    "PIN": "8"
+                  },
+                  "inputs": {
+                    "FREQUENCY": {
+                      "shadow": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 294
+                        }
+                      }
+                    },
+                    "DURATION": {
+                      "shadow": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 300
+                        }
+                      }
+                    }
+                  },
+                  "next": {
+                    "block": {
+                      "type": "buzzer_tone",
+                      "fields": {
+                        "PIN": "8"
+                      },
+                      "inputs": {
+                        "FREQUENCY": {
+                          "shadow": {
+                            "type": "math_number",
+                            "fields": {
+                              "NUM": 330
+                            }
+                          }
+                        },
+                        "DURATION": {
+                          "shadow": {
+                            "type": "math_number",
+                            "fields": {
+                              "NUM": 300
+                            }
+                          }
+                        }
+                      },
+                      "next": {
+                        "block": {
+                          "type": "buzzer_tone",
+                          "fields": {
+                            "PIN": "8"
+                          },
+                          "inputs": {
+                            "FREQUENCY": {
+                              "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 349
+                                }
+                              }
+                            },
+                            "DURATION": {
+                              "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 300
+                                }
+                              }
+                            }
+                          },
+                          "next": {
+                            "block": {
+                              "type": "buzzer_tone",
+                              "fields": {
+                                "PIN": "8"
+                              },
+                              "inputs": {
+                                "FREQUENCY": {
+                                  "shadow": {
+                                    "type": "math_number",
+                                    "fields": {
+                                      "NUM": 392
+                                    }
+                                  }
+                                },
+                                "DURATION": {
+                                  "shadow": {
+                                    "type": "math_number",
+                                    "fields": {
+                                      "NUM": 300
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "buzzer_tone",
+                                  "fields": {
+                                    "PIN": "8"
+                                  },
+                                  "inputs": {
+                                    "FREQUENCY": {
+                                      "shadow": {
+                                        "type": "math_number",
+                                        "fields": {
+                                          "NUM": 440
+                                        }
+                                      }
+                                    },
+                                    "DURATION": {
+                                      "shadow": {
+                                        "type": "math_number",
+                                        "fields": {
+                                          "NUM": 300
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "buzzer_tone",
+                                      "fields": {
+                                        "PIN": "8"
+                                      },
+                                      "inputs": {
+                                        "FREQUENCY": {
+                                          "shadow": {
+                                            "type": "math_number",
+                                            "fields": {
+                                              "NUM": 494
+                                            }
+                                          }
+                                        },
+                                        "DURATION": {
+                                          "shadow": {
+                                            "type": "math_number",
+                                            "fields": {
+                                              "NUM": 300
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "next": {
+                                        "block": {
+                                          "type": "buzzer_tone",
+                                          "fields": {
+                                            "PIN": "8"
+                                          },
+                                          "inputs": {
+                                            "FREQUENCY": {
+                                              "shadow": {
+                                                "type": "math_number",
+                                                "fields": {
+                                                  "NUM": 523
+                                                }
+                                              }
+                                            },
+                                            "DURATION": {
+                                              "shadow": {
+                                                "type": "math_number",
+                                                "fields": {
+                                                  "NUM": 300
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

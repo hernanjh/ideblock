@@ -1,0 +1,17 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "sonar1",
+      "type": "hc-sr04",
+      "trigPin": "9",
+      "echoPin": "10"
+    },
+    {
+      "id": "buzzer1",
+      "type": "buzzer",
+      "pin": "8"
+    }
+  ],
+  "connections": []
+}

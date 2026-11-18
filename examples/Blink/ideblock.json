@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Blinking LED",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "Blinking LED",
+      "es": "LED que parpadea"
+    },
+    "description": {
+      "en": "Turns the built-in LED on and off every second.",
+      "es": "Enciende y apaga el LED de la placa cada segundo."
+    },
+    "level": 1,
+    "order": 1
+  }
+}

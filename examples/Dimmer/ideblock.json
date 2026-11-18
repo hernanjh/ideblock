@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "LED dimmer",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "LED dimmer",
+      "es": "Regulador de brillo"
+    },
+    "description": {
+      "en": "A potentiometer controls how bright the LED shines.",
+      "es": "Un potenciómetro controla el brillo del LED."
+    },
+    "level": 2,
+    "order": 5
+  }
+}

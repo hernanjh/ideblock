@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Parking sensor",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "Parking sensor",
+      "es": "Sensor de estacionamiento"
+    },
+    "description": {
+      "en": "Beeps faster as an object gets closer to the ultrasonic sensor.",
+      "es": "Suena más rápido cuanto más cerca está un objeto del sensor ultrasónico."
+    },
+    "level": 3,
+    "order": 9
+  }
+}

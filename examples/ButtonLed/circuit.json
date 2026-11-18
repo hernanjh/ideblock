@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "button1",
+      "type": "pushbutton",
+      "pin": "2"
+    },
+    {
+      "id": "led1",
+      "type": "led",
+      "pin": "13"
+    }
+  ],
+  "connections": []
+}

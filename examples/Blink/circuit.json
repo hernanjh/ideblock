@@ -1,0 +1,13 @@
+{
+  "formatVersion": 1,
+  "components": [
+    {
+      "id": "led1",
+      "type": "led",
+      "pin": "13",
+      "x": 200,
+      "y": 60
+    }
+  ],
+  "connections": []
+}

@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Melody",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "Melody",
+      "es": "Melodía"
+    },
+    "description": {
+      "en": "Plays a scale on a buzzer when the board starts.",
+      "es": "Toca una escala en un buzzer al encender la placa."
+    },
+    "level": 2,
+    "order": 7
+  }
+}

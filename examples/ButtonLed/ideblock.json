@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "name": "Button and LED",
+  "board": "uno",
+  "mode": "blocks",
+  "example": {
+    "title": {
+      "en": "Button and LED",
+      "es": "Botón y LED"
+    },
+    "description": {
+      "en": "The LED lights up while the button is pressed.",
+      "es": "El LED se enciende mientras el botón está presionado."
+    },
+    "level": 1,
+    "order": 3
+  }
+}

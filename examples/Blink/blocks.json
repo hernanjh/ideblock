@@ -1,0 +1,64 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ideblock_program",
+        "id": "program",
+        "x": 40,
+        "y": 40,
+        "deletable": false,
+        "inputs": {
+          "LOOP": {
+            "block": {
+              "type": "led_set",
+              "fields": {
+                "STATE": "HIGH",
+                "PIN": "13"
+              },
+              "next": {
+                "block": {
+                  "type": "time_delay_seconds",
+                  "inputs": {
+                    "SECONDS": {
+                      "shadow": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 1
+                        }
+                      }
+                    }
+                  },
+                  "next": {
+                    "block": {
+                      "type": "led_set",
+                      "fields": {
+                        "STATE": "LOW",
+                        "PIN": "13"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "time_delay_seconds",
+                          "inputs": {
+                            "SECONDS": {
+                              "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 1
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

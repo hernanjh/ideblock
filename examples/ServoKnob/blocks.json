@@ -1,0 +1,88 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ideblock_program",
+        "id": "program",
+        "x": 40,
+        "y": 40,
+        "deletable": false,
+        "inputs": {
+          "LOOP": {
+            "block": {
+              "type": "servo_write",
+              "fields": {
+                "PIN": "9"
+              },
+              "inputs": {
+                "ANGLE": {
+                  "block": {
+                    "type": "math_map",
+                    "inputs": {
+                      "VALUE": {
+                        "block": {
+                          "type": "potentiometer_read",
+                          "fields": {
+                            "PIN": "A0"
+                          }
+                        }
+                      },
+                      "FROM_LOW": {
+                        "shadow": {
+                          "type": "math_number",
+                          "fields": {
+                            "NUM": 0
+                          }
+                        }
+                      },
+                      "FROM_HIGH": {
+                        "shadow": {
+                          "type": "math_number",
+                          "fields": {
+                            "NUM": 1023
+                          }
+                        }
+                      },
+                      "TO_LOW": {
+                        "shadow": {
+                          "type": "math_number",
+                          "fields": {
+                            "NUM": 0
+                          }
+                        }
+                      },
+                      "TO_HIGH": {
+                        "shadow": {
+                          "type": "math_number",
+                          "fields": {
+                            "NUM": 180
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "time_delay",
+                  "inputs": {
+                    "MS": {
+                      "shadow": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 20
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
