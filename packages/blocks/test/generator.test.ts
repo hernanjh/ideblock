@@ -161,6 +161,44 @@ describe('sketch generator', () => {
     expect(libraries).toEqual(['Adafruit NeoPixel']);
   });
 
+  it('turns an LED on for a while', () => {
+    const { code } = generate(
+      program([], [{ type: 'led_on_for', fields: { PIN: '13' }, inputs: { SECONDS: num(1.5) } }]),
+    );
+    expect(code).toContain('pinMode(13, OUTPUT);');
+    expect(code).toContain('digitalWrite(13, HIGH);\n  delay(1500);\n  digitalWrite(13, LOW);');
+  });
+
+  it('reads letters counting from 1 and searches text', () => {
+    const { code } = generate(
+      program(
+        [],
+        [
+          {
+            type: 'serial_print',
+            fields: { NEWLINE: 'TRUE' },
+            inputs: {
+              TEXT: {
+                block: { type: 'text_letter', inputs: { INDEX: num(1), TEXT: str('hola') } },
+              },
+            },
+          },
+          {
+            type: 'serial_print',
+            fields: { NEWLINE: 'TRUE' },
+            inputs: {
+              TEXT: {
+                block: { type: 'text_contains', inputs: { TEXT: str('hola'), PART: str('o') } },
+              },
+            },
+          },
+        ],
+      ),
+    );
+    expect(code).toContain('Serial.println(String(String("hola").charAt(0)));');
+    expect(code).toContain('Serial.println(String("hola").indexOf(String("o")) >= 0);');
+  });
+
   it('ignores blocks that are not inside the program', () => {
     const { code } = generate(program([], []), { extraTopBlocks: [led('HIGH', '7')] });
     expect(code).not.toContain('7');

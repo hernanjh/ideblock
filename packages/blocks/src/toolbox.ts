@@ -34,6 +34,7 @@ const CATEGORIES: ToolboxCategory[] = [
     colour: COLOURS.outputs,
     contents: [
       { kind: 'block', type: 'led_set' },
+      { kind: 'block', type: 'led_on_for', inputs: { SECONDS: number(1) } },
       { kind: 'block', type: 'io_digital_write' },
       { kind: 'block', type: 'led_brightness', inputs: { PERCENT: number(50) }, advanced: true },
       {
@@ -117,7 +118,7 @@ const CATEGORIES: ToolboxCategory[] = [
     colour: COLOURS.loops,
     contents: [
       { kind: 'block', type: 'controls_repeat_ext', inputs: { TIMES: number(10) } },
-      { kind: 'block', type: 'controls_whileUntil', advanced: true },
+      { kind: 'block', type: 'controls_whileUntil', fields: { MODE: 'UNTIL' } },
       {
         kind: 'block',
         type: 'controls_for',
@@ -165,8 +166,20 @@ const CATEGORIES: ToolboxCategory[] = [
     colour: COLOURS.text,
     contents: [
       { kind: 'block', type: 'text' },
-      { kind: 'block', type: 'text_join', advanced: true },
-      { kind: 'block', type: 'text_length', inputs: { VALUE: text('hola') }, advanced: true },
+      { kind: 'block', type: 'text_join', inputs: { ADD0: text('hola '), ADD1: text('mundo') } },
+      { kind: 'block', type: 'text_length', inputs: { VALUE: text('hola') } },
+      {
+        kind: 'block',
+        type: 'text_letter',
+        inputs: { INDEX: number(1), TEXT: text('hola') },
+        advanced: true,
+      },
+      {
+        kind: 'block',
+        type: 'text_contains',
+        inputs: { TEXT: text('hola'), PART: text('o') },
+        advanced: true,
+      },
     ],
   },
   {

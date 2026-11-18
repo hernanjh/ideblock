@@ -40,6 +40,19 @@ export const outputsModule: BlockModule = {
       tooltip: '%{BKY_IDEBLOCK_LED_SET_TOOLTIP}',
     },
     {
+      type: 'led_on_for',
+      message0: '%{BKY_IDEBLOCK_LED_ON_FOR}',
+      args0: [
+        { type: 'field_pin', name: 'PIN', pinKind: 'output' },
+        { type: 'input_value', name: 'SECONDS', check: 'Number' },
+      ],
+      inputsInline: true,
+      previousStatement: null,
+      nextStatement: null,
+      colour: COLOURS.outputs,
+      tooltip: '%{BKY_IDEBLOCK_LED_ON_FOR_TOOLTIP}',
+    },
+    {
       type: 'led_brightness',
       message0: '%{BKY_IDEBLOCK_LED_BRIGHTNESS}',
       args0: [
@@ -90,6 +103,16 @@ export const outputsModule: BlockModule = {
     },
   ],
   generators: {
+    led_on_for: (block, generator) => {
+      const pin = block.getFieldValue('PIN') as string;
+      generator.pinMode(pin, 'OUTPUT');
+      const seconds = generator.valueOrDefault(block, 'SECONDS', Order.MULTIPLICATIVE, '1');
+      const literal = Number(seconds);
+      const ms = Number.isFinite(literal)
+        ? String(Math.round(literal * 1000))
+        : `${seconds} * 1000`;
+      return `digitalWrite(${pin}, HIGH);\ndelay(${ms});\ndigitalWrite(${pin}, LOW);\n`;
+    },
     led_set: (block, generator) => {
       const pin = block.getFieldValue('PIN') as string;
       generator.pinMode(pin, 'OUTPUT');

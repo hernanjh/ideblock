@@ -88,5 +88,11 @@
   "TILT": "el sensor de inclinación del pin %1 está inclinado",
   "TILT_TOOLTIP": "Se activa cuando el sensor se inclina.",
   "TEMPERATURE": "temperatura en °C del sensor del pin %1",
-  "TEMPERATURE_TOOLTIP": "Lee un módulo de temperatura con termistor NTC de 10 kΩ. Necesita un pin analógico."
+  "TEMPERATURE_TOOLTIP": "Lee un módulo de temperatura con termistor NTC de 10 kΩ. Necesita un pin analógico.",
+  "LED_ON_FOR": "encender el LED del pin %1 durante %2 segundos",
+  "LED_ON_FOR_TOOLTIP": "Enciende el LED, espera ese tiempo y lo apaga.",
+  "TEXT_LETTER": "letra %1 de %2",
+  "TEXT_LETTER_TOOLTIP": "La letra en esa posición, contando desde 1.",
+  "TEXT_CONTAINS": "¿%1 contiene %2?",
+  "TEXT_CONTAINS_TOOLTIP": "Verdadero si el segundo texto aparece dentro del primero."
 }

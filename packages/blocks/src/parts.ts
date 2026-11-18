@@ -14,6 +14,7 @@ type FieldMap = Record<string, string>;
 const PART_BLOCKS: Record<string, (fields: FieldMap, board: BoardDefinition) => PartUse | null> = {
   led_set: (f) => part('led', { anode: f['PIN'] }),
   led_brightness: (f) => part('led', { anode: f['PIN'] }),
+  led_on_for: (f) => part('led', { anode: f['PIN'] }),
   button_pressed: (f) => part('pushbutton', { signal: f['PIN'] }),
   potentiometer_read: (f) => part('potentiometer', { signal: f['PIN'] }),
   light_sensor_read: (f) => part('photoresistor', { signal: f['PIN'] }),

@@ -88,5 +88,11 @@
   "TILT": "tilt sensor on pin %1 is tilted",
   "TILT_TOOLTIP": "Turns on when the sensor is tilted.",
   "TEMPERATURE": "temperature in °C from the sensor on pin %1",
-  "TEMPERATURE_TOOLTIP": "Reads a temperature module with a 10 kΩ NTC thermistor. Needs an analog pin."
+  "TEMPERATURE_TOOLTIP": "Reads a temperature module with a 10 kΩ NTC thermistor. Needs an analog pin.",
+  "LED_ON_FOR": "turn on the LED on pin %1 for %2 seconds",
+  "LED_ON_FOR_TOOLTIP": "Turns the LED on, waits that long and turns it off.",
+  "TEXT_LETTER": "letter %1 of %2",
+  "TEXT_LETTER_TOOLTIP": "The letter at that position, counting from 1.",
+  "TEXT_CONTAINS": "%1 contains %2?",
+  "TEXT_CONTAINS_TOOLTIP": "True when the second text appears inside the first one."
 }
