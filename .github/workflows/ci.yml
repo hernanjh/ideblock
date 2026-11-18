@@ -1,18 +1,16 @@
 name: CI
 
+# Runs only on demand to save Actions minutes: Actions → CI → Run workflow.
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
+    inputs:
+      e2e_all_platforms:
+        description: Also run end-to-end tests on Windows and macOS
+        type: boolean
+        default: false
 
 permissions:
   contents: read
-
-concurrency:
-  group: ci-${{ github.ref }}
-  # Every commit on main gets a full run; superseded pull request runs are cancelled.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   quality:
@@ -37,7 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: ${{ inputs.e2e_all_platforms && fromJSON('["ubuntu-latest","windows-latest","macos-latest"]') || fromJSON('["ubuntu-latest"]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
@@ -58,33 +56,3 @@ jobs:
           name: playwright-report-${{ matrix.os }}
           path: apps/desktop/playwright-report
           retention-days: 7
-
-  package:
-    name: Package (${{ matrix.os }})
-    needs: quality
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    env:
-      # Builds are unsigned until code signing certificates are set up.
-      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npm run package
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ideblock-${{ runner.os }}
-          path: |
-            apps/desktop/release/*.exe
-            apps/desktop/release/*.dmg
-            apps/desktop/release/*.AppImage
-            apps/desktop/release/*.deb
-          if-no-files-found: error
-          retention-days: 14
