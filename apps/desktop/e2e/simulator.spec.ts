@@ -53,6 +53,26 @@ test.describe('circuit', () => {
     await expect(window.getByTestId('circuit-redo')).toBeDisabled();
   });
 
+  test('explains how to build the circuit with real parts', async ({ launchApp }) => {
+    const { window } = await launchApp('es-AR');
+    await window.getByTestId('file-examples').click();
+    await window.getByTestId('example-Blink').click();
+    await window.getByTestId('simulator-assembly').click();
+    const guide = window.getByTestId('assembly-guide');
+    await expect(guide.getByTestId('assembly-parts')).toContainText('resistencia de 220 Ω');
+    await expect(guide.getByTestId('assembly-steps')).toContainText(
+      'Pata larga (+) → al pin D13 de la placa, con una resistencia de 220 Ω en el medio.',
+    );
+  });
+
+  test('offers the breadboard and switches to hand wiring', async ({ launchApp }) => {
+    const { window } = await launchApp();
+    await window.getByTestId('rail-circuit').click();
+    await window.getByTestId('add-breadboard').click();
+    await expect(window.getByTestId('wiring-manual')).toHaveAttribute('aria-pressed', 'true');
+    await expect(window.getByTestId('scene-item-breadboard1')).toBeVisible();
+  });
+
   test('moves components by dragging them', async ({ launchApp }) => {
     const { window } = await launchApp();
     await window.getByTestId('rail-circuit').click();

@@ -13,6 +13,8 @@ import { boardPinPositions, defaultPositions, supplyPin } from './layout';
 import { analyseCircuit, type CircuitAnalysis, type CircuitWire } from './netlist';
 
 export const WIRE_COLOURS = ['#1e88e5', '#2fa84f', '#f59f00', '#e53935', '#20242b', '#8e24aa'];
+/** Translation keys under `colors` for each wire colour, in the same order. */
+export const WIRE_COLOUR_NAMES = ['blue', 'green', 'orange', 'red', 'black', 'purple'] as const;
 export const GROUND_WIRE = '#20242b';
 export const SUPPLY_WIRE = '#e53935';
 

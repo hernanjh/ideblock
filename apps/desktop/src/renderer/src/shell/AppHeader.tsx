@@ -78,6 +78,11 @@ export function AppHeader() {
       checked: settings.consoleGraphVisible,
       onSelect: () => void update({ consoleGraphVisible: !settings.consoleGraphVisible }),
     },
+    {
+      id: 'assembly',
+      label: t('assembly.open'),
+      onSelect: () => openDialog('assembly'),
+    },
     'separator',
     {
       id: 'detach',

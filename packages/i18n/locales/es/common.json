@@ -406,7 +406,8 @@
     "undo": "Deshacer (Ctrl+Z)",
     "redo": "Rehacer (Ctrl+Y)",
     "rotate": "Girar",
-    "rotateHint": "Gira el componente un cuarto de vuelta. También podés apretar la tecla R."
+    "rotateHint": "Gira el componente un cuarto de vuelta. También podés apretar la tecla R.",
+    "assemblyHint": "Para armar el circuito en una protoboard, como en la vida real. Al agregar una, el cableado pasa a «A mano»."
   },
   "colors": {
     "red": "Rojo",
@@ -490,5 +491,31 @@
     "HORZ": "eje X (HORZ)",
     "VERT": "eje Y (VERT)",
     "SEL": "botón (SEL)"
+  },
+  "assembly": {
+    "title": "Cómo armarlo",
+    "intro": "Para armar este circuito con una placa {{board}} de verdad. El programa es el mismo que usaste en el simulador.",
+    "partsTitle": "Qué necesitás",
+    "board": "1 placa {{board}} y su cable USB",
+    "part_one": "{{count}} {{name}}",
+    "part_other": "{{count}} × {{name}}",
+    "resistors_one": "{{count}} resistencia de 220 Ω (rojo, rojo, marrón)",
+    "resistors_other": "{{count}} resistencias de 220 Ω (rojo, rojo, marrón)",
+    "wires_one": "{{count}} cable",
+    "wires_other": "{{count}} cables",
+    "stepsTitle": "Conexiones, paso a paso",
+    "unplug": "Desconectá la placa de la computadora mientras conectás. Cuando termines, revisá cada cable y recién ahí enchufala.",
+    "toPin": "al pin {{pin}} de la placa",
+    "throughResistor": ", con una resistencia de 220 Ω en el medio",
+    "toGround": "a GND (tierra)",
+    "toSupply": "a {{supply}}",
+    "plugTitle": "Pinchá las piezas en la protoboard",
+    "plug": "{{holes}}",
+    "wiresTitle": "Tendé los cables",
+    "wire": "Cable {{colour}}: desde {{from}} hasta {{to}}.",
+    "fixFirst": "La revisión del circuito encontró problemas: arreglalos en la vista Circuito antes de armarlo.",
+    "empty": "Todavía no hay componentes en el circuito.",
+    "print": "Imprimir o guardar en PDF",
+    "open": "Cómo armarlo"
   }
 }

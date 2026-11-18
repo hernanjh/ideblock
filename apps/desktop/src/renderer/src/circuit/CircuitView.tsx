@@ -3,6 +3,7 @@ import { pinsFor, type PinKind } from '@ideblock/blocks';
 import { COMPONENTS, findComponent } from '@ideblock/simulator';
 import {
   CircleCheck,
+  ClipboardList,
   Maximize,
   Redo2,
   RotateCw,
@@ -42,6 +43,7 @@ import { supplyPin } from './layout';
 import { legName } from './legs';
 import {
   WIRE_COLOURS,
+  WIRE_COLOUR_NAMES,
   circuitAnalysis,
   circuitWires,
   nextWireId,
@@ -54,7 +56,6 @@ import type { CircuitAnalysis, CircuitIssue } from './netlist';
 
 const ZOOM_STEPS = [0.5, 0.67, 0.8, 1, 1.25, 1.5, 2];
 const LED_COLOURS = ['red', 'green', 'yellow', 'blue', 'white'] as const;
-const WIRE_COLOUR_NAMES = ['blue', 'green', 'orange', 'red', 'black', 'purple'] as const;
 const ASSEMBLY_PARTS = ['breadboard', 'resistor'];
 const WIRING_MODES: readonly WiringMode[] = ['auto', 'manual'];
 
@@ -84,9 +85,13 @@ export function CircuitView({ console }: { console: ReactNode }) {
   const analysis = useMemo(() => circuitAnalysis(circuit, board), [circuit, board]);
 
   const add = (type: string): void => {
-    const component = newComponent(type, circuit, board);
+    // Breadboards and resistors only exist in hand wiring, so adding one switches
+    // to it; the automatic wires are turned into real ones first.
+    const base =
+      ASSEMBLY_PARTS.includes(type) && mode === 'auto' ? toManualWiring(circuit, board) : circuit;
+    const component = newComponent(type, base, board);
     if (!component) return;
-    setCircuit(withComponents(circuit, [...items, component]));
+    setCircuit(withComponents(base, [...circuitComponents(base), component]));
     select(component.id);
   };
 
@@ -180,6 +185,15 @@ export function CircuitView({ console }: { console: ReactNode }) {
             <Waypoints aria-hidden="true" size="1.1em" />
             {t('circuit.title', { board: board.name })}
           </h2>
+          <button
+            type="button"
+            className="button--small"
+            data-testid="open-assembly"
+            onClick={() => useUiStore.getState().openDialog('assembly')}
+          >
+            <ClipboardList aria-hidden="true" size="1em" />
+            {t('assembly.open')}
+          </button>
           <div className="card__end">
             <span className="wiring-label">{t('circuit.wiring')}</span>
             <div className="segmented" role="group" aria-label={t('circuit.wiring')}>
@@ -378,9 +392,11 @@ function Palette({ onAdd, mode }: { onAdd: (type: string) => void; mode: WiringM
       .toLowerCase()
       .includes(normalized);
   const groups = [
-    ...(mode === 'manual'
-      ? [{ heading: t('circuit.assembly'), types: ASSEMBLY_PARTS.filter(matching) }]
-      : []),
+    {
+      heading: t('circuit.assembly'),
+      hint: mode === 'auto' ? t('circuit.assemblyHint') : undefined,
+      types: ASSEMBLY_PARTS.filter(matching),
+    },
     {
       heading: t('circuit.basic'),
       types: COMPONENTS.map((definition) => definition.type).filter(matching),
@@ -404,6 +420,7 @@ function Palette({ onAdd, mode }: { onAdd: (type: string) => void; mode: WiringM
         .map((group) => (
           <div key={group.heading}>
             <h3 className="palette__heading">{group.heading}</h3>
+            {group.hint && <p className="palette__hint">{group.hint}</p>}
             <ul className="palette__grid">
               {group.types.map((type) => (
                 <li key={type}>

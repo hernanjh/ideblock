@@ -62,6 +62,10 @@ export function runSimulatorAction(action: SimulatorAction): void {
       useUiStore.getState().selectComponent(action.componentId);
       void window.ideblock.invoke('app:focus-main');
       break;
+    case 'openAssembly':
+      useUiStore.getState().openDialog('assembly');
+      void window.ideblock.invoke('app:focus-main');
+      break;
     case 'input':
       simulation.input(action.id, action.input);
       break;

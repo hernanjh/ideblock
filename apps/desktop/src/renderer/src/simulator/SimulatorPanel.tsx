@@ -6,7 +6,16 @@ import {
   findComponent,
   type ComponentInput,
 } from '@ideblock/simulator';
-import { ArrowRightLeft, Pause, Play, Plus, RotateCcw, Square, TriangleAlert } from 'lucide-react';
+import {
+  ArrowRightLeft,
+  ClipboardList,
+  Pause,
+  Play,
+  Plus,
+  RotateCcw,
+  Square,
+  TriangleAlert,
+} from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CircuitScene } from '../circuit/CircuitScene';
@@ -137,6 +146,7 @@ export function SimulatorPanel() {
         inputs={inputs}
         onInput={sendInput}
         onOpen={(id) => dispatch({ type: 'openCircuit', componentId: id })}
+        onAssembly={() => dispatch({ type: 'openAssembly' })}
         onAdd={(type) => {
           const component = newComponent(type, circuit, board);
           if (!component) return;
@@ -257,6 +267,7 @@ interface ComponentStripProps {
   onInput: (id: string, input: ComponentInput) => void;
   onOpen: (id: string) => void;
   onAdd: (type: string) => void;
+  onAssembly: () => void;
 }
 
 function ComponentStrip({
@@ -267,6 +278,7 @@ function ComponentStrip({
   onInput,
   onOpen,
   onAdd,
+  onAssembly,
 }: ComponentStripProps) {
   const { t } = useTranslation();
   const [adding, setAdding] = useState(false);
@@ -277,6 +289,17 @@ function ComponentStrip({
         {t('simulator.components')}
         <span className="components__hint">{t('simulator.componentsHint')}</span>
       </h3>
+      {items.length > 0 && (
+        <button
+          type="button"
+          className="button--small components__assembly"
+          data-testid="simulator-assembly"
+          onClick={onAssembly}
+        >
+          <ClipboardList aria-hidden="true" size="1em" />
+          {t('assembly.open')}
+        </button>
+      )}
       {items.length === 0 && <p className="console__empty">{t('simulator.empty')}</p>}
       <ul className="components__grid">
         {items.map((item) => (

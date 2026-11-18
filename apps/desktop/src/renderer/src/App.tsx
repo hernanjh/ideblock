@@ -1,3 +1,4 @@
+import { AssemblyGuide } from './circuit/AssemblyGuide';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BlockEditor } from './blocks/BlockEditor';
@@ -68,6 +69,7 @@ export function App() {
           <StatusBar />
           <SettingsDialog open={dialog === 'settings'} onClose={() => openDialog(null)} />
           <AboutDialog open={dialog === 'about'} onClose={() => openDialog(null)} />
+          <AssemblyGuide open={dialog === 'assembly'} onClose={() => openDialog(null)} />
         </div>
       </LocalSimulator>
     </ProjectCommandsProvider>

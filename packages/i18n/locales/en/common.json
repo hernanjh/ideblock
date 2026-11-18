@@ -406,7 +406,8 @@
     "undo": "Undo (Ctrl+Z)",
     "redo": "Redo (Ctrl+Y)",
     "rotate": "Rotate",
-    "rotateHint": "Turns the part a quarter turn. You can also press R."
+    "rotateHint": "Turns the part a quarter turn. You can also press R.",
+    "assemblyHint": "To build the circuit on a breadboard, like in real life. Adding one switches the wiring to \"By hand\"."
   },
   "colors": {
     "red": "Red",
@@ -490,5 +491,31 @@
     "HORZ": "X axis (HORZ)",
     "VERT": "Y axis (VERT)",
     "SEL": "button (SEL)"
+  },
+  "assembly": {
+    "title": "How to build it",
+    "intro": "To build this circuit with a real {{board}} board. The program is the same one you used in the simulator.",
+    "partsTitle": "What you need",
+    "board": "1 {{board}} board and its USB cable",
+    "part_one": "{{count}} {{name}}",
+    "part_other": "{{count}} × {{name}}",
+    "resistors_one": "{{count}} 220 Ω resistor (red, red, brown)",
+    "resistors_other": "{{count}} 220 Ω resistors (red, red, brown)",
+    "wires_one": "{{count}} wire",
+    "wires_other": "{{count}} wires",
+    "stepsTitle": "Connections, step by step",
+    "unplug": "Unplug the board from the computer while you connect. When you are done, check every wire and only then plug it in.",
+    "toPin": "to pin {{pin}} on the board",
+    "throughResistor": ", with a 220 Ω resistor in between",
+    "toGround": "to GND (ground)",
+    "toSupply": "to {{supply}}",
+    "plugTitle": "Plug the parts into the breadboard",
+    "plug": "{{holes}}",
+    "wiresTitle": "Lay the wires",
+    "wire": "{{colour}} wire: from {{from}} to {{to}}.",
+    "fixFirst": "The circuit check found problems: fix them in the Circuit view before building it.",
+    "empty": "The circuit has no components yet.",
+    "print": "Print or save as PDF",
+    "open": "How to build it"
   }
 }

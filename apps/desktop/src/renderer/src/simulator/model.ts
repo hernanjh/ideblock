@@ -26,6 +26,7 @@ export type SimulatorAction =
   | { type: 'pause' }
   | { type: 'resume' }
   | { type: 'openCircuit'; componentId: string | null }
+  | { type: 'openAssembly' }
   | { type: 'input'; id: string; input: ComponentInput }
   | { type: 'setCircuit'; circuit: CircuitDocument };
 

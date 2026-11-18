@@ -1752,6 +1752,72 @@ button:disabled {
   filter: drop-shadow(0 0 5px rgb(255 196 0 / 85%));
 }
 
+.components__assembly {
+  align-self: flex-start;
+  margin-bottom: var(--space-2);
+}
+
+.assembly {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.assembly h3 {
+  margin: var(--space-2) 0 0;
+}
+
+.assembly h4 {
+  margin: var(--space-1) 0;
+}
+
+.assembly ol,
+.assembly ul {
+  margin: 0;
+  padding-left: 1.4rem;
+  line-height: 1.6;
+}
+
+.assembly__picture {
+  display: flex;
+  height: min(460px, 55vh);
+}
+
+.assembly__picture > .scene {
+  flex: 1;
+}
+
+.assembly__tip {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* Only shown on paper, where the dialog header is hidden. */
+.assembly__print-title {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .assembly,
+  .assembly * {
+    visibility: visible;
+  }
+
+  .assembly {
+    position: absolute;
+    inset: 0;
+    color: #000;
+  }
+
+  .assembly__print-title {
+    display: block;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
