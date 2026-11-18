@@ -27,7 +27,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "npm run test:e2e --workspace @ideblock/desktop",
-    "check:licenses": "node scripts/check-licenses.mjs"
+    "check:licenses": "node scripts/check-licenses.mjs",
+    "fetch:toolchain": "node scripts/fetch-arduino-cli.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
