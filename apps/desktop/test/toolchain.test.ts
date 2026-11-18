@@ -69,3 +69,28 @@ describe.runIf(integration)('ToolchainService with arduino-cli', () => {
     await rm(build, { recursive: true, force: true });
   });
 });
+
+describe.runIf(integration)('ToolchainService cache', () => {
+  const binary = join(import.meta.dirname, '..', 'resources', 'bin', 'arduino-cli');
+  const dataRoot = process.env['IDEBLOCK_ARDUINO_DATA_DIR'] ?? join(tmpdir(), 'ideblock-arduino');
+
+  it('reuses the firmware of an unchanged program', { timeout: 600_000 }, async () => {
+    const build = await mkdtemp(join(tmpdir(), 'ideblock-build-'));
+    const stages: string[] = [];
+    const service = new ToolchainService(new ArduinoCli({ binary, dataRoot }), build, (event) =>
+      stages.push(event.stage),
+    );
+    const request = {
+      code: 'void setup() {}\nvoid loop() {}\n',
+      boardId: 'uno',
+      sketchName: 'cache',
+      libraries: [],
+    };
+    const first = await service.compile(request);
+    const compiles = stages.filter((stage) => stage === 'compile').length;
+    const second = await service.compile(request);
+    expect(second).toBe(first);
+    expect(stages.filter((stage) => stage === 'compile')).toHaveLength(compiles);
+    await rm(build, { recursive: true, force: true });
+  });
+});

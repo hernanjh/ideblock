@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { getBoard, type BoardDefinition } from '@ideblock/boards';
@@ -35,6 +36,7 @@ interface CompileResponse {
 type ProgressListener = (progress: ToolchainProgress) => void;
 
 const PROGRESS_INTERVAL_MS = 150;
+const CACHE_SIZE = 8;
 
 /** Sends at most one progress update per interval to keep the UI responsive. */
 function throttle(listener: ProgressListener): ProgressListener {
@@ -64,6 +66,8 @@ function memory(
 export class ToolchainService {
   private queue: Promise<unknown> = Promise.resolve();
   private indexUpdated = false;
+  /** Successful builds by source, so an unchanged program starts at once. */
+  private readonly cache = new Map<string, CompileResult>();
 
   constructor(
     private readonly cli: ArduinoCli,
@@ -117,7 +121,28 @@ export class ToolchainService {
     return result;
   }
 
+  private cacheKey(request: CompileRequest): string {
+    const board = getBoard(request.boardId);
+    return createHash('sha256')
+      .update(JSON.stringify([board.fqbn, [...request.libraries].sort(), request.code]))
+      .digest('hex');
+  }
+
   private async compileNow(request: CompileRequest): Promise<CompileResult> {
+    const key = this.cacheKey(request);
+    const cached = this.cache.get(key);
+    if (cached) return cached;
+    const result = await this.build(request);
+    if (result.ok) {
+      this.cache.delete(key);
+      this.cache.set(key, result);
+      // Oldest entries go first; Map keeps insertion order.
+      while (this.cache.size > CACHE_SIZE) this.cache.delete(this.cache.keys().next().value!);
+    }
+    return result;
+  }
+
+  private async build(request: CompileRequest): Promise<CompileResult> {
     const failed = (failure: CompileResult['failure'], output: string): CompileResult => ({
       ok: false,
       ...(failure ? { failure } : {}),
