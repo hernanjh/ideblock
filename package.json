@@ -1,0 +1,45 @@
+{
+  "name": "ideblock-monorepo",
+  "private": true,
+  "type": "module",
+  "description": "Open source IDE for programming Arduino-compatible and ESP32 boards with blocks or code",
+  "license": "GPL-3.0-only",
+  "author": "Hernan Hegykozi <hernanjh@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hernanjh/ideblock.git"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @ideblock/desktop",
+    "build": "npm run build --workspace @ideblock/desktop",
+    "package": "npm run package --workspace @ideblock/desktop",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "npm run test:e2e --workspace @ideblock/desktop",
+    "check:licenses": "node scripts/check-licenses.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.2",
+    "eslint": "10.15.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-i18next": "6.1.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.14.0",
+    "prettier": "3.10.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.73.0",
+    "vitest": "5.1.1"
+  }
+}
