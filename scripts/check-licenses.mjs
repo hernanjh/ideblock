@@ -41,10 +41,15 @@ const BUILD_ONLY_EXCEPTIONS = new Map([
   ['caniuse-lite', 'CC-BY-4.0 data used by the build tooling only'],
 ]);
 
+// Non-SPDX spellings found in published manifests, checked against the package's
+// LICENSE file before being listed here.
+const SPELLINGS = new Map([['Apache 2.0', 'Apache-2.0']]);
+
 function normalize(license) {
   if (!license) return [];
   if (typeof license === 'object') license = license.type;
-  const cleaned = String(license).replace(/[()]/g, '').trim();
+  const raw = String(license).trim();
+  const cleaned = (SPELLINGS.get(raw) ?? raw).replace(/[()]/g, '').trim();
   // "A OR B" is satisfied by either option; "A AND B" needs both.
   if (cleaned.includes(' OR ')) {
     return [cleaned.split(' OR ').map((part) => part.trim())];
