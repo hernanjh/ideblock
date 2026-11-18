@@ -1,0 +1,241 @@
+diff --git a/hw/block/m25p80.c b/hw/block/m25p80.c
+index 46dbe7c..4f8ef70 100644
+--- a/hw/block/m25p80.c
++++ b/hw/block/m25p80.c
+@@ -821,6 +821,7 @@ static void complete_collecting_data(Flash *s)
+             }
+             break;
+         case MAN_WINBOND:
++        case MAN_GIGADEVICE:
+             if (s->len > 1) {
+                 s->quad_enable = !!(s->data[1] & 0x02);
+             }
+@@ -835,6 +836,7 @@ static void complete_collecting_data(Flash *s)
+     case WRSR2:
+         switch (get_man(s)) {
+         case MAN_WINBOND:
++        case MAN_GIGADEVICE:
+             s->quad_enable = !!(s->data[0] & 0x02);
+             break;
+         default:
+@@ -1003,6 +1005,7 @@ static void decode_fast_read_cmd(Flash *s)
+     switch (get_man(s)) {
+     /* Dummy cycles - modeled with bytes writes instead of bits */
+     case MAN_SST:
++    case MAN_GIGADEVICE:
+         s->needed_bytes += 1;
+         break;
+     case MAN_WINBOND:
+@@ -1103,10 +1106,14 @@ static void decode_qio_read_cmd(Flash *s)
+     /* Dummy cycles modeled with bytes writes instead of bits */
+     switch (get_man(s)) {
+     case MAN_WINBOND:
+-    case MAN_GIGADEVICE:
+         s->needed_bytes += WINBOND_CONTINUOUS_READ_MODE_CMD_LEN;
+         s->needed_bytes += 4;
+         break;
++    case MAN_GIGADEVICE:
++        s->needed_bytes += GIGADEVICE_CONTINUOUS_READ_MODE_CMD_LEN;
++        /* 4 dummy cycles on 4 lines */
++        s->needed_bytes += 2;
++        break;
+     case MAN_SPANSION:
+         s->needed_bytes += SPANSION_CONTINUOUS_READ_MODE_CMD_LEN;
+         s->needed_bytes += extract32(s->spansion_cr2v,
+@@ -1295,6 +1302,7 @@ static void decode_new_cmd(Flash *s, uint32_t value)
+             s->state = STATE_COLLECTING_VAR_LEN_DATA;
+             break;
+         case MAN_WINBOND:
++        case MAN_GIGADEVICE:
+             s->needed_bytes = 2;
+             s->state = STATE_COLLECTING_VAR_LEN_DATA;
+             break;
+@@ -1321,6 +1329,7 @@ static void decode_new_cmd(Flash *s, uint32_t value)
+ 
+         switch (get_man(s)) {
+         case MAN_WINBOND:
++        case MAN_GIGADEVICE:
+             s->needed_bytes = 1;
+             s->state = STATE_COLLECTING_DATA;
+             s->pos = 0;
+@@ -1500,6 +1509,7 @@ static void decode_new_cmd(Flash *s, uint32_t value)
+             s->quad_enable = true;
+             break;
+         case MAN_WINBOND:
++        case MAN_GIGADEVICE:
+             s->data[0] = (!!s->quad_enable) << 1;
+             s->pos = 0;
+             s->len = 1;
+diff --git a/hw/misc/esp32_ledc.c b/hw/misc/esp32_ledc.c
+index 773d44e..55409a8 100644
+--- a/hw/misc/esp32_ledc.c
++++ b/hw/misc/esp32_ledc.c
+@@ -34,6 +34,15 @@ static uint64_t esp32_ledc_read(void *opaque, hwaddr addr, unsigned int size)
+     case A_LEDC_LSCH7_CONF0_REG:
+         r = s->channel_conf0_reg[(addr - A_LEDC_HSCH0_CONF0_REG) / 0x14];
+         break;
++    default:
++        /* IdeBlock: DUTY (0x08) and DUTY_R (0x10) readback per channel */
++        if (addr >= A_LEDC_HSCH0_CONF0_REG && addr < A_LEDC_HSCH0_CONF0_REG + 16 * 0x14) {
++            int off = (addr - A_LEDC_HSCH0_CONF0_REG) % 0x14;
++            int ch = (addr - A_LEDC_HSCH0_CONF0_REG) / 0x14;
++            if (off == 0x08) r = s->duty_raw[ch];
++            else if (off == 0x10) r = s->duty_raw[ch] >> 4;
++        }
++        break;
+     }
+     return r;
+ }
+@@ -137,6 +146,7 @@ static void esp32_ledc_write(void *opaque, hwaddr addr,
+     case A_LEDC_LSCH6_DUTY_REG:
+     case A_LEDC_LSCH7_DUTY_REG:{
+         int ledn = (addr - A_LEDC_HSCH0_DUTY_REG) / 0x14;
++        s->duty_raw[ledn] = value;
+         led_set_intensity(&s->led[ledn], esp32_ledc_get_percent(s, value, ledn));
+         qemu_set_irq(s->ledc_sync[0], (0x5000 | (ledn << 8) | led_get_intensity(&s->led[ledn])));
+         }break;
+diff --git a/hw/misc/esp32_sens.c b/hw/misc/esp32_sens.c
+index 823b851..93b432f 100644
+--- a/hw/misc/esp32_sens.c
++++ b/hw/misc/esp32_sens.c
+@@ -95,6 +95,15 @@ static const MemoryRegionOps esp32_sens_ops = {
+     .endianness = DEVICE_LITTLE_ENDIAN,
+ };
+ 
++/* IdeBlock: let an external process (qtest set_irq_in) drive ADC inputs.
++ * n = ADC channel index as used by ADC_values (ADC1 ch0-7 -> 0-7, ADC2 ch0-9 -> 8-17),
++ * level = raw 12-bit value. */
++static void esp32_sens_set_adc(void *opaque, int n, int level)
++{
++    Esp32SensState *s = ESP32_SENS(opaque);
++    s->ADC_values[n] = level;
++}
++
+ static void esp32_sens_init(Object *obj)
+ {
+     Esp32SensState *s = ESP32_SENS(obj);
+@@ -108,6 +117,7 @@ static void esp32_sens_init(Object *obj)
+     memset(s->ADC_values, 0, sizeof(s->ADC_values));
+     s->channel1 = 0;
+     s->channel2 = 0;
++    qdev_init_gpio_in_named(DEVICE(obj), esp32_sens_set_adc, "esp32_adc_in", 32);
+ }
+ 
+ 
+diff --git a/hw/ssi/esp32_spi.c b/hw/ssi/esp32_spi.c
+index 831801f..647e290 100644
+--- a/hw/ssi/esp32_spi.c
++++ b/hw/ssi/esp32_spi.c
+@@ -185,6 +185,7 @@ typedef struct Esp32SpiTransaction {
+     uint32_t cmd;
+     int addr_bytes;
+     uint32_t addr;
++    int dummy_bytes;
+     int data_tx_bytes;
+     int data_rx_bytes;
+     uint32_t* data;
+@@ -235,6 +236,9 @@ static void esp32_spi_transaction(Esp32SpiState *s, Esp32SpiTransaction *t)
+     esp32_spi_cs_set(s, 0);
+     esp32_spi_txrx_buffer(s, &t->cmd, t->cmd_bytes, 0);
+     esp32_spi_txrx_buffer(s, &t->addr, t->addr_bytes, 0);
++    for (int i = 0; i < t->dummy_bytes; ++i) {
++        ssi_transfer(s->spi, 0);
++    }
+     esp32_spi_txrx_buffer(s, t->data, t->data_tx_bytes, t->data_rx_bytes);
+     esp32_spi_cs_set(s, 1);
+ }
+@@ -245,6 +249,18 @@ static inline int bitlen_to_bytes(uint32_t val)
+     return (val + 1 + 7) / 8; /* bitlen registers hold number of bits, minus one */
+ }
+ 
++static int esp32_spi_dummy_bytes(Esp32SpiState *s, int addr_bits, int addr_bytes)
++{
++    const int cycles = FIELD_EX32(s->user1_reg, SPI_USER1, DUMMY_CYCLELEN) + 1;
++    int lines = 1;
++    if (FIELD_EX32(s->ctrl_reg, SPI_CTRL, FREAD_QIO)) {
++        lines = 4;
++    } else if (FIELD_EX32(s->ctrl_reg, SPI_CTRL, FREAD_DIO)) {
++        lines = 2;
++    }
++    return MAX((addr_bits + cycles * lines) / 8 - addr_bytes, 0);
++}
++
+ static void maybe_encrypt_data(Esp32SpiState *s)
+ {
+     Esp32FlashEncryptionState* flash_enc = esp32_flash_encryption_find();
+@@ -443,7 +459,7 @@ static void esp32_spi_do_command(Esp32SpiState* s, uint32_t cmd_reg)
+             return;
+         }
+         maybe_encrypt_data(s);
+-        if (FIELD_EX32(s->user_reg, SPI_USER, COMMAND) && FIELD_EX32(s->user2_reg, SPI_USER2, COMMAND_BITLEN)) {
++        if (FIELD_EX32(s->user_reg, SPI_USER, COMMAND) || FIELD_EX32(s->user2_reg, SPI_USER2, COMMAND_BITLEN)) {
+             t.cmd = FIELD_EX32(s->user2_reg, SPI_USER2, COMMAND_VALUE);
+             t.cmd_bytes = bitlen_to_bytes(FIELD_EX32(s->user2_reg, SPI_USER2, COMMAND_BITLEN));
+         } else {
+@@ -453,6 +469,11 @@ static void esp32_spi_do_command(Esp32SpiState* s, uint32_t cmd_reg)
+             t.addr_bytes = bitlen_to_bytes(FIELD_EX32(s->user1_reg, SPI_USER1, ADDR_BITLEN));
+             t.addr = bswap32(s->addr_reg);
+         }
++        if (FIELD_EX32(s->user_reg, SPI_USER, DUMMY)) {
++            const int addr_bits = t.addr_bytes ?
++                FIELD_EX32(s->user1_reg, SPI_USER1, ADDR_BITLEN) + 1 : 0;
++            t.dummy_bytes = esp32_spi_dummy_bytes(s, addr_bits, t.addr_bytes);
++        }
+         if (FIELD_EX32(s->user_reg, SPI_USER, MOSI)) {
+             t.data = &s->data_reg[0];
+             t.data_tx_bytes = bitlen_to_bytes(s->mosi_dlen_reg);
+diff --git a/include/hw/misc/esp32_ledc.h b/include/hw/misc/esp32_ledc.h
+index 7a41ce8..48aa1c4 100644
+--- a/include/hw/misc/esp32_ledc.h
++++ b/include/hw/misc/esp32_ledc.h
+@@ -20,6 +20,7 @@ typedef struct Esp32LEDCState {
+     uint32_t timer_conf_reg[ESP32_LEDC_TIMER_CNT];
+     uint32_t channel_conf0_reg[ESP32_LEDC_CHANNEL_CNT];
+     float duty[ESP32_LEDC_CHANNEL_CNT];
++    uint32_t duty_raw[ESP32_LEDC_CHANNEL_CNT];
+     LEDState led[ESP32_LEDC_CHANNEL_CNT];
+     qemu_irq ledc_sync[1];
+ } Esp32LEDCState;
+diff --git a/include/hw/ssi/esp32_spi.h b/include/hw/ssi/esp32_spi.h
+index 662b002..c01c5b0 100644
+--- a/include/hw/ssi/esp32_spi.h
++++ b/include/hw/ssi/esp32_spi.h
+@@ -61,6 +61,8 @@ REG32(SPI_CMD, 0x00)
+ 
+ REG32(SPI_ADDR, 0x04)
+ REG32(SPI_CTRL, 0x08)
++    FIELD(SPI_CTRL, FREAD_QIO, 24, 1)
++    FIELD(SPI_CTRL, FREAD_DIO, 23, 1)
+ REG32(SPI_STATUS, 0x10)
+     FIELD(SPI_STATUS, STATUS, 0, 16)
+ 
+diff --git a/system/qtest.c b/system/qtest.c
+index 12703a2..dcf231a 100644
+--- a/system/qtest.c
++++ b/system/qtest.c
+@@ -30,6 +30,7 @@
+ #include "qemu/module.h"
+ #include "qemu/cutils.h"
+ #include "qom/object_interfaces.h"
++extern GMainContext *g_main_context_default_l;
+ 
+ #define MAX_IRQ 256
+ 
+@@ -834,7 +835,7 @@ void qtest_server_init(const char *qtest_chrdev, const char *qtest_log, Error **
+     Chardev *chr;
+     Object *qobj;
+ 
+-    chr = qemu_chr_new("qtest", qtest_chrdev, NULL);
++    chr = qemu_chr_new("qtest", qtest_chrdev, g_main_context_default_l);
+     if (chr == NULL) {
+         error_setg(errp, "Failed to initialize device for qtest: \"%s\"",
+                    qtest_chrdev);
+@@ -872,7 +873,7 @@ static bool qtest_server_start(QTest *q, Error **errp)
+         return false;
+     }
+     qemu_chr_fe_set_handlers(&q->qtest_chr, qtest_can_read, qtest_read,
+-                             qtest_event, NULL, &q->qtest_chr, NULL, true);
++                             qtest_event, NULL, &q->qtest_chr, g_main_context_default_l, true);
+     qemu_chr_fe_set_echo(&q->qtest_chr, true);
+ 
+     inbuf = g_string_new("");

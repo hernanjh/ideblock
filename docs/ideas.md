@@ -150,11 +150,23 @@ Priority is high, medium or low. The phase is where it would fit best.
 
 ## Risks
 
-- **ESP32 simulation.** Espressif's upstream QEMU emulates the CPU, UART and flash but
-  not GPIO, LEDC (PWM), ADC or I2C. The lcgamboa fork adds these peripherals, with
-  limits: one instance per process, no BLE, touch or DAC, and an arduino-esp32 version
-  mismatch. The alternative is a shim library that reports pin activity over the UART
-  (simpler, less accurate). A feasibility spike opens Phase 2.
+- **ESP32 simulation (moved to Phase 4).** A feasibility spike in Phase 2 found:
+  - Espressif's QEMU 9.2.2 boots arduino-esp32 3.3 images and runs Serial sketches,
+    but drops GPIO writes, cannot inject inputs and hangs on `analogRead`.
+  - The lcgamboa fork (`esp32-picsimlab` machine) emulates GPIO, LEDC, ADC, I2C and
+    SPI. With a ~60-line patch (two flash fixes backported from Espressif, readable
+    LEDC duty, ADC as an input line, qtest polling) a separate process could watch an
+    LED, press a button, turn a potentiometer and read PWM through qtest.
+  - The fork has a single maintainer and lags Espressif; no binaries are published.
+  - Official macOS and Linux binaries depend on Homebrew or system libraries, so
+    QEMU must be built per platform by the project either way.
+  - A shim that overrides the weak `digitalWrite`/`digitalRead`/`analogRead` symbols
+    works on the unmodified binary but misses LEDC, RMT and libraries that bypass the
+    Arduino API.
+  - Estimated effort: 4–5 weeks for the patched fork, 1–2 weeks for the shim.
+  - **Decision:** postpone to Phase 4, together with the board manager and installers. The
+    preferred route at that point is the patched fork, built per platform in CI. Notes and the patch are in
+    [research/esp32-qemu](research/esp32-qemu/README.md).
 - **QEMU licensing.** QEMU is GPL-2.0. It must run as a separate process and never be
   linked into the application, since GPL-2.0-only code cannot be combined with
   GPL-3.0. Its source must be offered alongside the binaries.

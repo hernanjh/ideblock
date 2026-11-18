@@ -157,12 +157,27 @@ La prioridad es alta, media o baja. La fase indica dónde encajaría mejor.
 
 ## Riesgos
 
-- **Simulación de ESP32.** El QEMU oficial de Espressif emula la CPU, la UART y la flash,
-  pero no GPIO, LEDC (PWM), ADC ni I2C. El fork de lcgamboa agrega esos periféricos, con
-  limitaciones: una instancia por proceso, sin BLE, touch ni DAC, y una diferencia de
-  versión con arduino-esp32. La alternativa es una librería intermedia que informe la
-  actividad de los pines por la UART (más simple, menos fiel). La Fase 2 empieza con una
-  prueba de viabilidad.
+- **Simulación de ESP32 (pasa a la Fase 4).** Una prueba de viabilidad en la Fase 2
+  encontró:
+  - El QEMU 9.2.2 de Espressif arranca imágenes de arduino-esp32 3.3 y corre sketches
+    que usan el puerto serie, pero descarta las escrituras a GPIO, no permite inyectar
+    entradas y se cuelga en `analogRead`.
+  - El fork de lcgamboa (máquina `esp32-picsimlab`) emula GPIO, LEDC, ADC, I2C y SPI.
+    Con un parche de ~60 líneas (dos correcciones de flash traídas de Espressif, duty
+    de LEDC legible, ADC como línea de entrada, consultas por qtest) un proceso aparte
+    pudo ver un LED, apretar un botón, girar un potenciómetro y leer el PWM por qtest.
+  - El fork lo mantiene una sola persona, va atrasado respecto de Espressif y no
+    publica binarios.
+  - Los binarios oficiales de macOS y Linux dependen de Homebrew o de librerías del
+    sistema, así que QEMU hay que compilarlo para cada plataforma de todos modos.
+  - Una librería intermedia que reemplaza los símbolos débiles `digitalWrite`,
+    `digitalRead` y `analogRead` funciona con el binario sin modificar, pero no cubre
+    LEDC, RMT ni librerías que no pasan por la API de Arduino.
+  - Esfuerzo estimado: 4–5 semanas con el fork parcheado, 1–2 con la librería.
+  - **Decisión:** se posterga a la Fase 4, junto con el gestor de placas y los instaladores.
+    En ese momento el camino preferido es el fork parcheado, compilado por plataforma en
+    CI. Las notas y el parche están en
+    [research/esp32-qemu](research/esp32-qemu/README.es.md).
 - **Licencia de QEMU.** QEMU es GPL-2.0. Tiene que ejecutarse como proceso separado y
   nunca enlazarse con la aplicación, porque el código GPL-2.0-only no se puede combinar
   con GPL-3.0. Su código fuente se ofrece junto con los binarios.
