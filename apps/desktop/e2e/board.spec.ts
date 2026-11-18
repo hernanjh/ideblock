@@ -12,11 +12,9 @@ test.describe('physical board', () => {
 
   test('offers the serial monitor and graph', async ({ launchApp }) => {
     const { window } = await launchApp();
-    await window.getByTestId('toggle-console').click();
     await window.getByTestId('console-tab-serial').click();
 
     await expect(window.getByTestId('serial-connect')).toBeDisabled();
-    await window.getByTestId('serial-plot-view').click();
     await expect(window.getByTestId('serial-plotter')).toContainText('temp:21.5');
   });
 });

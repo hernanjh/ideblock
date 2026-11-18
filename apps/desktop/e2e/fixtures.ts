@@ -63,3 +63,9 @@ export async function editorText(window: Page): Promise<string> {
     return sorted.map((line) => (line.textContent ?? '').replace(/\u00a0/g, ' ')).join('\n');
   });
 }
+
+/** Runs an item from the title bar menus, e.g. `menu(window, 'file', 'new')`. */
+export async function menu(window: Page, name: string, item: string): Promise<void> {
+  await window.getByTestId(`menu-${name}`).click();
+  await window.getByTestId(`menu-${item}`).click();
+}

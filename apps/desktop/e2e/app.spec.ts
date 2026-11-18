@@ -18,7 +18,7 @@ test.describe('application shell', () => {
 
   test('follows the system language by default', async ({ launchApp }) => {
     const { window } = await launchApp('es-AR');
-    await expect(window.getByTestId('toggle-simulator')).toContainText('Simulador');
+    await expect(window.getByTestId('toolbar-simulate')).toContainText('Simular');
     await expect(window.getByTestId('app-version')).toHaveText('Versión 0.1.0');
   });
 

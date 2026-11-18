@@ -11,7 +11,6 @@ test.describe('compiling', () => {
     const { window } = await launchApp('es-AR');
     await window.getByTestId('file-examples').click();
     await window.getByTestId('example-ServoKnob').click();
-    await window.getByTestId('toggle-console').click();
     await window.getByTestId('build-verify').click();
 
     await expect(window.getByTestId('build-success')).toBeVisible({ timeout: 240_000 });
@@ -20,7 +19,6 @@ test.describe('compiling', () => {
 
   test('explains errors in hand-written code and jumps to the line', async ({ launchApp }) => {
     const { window } = await launchApp('es-AR');
-    await window.getByTestId('toggle-code').click();
     const editor = window.locator('[data-testid="code-editor"] .view-lines');
     await editor.click();
     await window.keyboard.type('x');

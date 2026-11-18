@@ -1,7 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
-import { editorText, expect, test } from './fixtures';
+import { editorText, expect, menu, test } from './fixtures';
 
 /** Answers the next native save dialog with `filePath`. */
 async function answerSaveDialog(app: ElectronApplication, filePath: string): Promise<void> {
@@ -53,13 +53,12 @@ test.describe('projects', () => {
     await first.window.getByTestId('file-save').click();
     await expect(first.window.getByTestId('save-status')).toHaveAttribute('data-status', 'saved');
 
-    await first.window.getByTestId('file-new').click();
+    await menu(first.window, 'file', 'new');
     await expect(first.window.getByTestId('project-name')).toHaveValue('My project');
 
     await answerOpenDialog(first.app, join(userDataDir, 'Blink', 'ideblock.json'));
-    await first.window.getByTestId('file-open').click();
+    await menu(first.window, 'file', 'open');
     await expect(first.window.getByTestId('project-name')).toHaveValue('Blinking LED');
-    await first.window.getByTestId('toggle-code').click();
     await expect.poll(() => editorText(first.window)).toContain('digitalWrite(13, HIGH);');
   });
 
@@ -78,7 +77,7 @@ test.describe('projects', () => {
   test('asks before replacing an edited project that is not in a folder', async ({ launchApp }) => {
     const { window } = await launchApp();
     await window.getByTestId('project-name').fill('Draft');
-    await window.getByTestId('file-new').click();
+    await menu(window, 'file', 'new');
 
     await expect(window.getByTestId('confirm-replace-dialog')).toBeVisible();
     await window.getByTestId('confirm-discard').click();
@@ -90,7 +89,7 @@ test.describe('projects', () => {
     await window.getByTestId('file-examples').click();
     await window.getByTestId('example-ButtonLed').click();
     await answerSaveDialog(app, join(userDataDir, 'button'));
-    await window.getByTestId('file-export').click();
+    await menu(window, 'file', 'export');
 
     await expect
       .poll(() => readFile(join(userDataDir, 'button.ino'), 'utf8').catch(() => ''))
