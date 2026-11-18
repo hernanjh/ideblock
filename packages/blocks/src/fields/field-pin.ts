@@ -1,6 +1,20 @@
 import * as Blockly from 'blockly/core';
 import { getActiveBoard, pinsFor, type PinKind } from '../board-context';
 
+/** Picks the pin a beginner most likely wired, based on common kit examples. */
+function defaultPin(kind: PinKind): string | undefined {
+  const board = getActiveBoard();
+  const pins = pinsFor(board, kind);
+  const preferred: Record<PinKind, string | undefined> = {
+    output: board.builtinLedPin,
+    pwm: board.architecture === 'esp32' ? '13' : '9',
+    digital: board.architecture === 'esp32' ? '4' : '2',
+    analog: undefined,
+  };
+  const choice = preferred[kind];
+  return choice && pins.includes(choice) ? choice : pins[0];
+}
+
 interface FieldPinJson extends Blockly.FieldDropdownFromJsonConfig {
   pinKind?: PinKind;
   value?: string;
@@ -18,7 +32,7 @@ export class FieldPin extends Blockly.FieldDropdown {
     const self: { field?: FieldPin } = {};
     super(() => FieldPin.options(pinKind, self.field?.getValue() ?? value));
     self.field = this;
-    const initial = value ?? pinsFor(getActiveBoard(), pinKind)[0];
+    const initial = value ?? defaultPin(pinKind);
     if (initial !== undefined) this.setValue(initial);
   }
 
