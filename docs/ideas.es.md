@@ -87,6 +87,9 @@ La prioridad es alta, media o baja. La fase indica dónde encajaría mejor.
 
 - **Validación de circuitos (alta).** Avisar de un LED sin resistencia, un
   cortocircuito o un pin usado dos veces. Enseña seguridad eléctrica.
+- **Programa y circuito que no coinciden (alta).** Avisar cuando un bloque maneja una
+  pieza que no está en el circuito en ese pin, por ejemplo bloques de NeoPixel en un
+  pin conectado a un LED común. Surgió en las primeras pruebas de uso.
 - **Desafíos autocorregibles (alta).** Comportamiento esperado de pines y del puerto
   serie más verificaciones del circuito, empaquetados en un archivo que reparte el
   docente. La corrección no necesita servidor.

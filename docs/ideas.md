@@ -84,6 +84,9 @@ Priority is high, medium or low. The phase is where it would fit best.
 
 - **Circuit validation (high).** Warn about an LED without a resistor, a short
   circuit or a pin used twice. Teaches electrical safety.
+- **Program and circuit mismatch (high).** Warn when a block drives a part that is
+  not in the circuit on that pin, for example NeoPixel blocks on a pin wired to a
+  plain LED. Reported by the first user tests.
 - **Self-checking challenges (high).** Expected pin and serial behavior plus circuit
   checks, packaged as a file the teacher distributes. Grading needs no server.
 - **Kit profiles (high).** Block palettes and examples for common educational kits
