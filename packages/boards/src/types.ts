@@ -41,6 +41,8 @@ export interface BoardDefinition {
   /** Pins usable with analogWrite. */
   pwmPins: readonly string[];
   builtinLedPin: string;
+  /** The built-in LED lights when its pin is LOW, as on ESP8266 modules. */
+  builtinLedActiveLow?: boolean;
   /** Default I2C pins used by the Wire library. */
   i2c: { sda: string; scl: string };
   /** USB vendor/product ids that identify the board when it is plugged in. */

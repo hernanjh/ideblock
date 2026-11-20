@@ -123,9 +123,10 @@ export const outputsModule: BlockModule = {
   generators: {
     // Each board says which pin its own LED is on, so the block works on all of them.
     builtin_led_set: (block, generator) => {
-      const pin = generator.board.builtinLedPin;
+      const { builtinLedPin: pin, builtinLedActiveLow } = generator.board;
       generator.pinMode(pin, 'OUTPUT');
-      return `digitalWrite(${pin}, ${block.getFieldValue('STATE') as string});\n`;
+      const on = block.getFieldValue('STATE') === 'HIGH';
+      return `digitalWrite(${pin}, ${on !== Boolean(builtinLedActiveLow) ? 'HIGH' : 'LOW'});\n`;
     },
     led_on_for: (block, generator) => {
       const pin = block.getFieldValue('PIN') as string;

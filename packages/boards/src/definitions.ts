@@ -229,6 +229,8 @@ export const nodeMcu: BoardDefinition = {
   analogInputPins: ['A0'],
   pwmPins: ESP8266_PINS.filter((pin) => pin !== '16'),
   builtinLedPin: '2',
+  // The ESP-12 module's LED is wired to 3.3 V, so it lights when the pin is LOW.
+  builtinLedActiveLow: true,
   i2c: { sda: '4', scl: '5' },
 };
 

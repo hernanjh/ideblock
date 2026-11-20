@@ -166,6 +166,8 @@ describe('sketch generator', () => {
     expect(generate(blink).code).toContain('pinMode(13, OUTPUT);');
     expect(generate(blink).code).toContain('digitalWrite(13, HIGH);');
     expect(generate(blink, { board: 'esp32-devkit' }).code).toContain('digitalWrite(2, HIGH);');
+    // ESP8266 modules light their LED with LOW.
+    expect(generate(blink, { board: 'nodemcu' }).code).toContain('digitalWrite(2, LOW);');
   });
 
   it('turns an LED on for a while', () => {
