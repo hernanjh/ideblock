@@ -66,9 +66,10 @@ Notas nuevas de pruebas de uso y de la comparación con Tinkercad y mBlock:
   y encajan con los modelos actuales.
 - **Simular las placas que faltan.** Uno, Nano, Mega, Leonardo, Micro y Pico ya
   corren en el simulador. Falta:
-  - En la Pico, servos, tonos y NeoPixel: arduino-pico los maneja con PIO, que
-    rp2040js ejecuta aparte del reloj simulado. Leer las colas FIFO del PIO a
-    más alto nivel (ancho de pulso, período del tono, colores) lo resolvería.
+  - En la Pico, servos, tonos y NeoPixel (hecho): arduino-pico los maneja con
+    PIO; el simulador reconoce los programas de servo, tono y WS2812 y convierte
+    los valores que reciben sus colas FIFO en la señal que dibujarían. Otros
+    programas PIO no se ejecutan.
   - En Leonardo y Micro, el PWM de los pines 6 y 13 (timer 4) y el puerto serie
     USB; las compilaciones para simular mandan Serial a la USART1.
   - Nano Every (ATmega4809): avr8js no emula la serie megaAVR 0.

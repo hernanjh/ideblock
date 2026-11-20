@@ -62,9 +62,10 @@ New notes from user tests and from comparing with Tinkercad and mBlock:
   current models.
 - **Simulating the remaining boards.** Uno, Nano, Mega, Leonardo, Micro and Pico
   run in the simulator. Still missing:
-  - Pico servos, tones and NeoPixels: arduino-pico drives them from PIO, which
-    rp2040js runs apart from the simulated clock. Reading the PIO FIFOs at a
-    higher level (pulse widths, tone periods, pixel colours) would work.
+  - Pico servos, tones and NeoPixels (done): arduino-pico drives them from PIO;
+    the simulator recognises the servo, tone and WS2812 programs and turns the
+    values pushed to their FIFOs into the waveforms they would draw. Other PIO
+    programs do not run.
   - Leonardo and Micro PWM on pins 6 and 13 (timer 4) and the USB serial port;
     simulation builds send Serial to USART1 instead.
   - Nano Every (ATmega4809): avr8js does not emulate the megaAVR 0-series.

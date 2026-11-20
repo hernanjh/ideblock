@@ -55,8 +55,7 @@ teenagers and adults who want to move on to real code.
 
 Boards compatible with Arduino Uno, Nano, Mega, Leonardo, Micro and Nano Every, ESP32
 DevKit, ESP32-C3 and ESP32-S3, NodeMCU and Wemos D1 mini (ESP8266), and Raspberry Pi
-Pico. The simulator runs Uno, Nano, Mega, Leonardo, Micro and Pico programs; on the
-Pico, servos, tones and NeoPixels are not simulated yet.
+Pico. The simulator runs Uno, Nano, Mega, Leonardo, Micro and Pico programs.
 
 ## Roadmap
 

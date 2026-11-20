@@ -57,8 +57,7 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
 
 Placas compatibles con Arduino Uno, Nano, Mega, Leonardo, Micro y Nano Every, ESP32
 DevKit, ESP32-C3 y ESP32-S3, NodeMCU y Wemos D1 mini (ESP8266), y Raspberry Pi Pico. El
-simulador corre programas de Uno, Nano, Mega, Leonardo, Micro y Pico; en la Pico
-todavía no se simulan servos, tonos ni NeoPixel.
+simulador corre programas de Uno, Nano, Mega, Leonardo, Micro y Pico.
 
 ## Hoja de ruta
 
