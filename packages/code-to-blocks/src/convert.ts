@@ -12,6 +12,7 @@ export interface SerializedBlock {
   inputs?: Record<string, { block?: SerializedBlock; shadow?: SerializedBlock }>;
   next?: { block: SerializedBlock };
   extraState?: Record<string, unknown>;
+  icons?: { comment?: { text: string; pinned: boolean; height: number; width: number } };
 }
 
 /** A circuit part, so code on its pins becomes the block for that part. */
@@ -80,6 +81,9 @@ const COMPARISON: Record<string, string> = {
   '>=': 'GTE',
 };
 
+/** Statements of a body, with the comments between them. */
+const withComments = (node: Node | null | undefined): Node[] =>
+  (node?.namedChildren ?? []).filter((child): child is Node => child !== null);
 const named = (node: Node | null | undefined): Node[] =>
   (node?.namedChildren ?? []).filter(
     (child): child is Node => child !== null && child.type !== 'comment',
@@ -206,6 +210,29 @@ function pinConstantText(node: Node): { name: string; value: string } | null {
   const name = field(declarators[0]!, 'declarator');
   const value = field(declarators[0]!, 'value')?.text;
   return name?.type === 'identifier' && value ? { name: name.text, value } : null;
+}
+
+/** The words of a line comment or a block comment. */
+function commentText(comment: string): string {
+  if (comment.startsWith('//')) return comment.slice(2).trim();
+  return comment
+    .replace(/^\/\*+|\*+\/$/g, '')
+    .split('\n')
+    .map((line) => line.replace(/^\s*\*?\s?/, '').trimEnd())
+    .join('\n')
+    .trim();
+}
+
+function addComment(block: SerializedBlock, text: string): void {
+  const previous = block.icons?.comment?.text;
+  block.icons = {
+    comment: {
+      text: previous ? `${previous}\n${text}` : text,
+      pinned: false,
+      height: 80,
+      width: 200,
+    },
+  };
 }
 
 class Converter {
@@ -598,12 +625,30 @@ class Converter {
 
   private statements(nodes: Node[]): Converted[] {
     const result: Converted[] = [];
+    // Comments above a statement go on its block; one at the end of a line goes on that line's block.
+    let pending: string[] = [];
+    let lastBlock: SerializedBlock | null = null;
+    let lastRow = -1;
     for (let index = 0; index < nodes.length; index++) {
       const node = nodes[index]!;
+      if (node.type === 'comment') {
+        const text = commentText(node.text);
+        if (node.startPosition.row === lastRow && lastBlock) addComment(lastBlock, text);
+        else if (text) pending.push(text);
+        continue;
+      }
       const ahead = (offset: number): Node | undefined => nodes[index + offset];
       const converted = this.statement(node, ahead);
       result.push(...converted.blocks);
       index += converted.consumed;
+      lastRow = (nodes[index] ?? node).endPosition.row;
+      const blocks = converted.blocks.filter((item): item is SerializedBlock => !isDeferred(item));
+      lastBlock = blocks.at(-1) ?? null;
+      const first = blocks[0];
+      if (first && pending.length > 0) {
+        addComment(first, pending.join('\n'));
+        pending = [];
+      }
     }
     return result;
   }
@@ -619,7 +664,7 @@ class Converter {
     });
     switch (node.type) {
       case 'compound_statement':
-        return { blocks: this.statements(named(node)), consumed: 0 };
+        return { blocks: this.statements(withComments(node)), consumed: 0 };
       case 'expression_statement': {
         const expression = named(node)[0];
         if (!expression) return one(null);
@@ -1028,7 +1073,9 @@ class Converter {
 
   private body(node: Node | null): SerializedBlock | undefined {
     if (!node) return undefined;
-    return this.chain(this.statements(node.type === 'compound_statement' ? named(node) : [node]));
+    return this.chain(
+      this.statements(node.type === 'compound_statement' ? withComments(node) : [node]),
+    );
   }
 
   private ifStatement(node: Node): SerializedBlock {
@@ -1209,8 +1256,8 @@ class Converter {
     // Servo pins come from attach() calls in setup.
     if (setupNode) this.findServoPins(setupNode);
 
-    const setup = this.statements(named(setupNode));
-    const loop = this.statements(named(loopNode));
+    const setup = this.statements(withComments(setupNode));
+    const loop = this.statements(withComments(loopNode));
 
     for (const node of functions) procedures.push(this.procedure(node, globals));
 

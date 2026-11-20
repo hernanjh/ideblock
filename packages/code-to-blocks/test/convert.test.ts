@@ -328,4 +328,21 @@ void loop() {
     expect(result.codeBlocks).toBe(0);
     expect(result.code).toContain('digitalWrite(13, ledState);');
   });
+
+  it('keeps comments on the blocks', async () => {
+    const result = await convert(`
+void setup() {}
+void loop() {
+  // Turn the LED on
+  digitalWrite(13, HIGH);
+  delay(1000); // wait a second
+  /* and off
+     again */
+  digitalWrite(13, LOW);
+}
+`);
+    expect(result.code).toContain('  // Turn the LED on\n  digitalWrite(13, HIGH);');
+    expect(result.code).toContain('  // wait a second\n  delay(1000);');
+    expect(result.code).toContain('  // and off\n  // again\n  digitalWrite(13, LOW);');
+  });
 });
