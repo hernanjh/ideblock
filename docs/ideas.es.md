@@ -6,9 +6,9 @@ Notas de trabajo sobre funcionalidades, referencias y riesgos. Son propuestas, n
 compromisos; cada una se revisa al cierre de una fase antes de entrar en la hoja de
 ruta.
 
-Última revisión: 2026-11-18 (cierre de la Fase 1).
+Última revisión: 2026-11-20 (cierre de la Fase 2).
 
-## Avance de la Fase 2
+## Revisión de la Fase 2
 
 Hecho hasta ahora: caché de firmware, más placas (Leonardo, Micro, Nano Every,
 ESP32-C3 y S3, ESP8266 y Pico), un bus I2C en el simulador con una pantalla LCD,

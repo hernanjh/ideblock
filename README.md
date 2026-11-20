@@ -6,7 +6,7 @@ IdeBlock is a free and open source desktop IDE for programming Arduino-compatibl
 and ESP32 boards. It is designed for kids taking their first steps, and grows with
 teenagers and adults who want to move on to real code.
 
-> **Status:** Phase 1 (first usable version). See the [roadmap](#roadmap).
+> **Status:** Phase 3 (code to blocks). Phases 1 and 2 are done. See the [roadmap](#roadmap).
 
 ## What it can do today
 

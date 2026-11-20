@@ -5,9 +5,9 @@
 Working notes on features, references and risks. Items here are proposals, not
 commitments; each one is reviewed at the end of a phase before it enters the roadmap.
 
-Last reviewed: 2026-11-18 (end of Phase 1).
+Last reviewed: 2026-11-20 (end of Phase 2).
 
-## Phase 2 progress
+## Phase 2 review
 
 Done so far: firmware cache, more boards (Leonardo, Micro, Nano Every, ESP32-C3
 and S3, ESP8266 and Pico), an I2C bus in the simulator with an LCD screen, RGB

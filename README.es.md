@@ -6,7 +6,7 @@ IdeBlock es un entorno de desarrollo de escritorio, libre y gratuito, para progr
 placas compatibles con Arduino y ESP32. Está pensado para chicos que dan sus primeros
 pasos y acompaña a adolescentes y adultos que quieren pasar a programar en código real.
 
-> **Estado:** Fase 1 (primera versión utilizable). Ver la [hoja de ruta](#hoja-de-ruta).
+> **Estado:** Fase 3 (de código a bloques). Las fases 1 y 2 están terminadas. Ver la [hoja de ruta](#hoja-de-ruta).
 
 ## Qué se puede hacer hoy
 
