@@ -8,6 +8,11 @@ export interface ServoSupport {
   header: string;
   /** Library to install, when the board platform does not bundle one. */
   library?: string;
+  /**
+   * Pulse widths in microseconds for 0 and 180 degrees, when the library's
+   * default range is narrower than the standard 544 to 2400.
+   */
+  pulseRange?: readonly [number, number];
 }
 
 export interface BoardCore {

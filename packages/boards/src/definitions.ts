@@ -254,8 +254,9 @@ export const pico: BoardDefinition = {
     indexUrl:
       'https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json',
   },
-  // The RP2040 platform bundles its own Servo library.
-  servo: { header: 'Servo.h' },
+  // The RP2040 platform bundles its own Servo library, which defaults to 1000
+  // to 2000 µs pulses: a quarter turn short of a full sweep on most servos.
+  servo: { header: 'Servo.h', pulseRange: [544, 2400] },
   drawing: 'generic',
   pinLabelPrefix: 'GP',
   digitalPins: [...PICO_PINS, '25'],

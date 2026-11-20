@@ -9,11 +9,12 @@ function servoName(pin: string): string {
 
 function useServo(generator: SketchGenerator, pin: string): string {
   const name = servoName(pin);
-  const { header, library } = generator.board.servo;
+  const { header, library, pulseRange } = generator.board.servo;
   generator.addInclude(header);
   if (library) generator.addLibrary(library);
   generator.addGlobal(`servo:${pin}`, `Servo ${name};`);
-  generator.addSetup(`servo:${pin}`, `${name}.attach(${pin});`);
+  const range = pulseRange ? `, ${pulseRange[0]}, ${pulseRange[1]}` : '';
+  generator.addSetup(`servo:${pin}`, `${name}.attach(${pin}${range});`);
   return name;
 }
 
