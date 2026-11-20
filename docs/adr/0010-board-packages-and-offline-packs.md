@@ -53,5 +53,6 @@ Options considered for the offline part:
   Windows and Linux computers makes two.
 - The pack is as large as what is installed (the ESP32 core alone is over
   1 GB), so teachers should install only the boards they use.
-- A full offline installer can later be built by putting a pack next to the
-  installer, without changing the format.
+- A school installer carries a pack in its resources (`npm run
+package:offline`); the installed app imports it the first time it starts and
+  remembers which pack it imported, so the same pack is not copied twice.

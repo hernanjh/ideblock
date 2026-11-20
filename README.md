@@ -46,7 +46,8 @@ teenagers and adults who want to move on to real code.
 - **Built-in simulator.** Try circuits and programs without hardware, running the
   real compiled firmware.
 - **Real boards.** Compile, upload and open the serial monitor on physical boards.
-- **Works offline.** Built for classrooms with poor or no connectivity.
+- **Works offline.** Built for classrooms with poor or no connectivity; see
+  [preparing a classroom without internet](docs/guides/offline-classroom.md).
 - **English and Spanish** from day one, ready for more languages.
 - **Private by design.** No accounts, no telemetry, no data collection.
 
@@ -77,17 +78,18 @@ npm run fetch:toolchain
 npm run dev
 ```
 
-| Command                   | Description                                                |
-| ------------------------- | ---------------------------------------------------------- |
-| `npm run dev`             | Start the app with hot reload                              |
-| `npm run lint`            | Run ESLint                                                 |
-| `npm run format`          | Format the code with Prettier                              |
-| `npm run typecheck`       | Type-check all workspaces                                  |
-| `npm test`                | Run unit tests                                             |
-| `npm run test:e2e`        | Build the app and run end-to-end tests                     |
-| `npm run package`         | Build an installer for the current platform                |
-| `npm run check:licenses`  | Verify that dependency licenses are GPL-3.0 compatible     |
-| `npm run fetch:toolchain` | Download the pinned arduino-cli used to compile and upload |
+| Command                   | Description                                                                               |
+| ------------------------- | ----------------------------------------------------------------------------------------- |
+| `npm run dev`             | Start the app with hot reload                                                             |
+| `npm run lint`            | Run ESLint                                                                                |
+| `npm run format`          | Format the code with Prettier                                                             |
+| `npm run typecheck`       | Type-check all workspaces                                                                 |
+| `npm test`                | Run unit tests                                                                            |
+| `npm run test:e2e`        | Build the app and run end-to-end tests                                                    |
+| `npm run package`         | Build an installer for the current platform                                               |
+| `npm run package:offline` | Build a school installer with an offline pack ([guide](docs/guides/offline-classroom.md)) |
+| `npm run check:licenses`  | Verify that dependency licenses are GPL-3.0 compatible                                    |
+| `npm run fetch:toolchain` | Download the pinned arduino-cli used to compile and upload                                |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the project structure and guidelines.
 

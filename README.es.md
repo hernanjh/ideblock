@@ -48,7 +48,8 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
   firmware compilado real.
 - **Placas reales.** Compilar, subir el programa y abrir el monitor serie en placas
   físicas.
-- **Funciona sin internet.** Pensado para aulas con poca o ninguna conectividad.
+- **Funciona sin internet.** Pensado para aulas con poca o ninguna conectividad;
+  ver [cómo preparar un aula sin internet](docs/guides/offline-classroom.es.md).
 - **Inglés y español** desde el primer día, preparado para sumar más idiomas.
 - **Privacidad ante todo.** Sin cuentas, sin telemetría, sin recolección de datos.
 
@@ -79,17 +80,18 @@ npm run fetch:toolchain
 npm run dev
 ```
 
-| Comando                   | Descripción                                                                 |
-| ------------------------- | --------------------------------------------------------------------------- |
-| `npm run dev`             | Inicia la app con recarga en caliente                                       |
-| `npm run lint`            | Ejecuta ESLint                                                              |
-| `npm run format`          | Formatea el código con Prettier                                             |
-| `npm run typecheck`       | Verifica los tipos de todos los workspaces                                  |
-| `npm test`                | Ejecuta los tests unitarios                                                 |
-| `npm run test:e2e`        | Compila la app y ejecuta los tests end-to-end                               |
-| `npm run package`         | Genera el instalador para la plataforma actual                              |
-| `npm run check:licenses`  | Verifica que las licencias de las dependencias sean compatibles con GPL-3.0 |
-| `npm run fetch:toolchain` | Descarga la versión fijada de arduino-cli que se usa para compilar y subir  |
+| Comando                   | Descripción                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`             | Inicia la app con recarga en caliente                                                                        |
+| `npm run lint`            | Ejecuta ESLint                                                                                               |
+| `npm run format`          | Formatea el código con Prettier                                                                              |
+| `npm run typecheck`       | Verifica los tipos de todos los workspaces                                                                   |
+| `npm test`                | Ejecuta los tests unitarios                                                                                  |
+| `npm run test:e2e`        | Compila la app y ejecuta los tests end-to-end                                                                |
+| `npm run package`         | Genera el instalador para la plataforma actual                                                               |
+| `npm run package:offline` | Genera un instalador para escuelas con un paquete sin conexión ([guía](docs/guides/offline-classroom.es.md)) |
+| `npm run check:licenses`  | Verifica que las licencias de las dependencias sean compatibles con GPL-3.0                                  |
+| `npm run fetch:toolchain` | Descarga la versión fijada de arduino-cli que se usa para compilar y subir                                   |
 
 En [CONTRIBUTING.es.md](CONTRIBUTING.es.md) se describe la estructura del proyecto y
 las pautas para contribuir.

@@ -56,5 +56,7 @@ Opciones evaluadas para la parte sin conexión:
   con computadoras Windows y Linux arma dos.
 - El paquete pesa lo que esté instalado (el core del ESP32 solo supera 1 GB), así
   que conviene instalar únicamente las placas que se usan.
-- Más adelante se puede armar un instalador offline completo poniendo un paquete
-  junto al instalador, sin cambiar el formato.
+- Un instalador para escuelas lleva un paquete en sus recursos (`npm run
+package:offline`); la aplicación instalada lo importa la primera vez que se
+  abre y recuerda qué paquete importó, así el mismo paquete no se copia dos
+  veces.
