@@ -20,6 +20,7 @@
     "dev": "npm run dev --workspace @ideblock/desktop",
     "build": "npm run build --workspace @ideblock/desktop",
     "package": "npm run package --workspace @ideblock/desktop",
+    "package:offline": "npm run package:offline --workspace @ideblock/desktop",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

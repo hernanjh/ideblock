@@ -15,6 +15,9 @@ extraResources:
     to: examples
   - from: resources/bin
     to: bin
+  # Only present in offline school installers, staged by scripts/stage-offline-pack.mjs.
+  - from: resources/offline-pack
+    to: offline-pack
 asar: true
 artifactName: ${productName}-${version}-${os}-${arch}.${ext}
 win:

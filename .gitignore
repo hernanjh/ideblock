@@ -15,6 +15,9 @@ playwright-report/
 # Downloaded toolchains
 apps/desktop/resources/bin/
 
+# Offline pack staged for a school installer
+apps/desktop/resources/offline-pack/
+
 # Logs
 *.log
 npm-debug.log*
