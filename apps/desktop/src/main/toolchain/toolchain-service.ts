@@ -115,6 +115,16 @@ export class ToolchainService {
     });
   }
 
+  /** Runs a task alone, since arduino-cli locks its data folder. */
+  exclusive<T>(task: () => Promise<T>): Promise<T> {
+    return this.enqueue(task);
+  }
+
+  /** Forgets earlier builds, after cores or libraries changed. */
+  clearCache(): void {
+    this.cache.clear();
+  }
+
   private enqueue<T>(task: () => Promise<T>): Promise<T> {
     const result = this.queue.then(task, task);
     this.queue = result.catch(() => undefined);

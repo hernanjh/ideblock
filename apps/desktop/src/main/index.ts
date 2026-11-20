@@ -1,6 +1,7 @@
 import { join } from 'node:path';
 import { app, BrowserWindow, shell } from 'electron';
 import { z } from 'zod';
+import { boardsHandlers } from './boards-ipc';
 import { broadcast, registerInvokeHandlers } from './ipc';
 import { installApplicationMenu } from './menu';
 import { examplesDirectory, projectHandlers } from './project-ipc';
@@ -11,6 +12,7 @@ import { ArduinoCli } from './toolchain/arduino-cli';
 import { findMissingDrivers } from './toolchain/drivers';
 import { PortWatcher } from './toolchain/port-watcher';
 import { SerialMonitor } from './toolchain/serial-monitor';
+import { BoardManager } from './toolchain/board-manager';
 import { ToolchainService } from './toolchain/toolchain-service';
 import { createMainWindow } from './window';
 
@@ -58,17 +60,22 @@ if (!app.requestSingleInstanceLock()) {
     const settings = new SettingsStore(join(app.getPath('userData'), 'settings.json'));
     await settings.load();
     const projects = new ProjectService(app.getPath('userData'), examplesDirectory());
-    const cli = new ArduinoCli({
-      binary: arduinoCliBinary(),
-      // Tests and classroom setups can share one folder of installed cores.
-      dataRoot:
-        process.env['IDEBLOCK_ARDUINO_DATA_DIR'] ?? join(app.getPath('userData'), 'arduino'),
-    });
+    // Tests and classroom setups can share one folder of installed cores.
+    const cliDataRoot =
+      process.env['IDEBLOCK_ARDUINO_DATA_DIR'] ?? join(app.getPath('userData'), 'arduino');
+    const cli = new ArduinoCli({ binary: arduinoCliBinary(), dataRoot: cliDataRoot });
     const toolchain = new ToolchainService(
       cli,
       join(app.getPath('userData'), 'build'),
       (progress) => broadcast('toolchain:progress', progress),
     );
+    const boards = new BoardManager({
+      cli,
+      dataRoot: cliDataRoot,
+      exclusive: (task) => toolchain.exclusive(task),
+      onProgress: (progress) => broadcast('toolchain:progress', progress),
+      onChanged: () => toolchain.clearCache(),
+    });
     const ports = new PortWatcher(cli, (list) => broadcast('ports:changed', list));
     const serial = new SerialMonitor(cli, {
       onData: (text) => broadcast('serial:data', text),
@@ -97,6 +104,7 @@ if (!app.requestSingleInstanceLock()) {
         return updated;
       },
       ...projectHandlers(projects),
+      ...boardsHandlers(boards),
       'toolchain:compile': (_event, request) =>
         toolchain.compile(compileRequestSchema.parse(request)),
       'toolchain:upload': async (_event, request) => {

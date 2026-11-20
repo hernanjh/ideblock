@@ -76,7 +76,15 @@ export interface CompileResult {
   firmware?: string;
 }
 
-export type ToolchainStage = 'index' | 'core' | 'library' | 'compile' | 'upload';
+export type ToolchainStage =
+  | 'index'
+  | 'core'
+  | 'library'
+  | 'compile'
+  | 'upload'
+  | 'remove'
+  | 'pack-export'
+  | 'pack-import';
 
 export interface ToolchainProgress {
   stage: ToolchainStage;
@@ -128,6 +136,49 @@ export interface SerialStatus {
   message?: string;
 }
 
+/** A board package ("core") the app supports, and its state on this computer. */
+export interface CoreStatus {
+  id: string;
+  /** Ids of the supported boards it brings. */
+  boards: string[];
+  installed: string | null;
+  /** Newest version in the package index, when the index is available. */
+  latest: string | null;
+}
+
+export interface LibraryStatus {
+  name: string;
+  installed: string | null;
+}
+
+export interface BoardsStatus {
+  cores: CoreStatus[];
+  libraries: LibraryStatus[];
+  /** False when the package indexes could not be refreshed, usually without internet. */
+  online: boolean;
+}
+
+export type BoardsFailure =
+  | 'tool-missing'
+  | 'busy'
+  | 'failed'
+  /** The folder holds no offline pack. */
+  | 'not-a-pack'
+  /** The pack was made on another operating system or processor. */
+  | 'wrong-platform';
+
+export type BoardsResult = { ok: true } | { ok: false; failure: BoardsFailure; detail?: string };
+
+/** Contents of an offline pack folder, described in its ideblock-pack.json. */
+export interface OfflinePack {
+  formatVersion: 1;
+  platform: string;
+  arch: string;
+  created: string;
+  cores: { id: string; version: string }[];
+  libraries: { name: string; version: string }[];
+}
+
 /**
  * Simulator state mirrored to the detached simulator window. Typed loosely here
  * because the renderer owns the exact shape.
@@ -161,6 +212,12 @@ export interface InvokeContract {
   'session:save': { args: [session: OpenedProject]; result: void };
   'toolchain:compile': { args: [request: CompileRequest]; result: CompileResult };
   'toolchain:upload': { args: [request: UploadRequest]; result: UploadResult };
+  'boards:status': { args: []; result: BoardsStatus };
+  'boards:install-core': { args: [id: string]; result: BoardsResult };
+  'boards:remove-core': { args: [id: string]; result: BoardsResult };
+  'boards:install-libraries': { args: []; result: BoardsResult };
+  'boards:export-pack': { args: [texts: DialogTexts]; result: BoardsResult | null };
+  'boards:import-pack': { args: [texts: DialogTexts]; result: BoardsResult | null };
   'ports:list': { args: []; result: PortInfo[] };
   'ports:missing-drivers': { args: []; result: MissingDriver[] };
   'serial:open': { args: [request: SerialOpenRequest]; result: SerialStatus };
@@ -208,6 +265,12 @@ const invokeChannelSet: Record<InvokeChannel, true> = {
   'session:save': true,
   'toolchain:compile': true,
   'toolchain:upload': true,
+  'boards:status': true,
+  'boards:install-core': true,
+  'boards:remove-core': true,
+  'boards:install-libraries': true,
+  'boards:export-pack': true,
+  'boards:import-pack': true,
   'ports:list': true,
   'ports:missing-drivers': true,
   'serial:open': true,
