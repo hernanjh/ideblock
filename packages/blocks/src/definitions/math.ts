@@ -110,8 +110,12 @@ export const mathModule: BlockModule = {
     },
   },
   valueTypes: {
-    math_number: (block) =>
-      Number.isInteger(Number(block.getFieldValue('NUM'))) ? 'int' : 'float',
+    math_number: (block) => {
+      const value = Number(block.getFieldValue('NUM'));
+      if (!Number.isInteger(value)) return 'float';
+      // An int has 16 bits on AVR boards, so larger numbers need a long.
+      return Math.abs(value) > 32767 ? 'long' : 'int';
+    },
     math_arithmetic: (block, types) => {
       const op = block.getFieldValue('OP') as string;
       if (op === 'POWER') return 'float';

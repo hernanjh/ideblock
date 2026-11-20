@@ -38,6 +38,17 @@ describe('variable type inference', () => {
     expect(code).toContain('unsigned long start = 0;');
   });
 
+  it('uses a long for numbers too big for a 16-bit int', () => {
+    const { code } = generate(program([set('wait', num(100000)), set('small', num(-32767))], []), {
+      variables: [
+        { id: 'wait', name: 'wait' },
+        { id: 'small', name: 'small' },
+      ],
+    });
+    expect(code).toContain('long wait = 0;');
+    expect(code).toContain('int small = 0;');
+  });
+
   it('widens a variable assigned both integers and decimals', () => {
     const { code } = generate(
       program(
