@@ -41,8 +41,13 @@ Notas nuevas de pruebas de uso y de la comparación con Tinkercad y mBlock:
   - En Leonardo y Micro, el PWM de los pines 6 y 13 (timer 4) y el puerto serie
     USB; las compilaciones para simular mandan Serial a la USART1.
   - Nano Every (ATmega4809): avr8js no emula la serie megaAVR 0.
-  - ESP8266: no hay un emulador libre que sirva; el ESP32 está previsto para la
-    Fase 4.
+  - ESP8266: [digitake/esp8266-emulator](https://github.com/digitake/esp8266-emulator)
+    (C, MIT) corre imágenes del core de Arduino 3.1.2 sin modificar y se maneja
+    con JSON por stdin/stdout, con GPIO, UART y temporizadores FRC, que el core
+    también usa para PWM por software, tonos, servo e I2C. No tiene ADC, sus
+    tiempos son ideales y en Windows solo corre dentro de WSL, así que habría que
+    adaptarlo. Todavía no se compiló ni se probó; candidato para la Fase 4 junto
+    con el ESP32.
 - **Bloques con duración (hecho en parte).** Ya existe "encender el LED durante N
   segundos"; los tonos y los colores RGB podrían tener la misma forma.
 

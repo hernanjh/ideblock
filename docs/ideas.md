@@ -38,7 +38,12 @@ New notes from user tests and from comparing with Tinkercad and mBlock:
   - Leonardo and Micro PWM on pins 6 and 13 (timer 4) and the USB serial port;
     simulation builds send Serial to USART1 instead.
   - Nano Every (ATmega4809): avr8js does not emulate the megaAVR 0-series.
-  - ESP8266: no open source emulator fits; ESP32 is planned for Phase 4.
+  - ESP8266: [digitake/esp8266-emulator](https://github.com/digitake/esp8266-emulator)
+    (C, MIT) runs unmodified Arduino core 3.1.2 images and talks JSON over
+    stdin/stdout, with GPIO, UART and FRC timers, which the core also uses for
+    software PWM, tone, servo and I2C. It has no ADC, its timing is idealized
+    and it runs on Windows only inside WSL, so it needs a Windows port. Not yet
+    built or tried; candidate for Phase 4 with ESP32.
 - **Timed blocks (done in part).** "Turn on the LED for N seconds" exists; tones
   and RGB colours could get the same form.
 
