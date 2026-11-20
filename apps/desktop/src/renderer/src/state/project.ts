@@ -71,6 +71,8 @@ interface ProjectState {
   switchToCode: () => void;
   /** Returns to blocks only when the code still matches the blocks, so nothing is lost. */
   switchToBlocks: () => boolean;
+  /** Replaces the blocks with ones converted from the code and returns to blocks. */
+  applyConvertedBlocks: (state: WorkspaceState) => void;
   setDiagnostics: (diagnostics: Diagnostic[]) => void;
   markSaved: (revision: number, path: string | null) => void;
   setSaveStatus: (status: SaveStatus) => void;
@@ -161,6 +163,18 @@ export const useProjectStore = create<ProjectState>((set, get) => {
       if (code !== (sketch?.code ?? '')) return false;
       change({ mode: 'blocks' });
       return true;
+    },
+    applyConvertedBlocks: (workspaceState) => {
+      const { boardId, loadId } = get();
+      change({
+        mode: 'blocks',
+        workspaceState,
+        code: '',
+        sketch: safeSketch(workspaceState, boardId),
+        diagnostics: [],
+        // The block editor reloads the new workspace.
+        loadId: loadId + 1,
+      });
     },
     setDiagnostics: (diagnostics) => set({ diagnostics }),
     markSaved: (revision, path) =>

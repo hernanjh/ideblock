@@ -9,7 +9,9 @@ import type { Plugin } from 'vite';
 // only injected into production builds.
 const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
-  "script-src 'self'",
+  // The C++ parser that turns code into blocks is WebAssembly; this allows
+  // compiling WebAssembly only, not eval() of JavaScript.
+  "script-src 'self' 'wasm-unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self' data:",

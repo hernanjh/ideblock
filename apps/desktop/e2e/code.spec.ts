@@ -35,4 +35,39 @@ test.describe('code editor', () => {
     await expect.poll(() => editorText(window)).toContain('// my note');
     await expect(window.getByTestId('switch-to-blocks')).toHaveCount(0);
   });
+
+  test('converts hand-written code to blocks', async ({ launchApp }) => {
+    const { window } = await launchApp();
+    const editor = window.locator('[data-testid="code-editor"] .view-lines');
+    await editor.click();
+    await window.keyboard.type('x');
+    await window.getByTestId('switch-to-code').click();
+
+    await editor.click();
+    await window.keyboard.press('Control+A');
+    await window.keyboard.insertText(
+      [
+        '#include <EEPROM.h>',
+        '',
+        'void setup() {',
+        '  pinMode(LED_BUILTIN, OUTPUT);',
+        '}',
+        '',
+        'void loop() {',
+        '  digitalWrite(LED_BUILTIN, HIGH);',
+        '  delay(250);',
+        '  digitalWrite(LED_BUILTIN, LOW);',
+        '  delay(250);',
+        '}',
+        '',
+      ].join('\n'),
+    );
+    await window.getByTestId('convert-to-blocks').click();
+    await expect(window.getByTestId('conversion-summary')).toContainText('1');
+    await window.getByTestId('apply-conversion').click();
+
+    await expect(window.getByTestId('code-mode-overlay')).toHaveCount(0);
+    await expect.poll(() => editorText(window)).toContain('digitalWrite(13, HIGH);');
+    await expect.poll(() => editorText(window)).toContain('#include <EEPROM.h>');
+  });
 });

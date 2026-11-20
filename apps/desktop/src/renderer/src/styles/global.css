@@ -977,6 +977,17 @@ button:disabled {
   font-size: 0.875rem;
 }
 
+.overlay__warning {
+  padding-left: var(--space-2);
+  border-left: 3px solid #f59f00;
+  font-size: 0.875rem;
+}
+
+.overlay__card .notice__actions {
+  align-self: stretch;
+  justify-content: flex-end;
+}
+
 /* Console */
 
 .console {
