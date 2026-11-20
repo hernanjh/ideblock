@@ -8,6 +8,7 @@ import {
   type RPI2C,
 } from 'rp2040js';
 import { bootromB1 } from './rp2040/bootrom';
+import { PioModel, type PioBlock } from './rp2040/pio-model';
 import type { I2CDevice, PinListener, Runner } from './runner';
 
 export const RP2040_FREQUENCY = 125_000_000;
@@ -29,7 +30,7 @@ interface SimulationClock {
   readonly nanos: number;
   readonly nanosToNextAlarm: number;
   tick(deltaNanos: number): void;
-  createAlarm(callback: () => void): { schedule(deltaNanos: number): void };
+  createAlarm(callback: () => void): { schedule(deltaNanos: number): void; cancel(): void };
 }
 
 interface WritablePeripheral {
@@ -88,6 +89,8 @@ export class Rp2040Runner implements Runner {
     this.clock = this.mcu.clock as unknown as SimulationClock;
     this.mcu.logger = new ConsoleLogger(LogLevel.Error);
     this.mcu.loadBootrom(bootromB1);
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const runner = this;
     this.mcu.flash.set(firmware, 0);
 
     this.mcu.gpio.forEach((pin, gpio) => {
@@ -118,6 +121,26 @@ export class Rp2040Runner implements Runner {
         write(offset, value);
       };
     }
+
+    // Servos, tones and NeoPixels are driven by PIO programs, modelled on the simulated clock.
+    new PioModel(this.mcu.pio as unknown as PioBlock[], {
+      frequency: this.frequency,
+      get cycles() {
+        return runner.cycles;
+      },
+      timer: (callback) => {
+        const alarm = this.clock.createAlarm(callback);
+        return {
+          schedule: (delayCycles) => alarm.schedule(delayCycles * NANOS_PER_CYCLE),
+          cancel: () => alarm.cancel(),
+        };
+      },
+      drive: (gpio, high, cycles) => {
+        for (const name of namesOf(gpio)) {
+          for (const listener of this.listeners) listener(name, high, cycles);
+        }
+      },
+    });
 
     // Start at the second-stage boot loader in flash, as the boot ROM would.
     this.mcu.core.PC = FLASH_START;

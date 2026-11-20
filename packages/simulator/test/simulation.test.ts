@@ -297,6 +297,30 @@ describe('new components', () => {
     expect(Number(serial.split('\r\n')[0])).toBeCloseTo(256, -1);
   });
 
+  it('drives servos, tones and NeoPixels on the Pico through its PIO', () => {
+    const firmware = readFileSync(join(import.meta.dirname, 'fixtures', 'PicoParts.ino.bin'));
+    const simulation = new Simulation(
+      firmware.toString('base64'),
+      [
+        { id: 'arm', type: 'servo', pins: { signal: '9' } },
+        { id: 'beeper', type: 'buzzer', pins: { signal: '8' } },
+        { id: 'ring', type: 'neopixel-ring', pins: { din: '6' }, props: { pixels: 4 } },
+      ],
+      'rp2040',
+    );
+    const frames = run(simulation, 1000, 50);
+    const early = frames[6]!.components;
+    expect(early['arm']).toEqual({ angle: 0 });
+    expect(early['beeper']?.['frequency']).toBeCloseTo(440, -1);
+    expect(early['ring']).toEqual({ colours: '255,0,0;0,0,0;0,0,0;0,0,200' });
+    const late = frames[16]!.components;
+    expect(late['arm']).toEqual({ angle: 180 });
+    expect(late['ring']).toEqual({ colours: '255,0,0;0,255,0;0,0,0;0,0,200' });
+    // The second tone plays from 0.5 s for 200 ms.
+    expect(frames[11]!.components['beeper']?.['frequency']).toBeCloseTo(1000, -1);
+    expect(frames[19]!.components['beeper']).toEqual({ frequency: 0 });
+  });
+
   it('runs Arduino Leonardo firmware, with Serial sent to USART1', () => {
     const simulation = new Simulation(
       hex('LeoCheck'),

@@ -36,3 +36,8 @@ available at <https://github.com/earlephilhower/arduino-pico>.
 `LeoCheck.ino.hex` is `LeoCheck.ino` in this folder, compiled for the Arduino
 Leonardo (`arduino:avr:leonardo`). Its first lines send `Serial` to USART1, as
 the application does for Leonardo and Micro simulation builds.
+
+`PicoParts.ino.bin` is `PicoParts.ino` in this folder, built like `PicoCheck.ino.bin`.
+It drives a servo, tones and NeoPixels through PIO state machines, and also
+contains Adafruit NeoPixel 1.15.5 (LGPL-3.0) and the arduino-pico Servo
+library (LGPL-2.1).
