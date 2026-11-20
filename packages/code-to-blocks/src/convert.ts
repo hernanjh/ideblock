@@ -158,6 +158,7 @@ const PIN_ARGUMENTS: Record<string, number[]> = {
   noTone: [0],
   readDistanceCm: [0, 1],
   readTemperatureC: [0],
+  pulseIn: [0],
   showDigit: [0],
   '*.attach': [0],
 };
@@ -502,6 +503,12 @@ class Converter {
               : 'io_analog_read';
         return this.block(type, { fields: { PIN: pin } });
       }
+      case 'pulseIn': {
+        const level = args[1]?.text;
+        if (!pin || args.length !== 2 || (level !== 'HIGH' && level !== 'LOW')) return null;
+        this.uses(pin, 'INPUT');
+        return this.block('io_pulse_in', { fields: { PIN: pin, STATE: level } });
+      }
       case 'digitalRead':
         if (!pin) return null;
         this.uses(pin, 'INPUT');
@@ -667,6 +674,15 @@ class Converter {
         return single(null);
       case 'digitalWrite': {
         const level = args[1]?.text;
+        if (pin && args[1] && level !== 'HIGH' && level !== 'LOW') {
+          this.uses(pin, 'OUTPUT');
+          return single(
+            this.block('io_digital_write_value', {
+              fields: { PIN: pin },
+              inputs: { VALUE: this.input(args[1]) },
+            }),
+          );
+        }
         if (!pin || (level !== 'HIGH' && level !== 'LOW')) break;
         this.uses(pin, 'OUTPUT');
         const led = this.partOn(pin, 'led');
@@ -722,6 +738,9 @@ class Converter {
           }),
         );
       }
+      case 'delayMicroseconds':
+        if (args.length !== 1) break;
+        return single(this.block('time_delay_us', { inputs: { US: this.input(args[0]!) } }));
       case 'delay': {
         const ms = numberValue(args[0] ?? null);
         if (ms !== null && ms >= 1000 && ms % 100 === 0) {
@@ -761,10 +780,19 @@ class Converter {
             consumed: 1,
           };
         }
+        if (pin && args.length === 2) {
+          return single(
+            this.block('buzzer_tone_start', {
+              fields: { PIN: pin },
+              inputs: { FREQUENCY: this.input(args[1]!) },
+            }),
+          );
+        }
         break;
       }
       case 'noTone':
-        if (pin) return single(this.block('buzzer_stop', { fields: { PIN: pin } }));
+        if (pin && args.length === 1)
+          return single(this.block('buzzer_stop', { fields: { PIN: pin } }));
         break;
       case 'Serial.print':
       case 'Serial.println':

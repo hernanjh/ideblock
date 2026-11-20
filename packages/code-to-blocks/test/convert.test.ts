@@ -275,16 +275,57 @@ void loop() {}
   it('keeps a pin name that code blocks still use', async () => {
     const result = await convert(`
 const int ledPin = LED_BUILTIN;
-int ledState = LOW;
 void setup() {
   pinMode(ledPin, OUTPUT);
 }
 void loop() {
-  digitalWrite(ledPin, ledState);
+  do {
+    digitalWrite(ledPin, HIGH);
+  } while (false);
 }
 `);
     expect(result.code).toContain('const int ledPin = LED_BUILTIN;');
-    expect(result.code).toContain('digitalWrite(ledPin, ledState);');
+    expect(result.code).toContain('digitalWrite(ledPin, HIGH);');
     expect(result.code).toContain('pinMode(13, OUTPUT);');
+  });
+
+  it('converts the classic ultrasonic sketch', async () => {
+    const result = await convert(`
+const int trigPin = 9;
+const int echoPin = 10;
+long duration;
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  tone(8, duration);
+  delay(100);
+  noTone(8);
+}
+`);
+    expect(result.codeBlocks).toBe(0);
+    expect(result.code).toContain('delayMicroseconds(10);');
+    expect(result.code).toContain('duration = pulseIn(10, HIGH);');
+    expect(result.code).toContain('tone(8, duration);');
+  });
+
+  it('writes a variable level to a pin', async () => {
+    const result = await convert(`
+bool ledState = false;
+void setup() {}
+void loop() {
+  ledState = !ledState;
+  digitalWrite(13, ledState);
+}
+`);
+    expect(result.codeBlocks).toBe(0);
+    expect(result.code).toContain('digitalWrite(13, ledState);');
   });
 });
