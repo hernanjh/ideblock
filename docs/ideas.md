@@ -5,7 +5,36 @@
 Working notes on features, references and risks. Items here are proposals, not
 commitments; each one is reviewed at the end of a phase before it enters the roadmap.
 
-Last reviewed: 2026-11-20 (end of Phase 2).
+Last reviewed: 2026-11-20 (end of Phase 3).
+
+## Phase 3 review
+
+Done: a C++ parser (tree-sitter, [ADR 0009](adr/0009-code-to-blocks.md)) and a
+converter that turns hand-written code, an opened `.ino` file or a sketch from
+a book back into blocks. Code without a matching block stays in grey code
+blocks, so a converted sketch always compiles as before. The converter reads
+the circuit to pick part blocks, names given to pins (`const int ledPin = 13;`,
+`#define`), the common `LiquidCrystal_I2C` library and the classic examples
+(Blink, Fade, Button, Sweep, Knob, AnalogReadSerial). Every bundled example
+converts back to exactly the same code. The circuit mismatch notice now also
+works with hand-written code. Numbers too large for a 16-bit `int` now get a
+`long`.
+
+New ideas from this phase:
+
+- **Add every missing part at once (high).** After converting or opening a
+  sketch, the circuit is usually empty and the notice offers each part one by
+  one; one button could place them all.
+- **Blocks for what classic sketches still leave as code (medium):**
+  `delayMicroseconds`, `pulseIn`, `tone` with a duration and no pause, and
+  `digitalWrite` with a variable level.
+- **Keep comments (medium).** tree-sitter sees comments; they could become
+  block comments instead of being dropped.
+- **Paste C++ into the block editor (medium)** to convert just that piece.
+- **Show which lines stayed as code (low)** by marking them in the code editor
+  before converting.
+- **Local variables in blocks (low).** Blocks only have global variables, so
+  converted locals become globals.
 
 ## Phase 2 review
 

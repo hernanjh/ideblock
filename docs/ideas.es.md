@@ -6,7 +6,37 @@ Notas de trabajo sobre funcionalidades, referencias y riesgos. Son propuestas, n
 compromisos; cada una se revisa al cierre de una fase antes de entrar en la hoja de
 ruta.
 
-Última revisión: 2026-11-20 (cierre de la Fase 2).
+Última revisión: 2026-11-20 (cierre de la Fase 3).
+
+## Revisión de la Fase 3
+
+Hecho: un analizador de C++ (tree-sitter, [ADR 0009](adr/0009-code-to-blocks.es.md))
+y un conversor que vuelve a pasar a bloques el código escrito a mano, un archivo
+`.ino` abierto o un sketch de un libro. El código sin un bloque equivalente queda
+en bloques grises de código, así que un sketch convertido siempre compila igual
+que antes. El conversor usa el circuito para elegir bloques de componentes, y
+entiende nombres dados a los pines (`const int ledPin = 13;`, `#define`), la
+librería `LiquidCrystal_I2C`, que es la más común, y los ejemplos clásicos (Blink,
+Fade, Button, Sweep, Knob, AnalogReadSerial). Todos los ejemplos incluidos
+vuelven a dar exactamente el mismo código. El aviso de programa y circuito que no
+coinciden ahora también funciona con código escrito a mano. Los números
+demasiado grandes para un `int` de 16 bits ahora usan `long`.
+
+Ideas nuevas de esta fase:
+
+- **Agregar de una vez todas las piezas que faltan (alta).** Después de convertir
+  o abrir un sketch, el circuito suele estar vacío y el aviso ofrece las piezas de
+  a una; un solo botón podría ubicarlas todas.
+- **Bloques para lo que los sketches clásicos todavía dejan como código (media):**
+  `delayMicroseconds`, `pulseIn`, `tone` con duración y sin pausa, y
+  `digitalWrite` con un nivel variable.
+- **Conservar los comentarios (media).** tree-sitter ve los comentarios; podrían
+  pasar a ser comentarios de bloque en lugar de perderse.
+- **Pegar C++ en el editor de bloques (media)** para convertir solo ese pedazo.
+- **Mostrar qué líneas quedan como código (baja)** marcándolas en el editor antes
+  de convertir.
+- **Variables locales en bloques (baja).** Los bloques solo tienen variables
+  globales, así que las locales convertidas pasan a ser globales.
 
 ## Revisión de la Fase 2
 
