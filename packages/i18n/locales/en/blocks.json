@@ -104,5 +104,10 @@
   "JOYSTICK_PRESSED": "joystick button on pin %1 is pressed",
   "JOYSTICK_PRESSED_TOOLTIP": "True while the joystick stick is pushed down.",
   "BUILTIN_LED": "%1 the board LED",
-  "BUILTIN_LED_TOOLTIP": "The board has its own LED, marked L. Nothing needs to be wired."
+  "BUILTIN_LED_TOOLTIP": "The board has its own LED, marked L. Nothing needs to be wired.",
+  "CODE_STATEMENT": "code %1",
+  "CODE_EXPRESSION": "code %1",
+  "CODE_GLOBAL": "program code %1",
+  "CODE_TOOLTIP": "C++ code that has no block. It is copied into the program as is.",
+  "CODE_GLOBAL_TOOLTIP": "C++ code that goes before setup(): libraries, variables or functions. It is copied as is."
 }

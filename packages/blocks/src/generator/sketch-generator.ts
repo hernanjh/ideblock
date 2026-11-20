@@ -35,6 +35,7 @@ const TOP_LEVEL_BLOCKS = new Set([
   PROGRAM_BLOCK_TYPE,
   'procedures_defnoreturn',
   'procedures_defreturn',
+  'code_global',
 ]);
 
 type VariableModel = Blockly.IVariableModel<Blockly.IVariableState>;
@@ -188,6 +189,12 @@ export class SketchGenerator extends Blockly.CodeGenerator {
 
   addInclude(header: string): void {
     this.sections.includes.set(header, `#include <${header}>`);
+  }
+
+  /** An include line written by hand, kept as it was. */
+  addRawInclude(line: string): void {
+    const header = /^#include\s*[<"]([^>"]+)[>"]/.exec(line)?.[1];
+    this.sections.includes.set(header ?? line, line);
   }
 
   addLibrary(name: string): void {

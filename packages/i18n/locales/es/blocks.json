@@ -104,5 +104,10 @@
   "JOYSTICK_PRESSED": "el botón del joystick del pin %1 está presionado",
   "JOYSTICK_PRESSED_TOOLTIP": "Verdadero mientras se aprieta la palanca del joystick.",
   "BUILTIN_LED": "%1 el LED de la placa",
-  "BUILTIN_LED_TOOLTIP": "La placa trae su propio LED, marcado con L. No hace falta conectar nada."
+  "BUILTIN_LED_TOOLTIP": "La placa trae su propio LED, marcado con L. No hace falta conectar nada.",
+  "CODE_STATEMENT": "código %1",
+  "CODE_EXPRESSION": "código %1",
+  "CODE_GLOBAL": "código del programa %1",
+  "CODE_TOOLTIP": "Código C++ que no tiene un bloque. Se copia tal cual al programa.",
+  "CODE_GLOBAL_TOOLTIP": "Código C++ que va antes de setup(): librerías, variables o funciones. Se copia tal cual."
 }

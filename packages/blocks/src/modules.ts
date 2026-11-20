@@ -1,3 +1,4 @@
+import { codeModule } from './definitions/code';
 import { displaysModule } from './definitions/displays';
 import { logicModule } from './definitions/logic';
 import { loopsModule } from './definitions/loops';
@@ -27,4 +28,5 @@ export const BLOCK_MODULES: readonly BlockModule[] = [
   textModule,
   variablesModule,
   proceduresModule,
+  codeModule,
 ];
