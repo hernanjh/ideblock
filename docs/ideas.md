@@ -22,9 +22,9 @@ works with hand-written code. Numbers too large for a 16-bit `int` now get a
 
 New ideas from this phase:
 
-- **Add every missing part at once (high).** After converting or opening a
-  sketch, the circuit is usually empty and the notice offers each part one by
-  one; one button could place them all.
+- **Add every missing part at once (done).** After converting or opening a
+  sketch the circuit is usually empty; one button now places every part the
+  program uses.
 - **Blocks for what classic sketches still leave as code (medium):**
   `delayMicroseconds`, `pulseIn`, `tone` with a duration and no pause, and
   `digitalWrite` with a variable level.

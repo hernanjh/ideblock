@@ -24,9 +24,9 @@ demasiado grandes para un `int` de 16 bits ahora usan `long`.
 
 Ideas nuevas de esta fase:
 
-- **Agregar de una vez todas las piezas que faltan (alta).** Después de convertir
-  o abrir un sketch, el circuito suele estar vacío y el aviso ofrece las piezas de
-  a una; un solo botón podría ubicarlas todas.
+- **Agregar de una vez todas las piezas que faltan (hecho).** Después de convertir
+  o abrir un sketch el circuito suele estar vacío; ahora un solo botón ubica todas
+  las piezas que usa el programa.
 - **Bloques para lo que los sketches clásicos todavía dejan como código (media):**
   `delayMicroseconds`, `pulseIn`, `tone` con duración y sin pausa, y
   `digitalWrite` con un nivel variable.
