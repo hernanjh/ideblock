@@ -1,12 +1,7 @@
 import type { PartUse } from '@ideblock/blocks';
 import { getBoard, type BoardDefinition } from '@ideblock/boards';
 import type { CircuitDocument } from '@ideblock/project';
-import {
-  COMPONENTS,
-  UNSIMULATED_PARTS,
-  findComponent,
-  type ComponentInput,
-} from '@ideblock/simulator';
+import { COMPONENTS, findComponent, type ComponentInput } from '@ideblock/simulator';
 import {
   ArrowRightLeft,
   ClipboardList,
@@ -61,8 +56,6 @@ export function SimulatorPanel() {
   const simulated = useMemo(() => visibleParts(items, 'auto'), [items]);
   const names = useMemo(() => componentNames(items, t), [items, t]);
   const running = status === 'running' || status === 'paused';
-  const unsimulatedTypes = UNSIMULATED_PARTS[board.simulation?.mcu ?? 'atmega328p'] ?? [];
-  const unsimulated = items.filter((item) => unsimulatedTypes.includes(item.type));
   const sendInput = (id: string, input: ComponentInput): void =>
     dispatch({ type: 'input', id, input });
 
@@ -119,15 +112,6 @@ export function SimulatorPanel() {
           })
         }
       />
-
-      {unsimulated.length > 0 && (
-        <p className="notice" role="status" data-testid="unsimulated-parts">
-          {t('simulator.unsimulatedParts', {
-            board: board.name,
-            parts: unsimulated.map((item) => names[item.id] ?? item.type).join(', '),
-          })}
-        </p>
-      )}
 
       {status === 'unsupported' && (
         <p className="notice" role="status">

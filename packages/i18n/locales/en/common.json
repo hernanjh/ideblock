@@ -287,7 +287,6 @@
     "temperature": "Temperature: {{value}} °C",
     "x": "Left/right: {{value}}",
     "y": "Down/up: {{value}}",
-    "unsimulatedParts": "On {{board}} the simulator does not drive these parts yet: {{parts}}. The rest of the circuit works.",
     "mismatchSeveral_one": "{{count}} part is missing from the circuit.",
     "mismatchSeveral_other": "{{count}} parts are missing from the circuit.",
     "mismatchAddAll": "Add them all"

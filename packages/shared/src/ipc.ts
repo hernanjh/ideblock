@@ -77,14 +77,7 @@ export interface CompileResult {
 }
 
 export type ToolchainStage =
-  | 'index'
-  | 'core'
-  | 'library'
-  | 'compile'
-  | 'upload'
-  | 'remove'
-  | 'pack-export'
-  | 'pack-import';
+  'index' | 'core' | 'library' | 'compile' | 'upload' | 'remove' | 'pack-export' | 'pack-import';
 
 export interface ToolchainProgress {
   stage: ToolchainStage;
