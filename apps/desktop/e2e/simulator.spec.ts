@@ -86,6 +86,36 @@ test.describe('circuit', () => {
     await expect.poll(async () => (await item.boundingBox())!.x).toBeGreaterThan(before.x + 30);
   });
 
+  test('warns when hand-written code drives a part the circuit does not have', async ({
+    launchApp,
+  }) => {
+    const { window } = await launchApp();
+    const editor = window.locator('[data-testid="code-editor"] .view-lines');
+    await editor.click();
+    await window.keyboard.type('x');
+    await window.getByTestId('switch-to-code').click();
+    await editor.click();
+    await window.keyboard.press('Control+A');
+    await window.keyboard.insertText(
+      [
+        '#include <Servo.h>',
+        'Servo arm;',
+        '',
+        'void setup() {',
+        '  arm.attach(9);',
+        '}',
+        '',
+        'void loop() {',
+        '  arm.write(90);',
+        '}',
+        '',
+      ].join('\n'),
+    );
+    await expect(window.getByTestId('mismatches')).toContainText('pin 9');
+    await window.getByTestId('mismatch-add-servo').click();
+    await expect(window.getByTestId('mismatches')).toHaveCount(0);
+  });
+
   test('warns when the blocks drive a part the circuit does not have', async ({ launchApp }) => {
     const { window } = await launchApp('es-AR');
     await window.getByTestId('file-examples').click();

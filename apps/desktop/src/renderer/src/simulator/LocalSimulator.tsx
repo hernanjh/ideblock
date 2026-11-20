@@ -1,10 +1,9 @@
-import { getBoard } from '@ideblock/boards';
-import { partsUsedBy } from '@ideblock/blocks';
 import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { currentCode, useProjectStore } from '../state/project';
 import { useSimulationStore } from '../state/simulation';
 import { useUiStore } from '../state/ui';
+import { useProgramParts } from './program-parts';
 import { SimulatorModelContext, type SimulatorAction, type SimulatorSnapshot } from './model';
 
 function useSnapshot(): SimulatorSnapshot {
@@ -22,12 +21,7 @@ function useSnapshot(): SimulatorSnapshot {
   const circuit = useProjectStore((state) => state.circuit);
   const boardId = useProjectStore((state) => state.boardId);
   const code = useProjectStore(currentCode);
-  const mode = useProjectStore((state) => state.mode);
-  const workspaceState = useProjectStore((state) => state.workspaceState);
-  const programParts = useMemo(
-    () => (mode === 'blocks' ? partsUsedBy(workspaceState, getBoard(boardId)) : []),
-    [mode, workspaceState, boardId],
-  );
+  const programParts = useProgramParts();
   const { runningCode, ...rest } = simulation;
   return useMemo(
     () => ({
