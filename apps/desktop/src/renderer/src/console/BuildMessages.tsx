@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useBuildStore } from '../state/build';
 import { useProjectStore } from '../state/project';
 import { useSettingsStore } from '../state/settings';
+import { useUiStore } from '../state/ui';
 
 function percent(used: number, max: number): number {
   return max > 0 ? Math.round((used / max) * 100) : 0;
@@ -104,6 +105,16 @@ export function BuildMessages() {
           <CircleX aria-hidden="true" size="1.2em" />
           {t(`build.failure.${result.failure}`)}
         </p>
+        {(result.failure === 'core-install' || result.failure === 'library-install') && (
+          <button
+            type="button"
+            className="button--small"
+            data-testid="open-boards"
+            onClick={() => useUiStore.getState().openDialog('boards')}
+          >
+            {t('boards.offlineHelp')}
+          </button>
+        )}
         <RawOutput output={result.output} />
       </div>
     );

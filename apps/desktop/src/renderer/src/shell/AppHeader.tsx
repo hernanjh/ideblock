@@ -41,6 +41,8 @@ export function AppHeader() {
     },
     { id: 'save-as', label: t('files.saveAsMenu'), onSelect: () => void commands.saveAs() },
     { id: 'export', label: t('files.exportMenu'), onSelect: () => void commands.exportSketch() },
+    'separator',
+    { id: 'boards', label: t('boards.menu'), onSelect: () => openDialog('boards') },
   ];
 
   const view: MenuEntry[] = [

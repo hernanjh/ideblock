@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type MainView = 'program' | 'circuit';
-export type AppDialog = 'settings' | 'about' | 'assembly' | null;
+export type AppDialog = 'settings' | 'about' | 'assembly' | 'boards' | null;
 
 interface UiState {
   /** True while the simulator is shown in its own window. */

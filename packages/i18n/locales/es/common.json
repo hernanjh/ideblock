@@ -183,7 +183,10 @@
       "core": "Instalando las herramientas para {{board}}. Pasa solo la primera vez y necesita internet.",
       "library": "Instalando la librería {{subject}}…",
       "compile": "Revisando el programa para {{board}}…",
-      "upload": "Subiendo a la placa…"
+      "upload": "Subiendo a la placa…",
+      "remove": "Quitando {{subject}}…",
+      "pack-export": "Copiando {{subject}} al paquete…",
+      "pack-import": "Copiando {{subject}} desde el paquete…"
     },
     "success": "El programa está bien.",
     "memory": "Usa {{used}} de {{max}} bytes de memoria de programa ({{percent}}%).",
@@ -532,5 +535,42 @@
     "empty": "Todavía no hay componentes en el circuito.",
     "print": "Imprimir o guardar en PDF",
     "open": "Cómo armarlo"
+  },
+  "boards": {
+    "menu": "Placas y librerías…",
+    "title": "Placas y librerías",
+    "intro": "Para verificar y subir programas, cada familia de placas necesita sus herramientas. Se instalan solas la primera vez que se usan, si hay internet. Acá podés dejarlas listas antes de una clase.",
+    "offline": "No hay conexión a internet: se muestran las versiones que estaban guardadas.",
+    "loading": "Revisando qué está instalado…",
+    "cores": "Placas",
+    "installedVersion": "Instalado (versión {{version}})",
+    "updateAvailable": "Instalado {{installed}} · hay una versión nueva: {{latest}}",
+    "notInstalled": "No instalado",
+    "install": "Instalar",
+    "update": "Actualizar",
+    "remove": "Quitar",
+    "installed": "Listo, ya está instalado.",
+    "removed": "Listo, se quitó.",
+    "libraries": "Librerías de los bloques",
+    "librariesHint": "Los bloques de servos, pantallas LCD y NeoPixel usan estas librerías.",
+    "installLibraries": "Instalar las librerías",
+    "librariesInstalled": "Listo, las librerías ya están instaladas.",
+    "pack": "Paquete para usar sin internet",
+    "packHint": "Copiá las placas y librerías instaladas a una carpeta (por ejemplo, un pendrive) y después importalas en las otras computadoras del aula. El paquete sirve para computadoras con el mismo sistema operativo.",
+    "export": "Exportar a una carpeta…",
+    "exportTitle": "Elegí dónde guardar el paquete",
+    "exported": "Listo, el paquete se guardó en la carpeta elegida.",
+    "import": "Importar un paquete…",
+    "importTitle": "Elegí la carpeta del paquete",
+    "imported": "Listo, se instalaron las placas y librerías del paquete.",
+    "working": "Trabajando…",
+    "failure": {
+      "tool-missing": "No se encontró arduino-cli. Reinstalá IdeBlock.",
+      "busy": "Hay otra tarea en curso. Probá de nuevo en un momento.",
+      "failed": "No se pudo terminar. Revisá la conexión a internet. {{detail}}",
+      "not-a-pack": "Esa carpeta no tiene un paquete de IdeBlock.",
+      "wrong-platform": "Ese paquete es para otro sistema ({{detail}}). Exportalo desde una computadora como esta."
+    },
+    "offlineHelp": "¿Sin internet? Importá un paquete de placas"
   }
 }

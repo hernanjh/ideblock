@@ -183,7 +183,10 @@
       "core": "Installing the tools for {{board}}. This happens only the first time and needs internet.",
       "library": "Installing the {{subject}} library…",
       "compile": "Checking the program for {{board}}…",
-      "upload": "Uploading to the board…"
+      "upload": "Uploading to the board…",
+      "remove": "Removing {{subject}}…",
+      "pack-export": "Copying {{subject}} to the pack…",
+      "pack-import": "Copying {{subject}} from the pack…"
     },
     "success": "The program is correct.",
     "memory": "It uses {{used}} of {{max}} bytes of program memory ({{percent}}%).",
@@ -532,5 +535,42 @@
     "empty": "The circuit has no components yet.",
     "print": "Print or save as PDF",
     "open": "How to build it"
+  },
+  "boards": {
+    "menu": "Boards and libraries…",
+    "title": "Boards and libraries",
+    "intro": "To verify and upload programs, each family of boards needs its tools. They install themselves the first time they are used, with internet. Here you can get them ready before a class.",
+    "offline": "There is no internet connection: showing the versions saved earlier.",
+    "loading": "Checking what is installed…",
+    "cores": "Boards",
+    "installedVersion": "Installed (version {{version}})",
+    "updateAvailable": "Installed {{installed}} · a new version is available: {{latest}}",
+    "notInstalled": "Not installed",
+    "install": "Install",
+    "update": "Update",
+    "remove": "Remove",
+    "installed": "Done, it is installed.",
+    "removed": "Done, it was removed.",
+    "libraries": "Block libraries",
+    "librariesHint": "The servo, LCD screen and NeoPixel blocks use these libraries.",
+    "installLibraries": "Install the libraries",
+    "librariesInstalled": "Done, the libraries are installed.",
+    "pack": "Pack for working without internet",
+    "packHint": "Copy the installed boards and libraries to a folder (a USB stick, for example), then import them on the other computers in the classroom. The pack works on computers with the same operating system.",
+    "export": "Export to a folder…",
+    "exportTitle": "Choose where to save the pack",
+    "exported": "Done, the pack was saved in the chosen folder.",
+    "import": "Import a pack…",
+    "importTitle": "Choose the pack folder",
+    "imported": "Done, the boards and libraries in the pack are installed.",
+    "working": "Working…",
+    "failure": {
+      "tool-missing": "arduino-cli was not found. Reinstall IdeBlock.",
+      "busy": "Another task is running. Try again in a moment.",
+      "failed": "It could not finish. Check the internet connection. {{detail}}",
+      "not-a-pack": "That folder has no IdeBlock pack.",
+      "wrong-platform": "That pack is for another system ({{detail}}). Export it from a computer like this one."
+    },
+    "offlineHelp": "No internet? Import a boards pack"
   }
 }

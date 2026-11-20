@@ -1,3 +1,4 @@
+import { BoardsDialog } from './components/BoardsDialog';
 import { AssemblyGuide } from './circuit/AssemblyGuide';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -70,6 +71,7 @@ export function App() {
           <SettingsDialog open={dialog === 'settings'} onClose={() => openDialog(null)} />
           <AboutDialog open={dialog === 'about'} onClose={() => openDialog(null)} />
           <AssemblyGuide open={dialog === 'assembly'} onClose={() => openDialog(null)} />
+          <BoardsDialog open={dialog === 'boards'} onClose={() => openDialog(null)} />
         </div>
       </LocalSimulator>
     </ProjectCommandsProvider>
