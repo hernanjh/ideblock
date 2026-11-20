@@ -12,6 +12,8 @@ import type {
 import type { ArduinoCli } from './arduino-cli';
 
 export const PACK_MANIFEST = 'ideblock-pack.json';
+/** Remembers the pack an offline installer brought, so it is imported only once. */
+const BUNDLED_MARKER = 'bundled-pack.json';
 
 interface CoreListResponse {
   platforms?: { id: string; installed_version?: string; latest_version?: string }[];
@@ -186,6 +188,26 @@ export class BoardManager {
     const index = await this.options.cli.run(['core', 'update-index']);
     this.indexFresh = index.code === 0;
     return this.indexFresh;
+  }
+
+  /**
+   * Imports the pack shipped next to the application by an offline installer,
+   * once: a marker remembers which pack was imported.
+   */
+  async importBundled(source: string): Promise<BoardsResult | null> {
+    const manifest = await readPack(source);
+    if (!manifest) return null;
+    const marker = join(this.options.dataRoot, BUNDLED_MARKER);
+    const imported = await readFile(marker, 'utf8')
+      .then((text) => (JSON.parse(text) as { created?: string }).created)
+      .catch(() => undefined);
+    if (imported === manifest.created) return null;
+    const result = await this.importPack(source);
+    if (result.ok) {
+      await mkdir(this.options.dataRoot, { recursive: true });
+      await writeFile(marker, `${JSON.stringify({ created: manifest.created })}\n`);
+    }
+    return result;
   }
 
   private change(task: () => Promise<BoardsResult>): Promise<BoardsResult> {

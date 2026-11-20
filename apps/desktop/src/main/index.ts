@@ -76,6 +76,11 @@ if (!app.requestSingleInstanceLock()) {
       onProgress: (progress) => broadcast('toolchain:progress', progress),
       onChanged: () => toolchain.clearCache(),
     });
+    // An offline school installer ships a pack of boards and libraries next to the app.
+    const bundledPack =
+      process.env['IDEBLOCK_OFFLINE_PACK'] ??
+      (app.isPackaged ? join(process.resourcesPath, 'offline-pack') : null);
+    if (bundledPack) void boards.importBundled(bundledPack);
     const ports = new PortWatcher(cli, (list) => broadcast('ports:changed', list));
     const serial = new SerialMonitor(cli, {
       onData: (text) => broadcast('serial:data', text),

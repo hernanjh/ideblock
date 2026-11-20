@@ -149,4 +149,29 @@ describe('BoardManager', () => {
     await rm(join(root, 'arduino-cli'));
     expect(await manager({}).installLibraries()).toEqual({ ok: false, failure: 'tool-missing' });
   });
+
+  it('imports the pack of an offline installer once', async () => {
+    const pack = join(root, 'pack');
+    await mkdir(join(pack, 'data', 'packages'), { recursive: true });
+    await writeFile(join(pack, 'data', 'packages', 'core.txt'), 'avr');
+    const manifest = {
+      formatVersion: 1,
+      platform: 'linux',
+      arch: 'x64',
+      created: '2026-11-20T10:00:00.000Z',
+      cores: [],
+      libraries: [],
+    };
+    await writeFile(join(pack, PACK_MANIFEST), JSON.stringify(manifest));
+
+    const boards = manager({});
+    expect(await boards.importBundled(pack)).toEqual({ ok: true });
+    expect(await boards.importBundled(pack)).toBe(null);
+    await writeFile(
+      join(pack, PACK_MANIFEST),
+      JSON.stringify({ ...manifest, created: '2026-12-01T10:00:00.000Z' }),
+    );
+    expect(await boards.importBundled(pack)).toEqual({ ok: true });
+    expect(await boards.importBundled(join(root, 'missing'))).toBe(null);
+  });
 });
