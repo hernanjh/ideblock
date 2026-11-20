@@ -174,4 +174,117 @@ void loop() {
     const result = await convert('void setup() {\n  delay(10)\n}\nvoid loop() {}');
     expect(result.syntaxError).toBe(true);
   });
+
+  it('turns names given to pins into the pins', async () => {
+    const result = await convert(`
+#define BUTTON 2
+const int ledPin = 13;
+int led2 = 12;
+int buttonState = 0;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(BUTTON, INPUT);
+}
+
+void loop() {
+  buttonState = digitalRead(BUTTON);
+  if (buttonState == HIGH) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(led2, LOW);
+  }
+}
+`);
+    expect(result.codeBlocks).toBe(0);
+    expect(result.code).not.toContain('ledPin');
+    expect(result.code).not.toContain('BUTTON');
+    expect(result.code).toContain('digitalWrite(12, LOW);');
+    expect(result.code).toContain('digitalRead(2)');
+    expect(result.state.variables).toEqual([{ name: 'buttonState', id: 'buttonState' }]);
+  });
+
+  it('keeps a pin name that is also used as a number', async () => {
+    const result = await convert(`
+const int ledPin = 9;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println(ledPin);
+}
+
+void loop() {
+  analogWrite(ledPin, 100);
+}
+`);
+    expect(result.code).toContain('ledPin = 9;');
+    expect(result.code).toContain('analogWrite(9, 100);');
+  });
+
+  it('reads a NeoPixel strip sized with names', async () => {
+    const result = await convert(`
+#include <Adafruit_NeoPixel.h>
+#define PIN 6
+#define NUMPIXELS 8
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+void setup() {
+  pixels.begin();
+}
+
+void loop() {
+  pixels.setPixelColor(0, pixels.Color(0, 150, 0));
+  pixels.show();
+}
+`);
+    expect(result.codeBlocks).toBe(0);
+    expect(result.code).toContain('Adafruit_NeoPixel pixels_6(8, 6');
+  });
+
+  it('reads the common LiquidCrystal_I2C library as the LCD blocks', async () => {
+    const result = await convert(`
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+void setup() {
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 1);
+  lcd.print("Hola");
+}
+void loop() {}
+`);
+    expect(result.codeBlocks).toBe(0);
+    expect(types(result.state.blocks.blocks)).toContain('lcd_print');
+  });
+
+  it('keeps an LCD at another address as code', async () => {
+    const result = await convert(`
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
+void setup() {
+  lcd.init();
+}
+void loop() {}
+`);
+    expect(result.code).toContain('LiquidCrystal_I2C lcd(0x3F, 16, 2);');
+    expect(result.code).toContain('lcd.init();');
+  });
+
+  it('keeps a pin name that code blocks still use', async () => {
+    const result = await convert(`
+const int ledPin = LED_BUILTIN;
+int ledState = LOW;
+void setup() {
+  pinMode(ledPin, OUTPUT);
+}
+void loop() {
+  digitalWrite(ledPin, ledState);
+}
+`);
+    expect(result.code).toContain('const int ledPin = LED_BUILTIN;');
+    expect(result.code).toContain('digitalWrite(ledPin, ledState);');
+    expect(result.code).toContain('pinMode(13, OUTPUT);');
+  });
 });

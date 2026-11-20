@@ -50,6 +50,7 @@ const LIBRARY_HEADERS: Record<string, 'servo' | 'lcd' | 'strip'> = {
   'Servo.h': 'servo',
   'ESP32Servo.h': 'servo',
   'LiquidCrystal_PCF8574.h': 'lcd',
+  'LiquidCrystal_I2C.h': 'lcd',
   'Adafruit_NeoPixel.h': 'strip',
 };
 const VARIABLE_TYPES = new Set([
@@ -146,6 +147,66 @@ interface Deferred {
 type Converted = SerializedBlock | Deferred;
 const isDeferred = (item: Converted): item is Deferred => 'deferred' in item;
 
+/** Arguments that are pins, by function name; "*.attach" is any object's attach(). */
+const PIN_ARGUMENTS: Record<string, number[]> = {
+  pinMode: [0],
+  digitalWrite: [0],
+  digitalRead: [0],
+  analogRead: [0],
+  analogWrite: [0],
+  tone: [0],
+  noTone: [0],
+  readDistanceCm: [0, 1],
+  readTemperatureC: [0],
+  showDigit: [0],
+  '*.attach': [0],
+};
+
+/** True when the node is a pin argument of a call, or a NeoPixel strip's size or pin. */
+function isPinArgument(node: Node): boolean {
+  const list = node.parent;
+  if (list?.type !== 'argument_list') return false;
+  const index = named(list).findIndex((arg) => arg.id === node.id);
+  const owner = list.parent;
+  if (owner?.type === 'init_declarator') {
+    const declaration = owner.parent;
+    return (
+      declaration !== null && field(declaration, 'type')?.text === 'Adafruit_NeoPixel' && index <= 1
+    );
+  }
+  if (owner?.type !== 'call_expression') return false;
+  const { name, object, method } = callParts(owner);
+  const positions = PIN_ARGUMENTS[object !== null ? `*.${method}` : name] ?? [];
+  return positions.includes(index);
+}
+
+/** "#define LED 13", "const int ledPin = 13;" or "int led = A0;", as a name and a pin. */
+function pinConstant(node: Node, builtinLed: string): { name: string; value: string } | null {
+  const isPin = (text: string | undefined): text is string =>
+    text !== undefined && (/^\d+$/.test(text) || /^A\d+$/.test(text));
+  const result = pinConstantText(node);
+  if (!result) return null;
+  if (result.value === 'LED_BUILTIN' && builtinLed) return { name: result.name, value: builtinLed };
+  return isPin(result.value) ? result : null;
+}
+
+function pinConstantText(node: Node): { name: string; value: string } | null {
+  if (node.type === 'preproc_def') {
+    const name = field(node, 'name')?.text;
+    const value = field(node, 'value')?.text.trim();
+    return name && value ? { name, value } : null;
+  }
+  if (node.type !== 'declaration') return null;
+  const type = field(node, 'type')?.text;
+  if (!type || !['int', 'byte', 'uint8_t', 'short', 'long', 'unsigned int'].includes(type))
+    return null;
+  const declarators = declaratorsOf(node);
+  if (declarators.length !== 1 || declarators[0]!.type !== 'init_declarator') return null;
+  const name = field(declarators[0]!, 'declarator');
+  const value = field(declarators[0]!, 'value')?.text;
+  return name?.type === 'identifier' && value ? { name: name.text, value } : null;
+}
+
 class Converter {
   private readonly variables = new Map<string, string>();
   private readonly procedures = new Map<string, { returns: boolean; params: string[] }>();
@@ -153,6 +214,16 @@ class Converter {
   private readonly lcds = new Set<string>();
   private readonly strips = new Map<string, { pin: string; count: number }>();
   private readonly pinModes = new Map<string, string>();
+  /** Names that only ever stand for a pin, such as "const int ledPin = 13;", and their pin. */
+  private readonly constants = new Map<string, string>();
+  /** Those of them used only as pins, whose declaration is no longer needed. */
+  private readonly pinOnly = new Set<string>();
+  /** Declarations of those names, put back if a code block still uses the name. */
+  private readonly pinDeclarations = new Map<string, string>();
+  /** Names used by other top-level declarations, such as an array size, which must stay constant. */
+  private readonly globalNames = new Set<string>();
+  /** The C++ kept in code blocks. */
+  private readonly codeTexts: string[] = [];
   /** Pins the converted blocks set up themselves, and the mode they use. */
   private readonly generatedModes = new Map<string, string>();
   private parameters = new Map<string, string>();
@@ -178,6 +249,7 @@ class Converter {
     text: string,
   ): SerializedBlock {
     this.codeCount++;
+    this.codeTexts.push(text);
     return this.block(type, { fields: { CODE: text.trim() } });
   }
 
@@ -204,6 +276,7 @@ class Converter {
     if (!inner) return null;
     if (inner.type === 'number_literal' || /^A\d+$/.test(inner.text)) return inner.text;
     if (inner.text === 'LED_BUILTIN') return this.options.board.builtinLedPin;
+    if (inner.type === 'identifier') return this.constants.get(inner.text) ?? null;
     return null;
   }
 
@@ -267,11 +340,23 @@ class Converter {
       case 'false':
         return this.block('logic_boolean', { fields: { BOOL: inner.type.toUpperCase() } });
       case 'identifier': {
+        // A pin read gives true for HIGH, so HIGH and LOW compare as true and false.
+        if (inner.text === 'HIGH' || inner.text === 'LOW') {
+          return this.block('logic_boolean', {
+            fields: { BOOL: inner.text === 'HIGH' ? 'TRUE' : 'FALSE' },
+          });
+        }
         const id = this.variableId(inner.text);
         if (id) return this.block('variables_get', { fields: { VAR: { id } } });
         break;
       }
       case 'unary_expression':
+        if (field(inner, 'operator')?.text === '-') {
+          return this.block('math_single', {
+            fields: { OP: 'NEG' },
+            inputs: { NUM: this.input(field(inner, 'argument')) },
+          });
+        }
         if (field(inner, 'operator')?.text === '!') {
           return this.block('logic_negate', {
             inputs: { BOOL: { block: this.expression(field(inner, 'argument')) } },
@@ -568,7 +653,12 @@ class Converter {
       case 'pinMode':
         if (pin && args[1]) {
           this.pinModes.set(pin, args[1].text);
-          return single({ deferred: 'pinMode', pin, mode: args[1].text, text: `${node.text};` });
+          return single({
+            deferred: 'pinMode',
+            pin,
+            mode: args[1].text,
+            text: `pinMode(${pin}, ${args[1].text});`,
+          });
         }
         break;
       case 'Serial.begin':
@@ -712,7 +802,7 @@ class Converter {
       }
     }
     if (object !== null && this.lcds.has(object)) {
-      if (method === 'begin' || method === 'setBacklight') return single(null);
+      if (['begin', 'init', 'setBacklight', 'backlight'].includes(method)) return single(null);
       if (method === 'clear') {
         this.usedLibraries.add('lcd');
         return single(this.block('lcd_clear'));
@@ -1062,8 +1152,11 @@ class Converter {
     const includes: { header: string; text: string }[] = [];
     const functions: Node[] = [];
 
+    this.findPinConstants(root, top);
+
     // First pass: names that statements refer to.
     for (const node of top) {
+      if (this.isPinConstant(node)) continue;
       if (node.type === 'function_definition') {
         const declarator = field(node, 'declarator');
         const name = declarator ? (field(declarator, 'declarator')?.text ?? '') : '';
@@ -1114,7 +1207,11 @@ class Converter {
         return header !== 'Wire.h' || !this.usedLibraries.has('lcd');
       })
       .map(({ text }) => text);
-    const rawGlobal = [...rawIncludes, ...globals].join('\n').trim();
+    const stillNamed = [...this.pinOnly].filter((name) =>
+      [...this.codeTexts, ...globals].some((text) => new RegExp(`\\b${name}\\b`).test(text)),
+    );
+    const kept = stillNamed.map((name) => this.pinDeclarations.get(name)!);
+    const rawGlobal = [...rawIncludes, ...kept, ...globals].join('\n').trim();
 
     const blocks: SerializedBlock[] = [program];
     let y = 40;
@@ -1138,6 +1235,71 @@ class Converter {
     };
   }
 
+  /**
+   * Names given to pins: "#define LED 13", "const int ledPin = 13;" or a
+   * variable that is never changed. They become the pin itself when every use
+   * is a pin, so the blocks show the pin and the name is not needed.
+   */
+  private findPinConstants(root: Node, top: Node[]): void {
+    const candidates = new Map<string, string>();
+    for (const node of top) {
+      const constant = pinConstant(node, this.options.board.builtinLedPin);
+      if (constant) {
+        candidates.set(constant.name, constant.value);
+        this.pinDeclarations.set(constant.name, node.text.trim());
+      }
+      // Names other declarations use, such as an array size, must stay as they are.
+      if (node.type !== 'function_definition' && node.type !== 'preproc_def') {
+        const names = new Map<string, number>();
+        const count = (child: Node): void => {
+          if (child.type === 'identifier') names.set(child.text, (names.get(child.text) ?? 0) + 1);
+          for (const grandchild of child.children) if (grandchild) count(grandchild);
+        };
+        count(node);
+        const own = node.type === 'declaration' ? declaratorsOf(node) : [];
+        for (const [name, uses] of names) {
+          const declared = own.some(
+            (declarator) =>
+              (declarator.type === 'init_declarator' ? field(declarator, 'declarator') : declarator)
+                ?.text === name,
+          );
+          if (uses > (declared ? 1 : 0)) this.globalNames.add(name);
+        }
+      }
+    }
+    if (candidates.size === 0) return;
+    const rejected = new Set<string>();
+    const assigned = new Set<string>();
+    const visit = (node: Node): void => {
+      if (node.type === 'identifier' && candidates.has(node.text) && !isPinArgument(node)) {
+        // The declaration's own name is not a use.
+        const parent = node.parent;
+        const declares =
+          parent !== null &&
+          (parent.type === 'init_declarator' || parent.type === 'preproc_def') &&
+          field(parent, parent.type === 'preproc_def' ? 'name' : 'declarator')?.id === node.id;
+        const target =
+          parent !== null &&
+          ((parent.type === 'assignment_expression' && field(parent, 'left')?.id === node.id) ||
+            parent.type === 'update_expression');
+        if (target) assigned.add(node.text);
+        if (!declares) rejected.add(node.text);
+      }
+      for (const child of node.children) if (child) visit(child);
+    };
+    visit(root);
+    for (const [name, value] of candidates) {
+      if (assigned.has(name)) continue;
+      this.constants.set(name, value);
+      if (!rejected.has(name)) this.pinOnly.add(name);
+    }
+  }
+
+  private isPinConstant(node: Node): boolean {
+    const constant = pinConstant(node, this.options.board.builtinLedPin);
+    return constant !== null && this.pinOnly.has(constant.name);
+  }
+
   private globalDeclaration(node: Node, globals: string[], setupStart: SerializedBlock[]): void {
     const type = field(node, 'type')?.text ?? '';
     const declarators = declaratorsOf(node);
@@ -1156,14 +1318,26 @@ class Converter {
       for (const declarator of declarators) this.servos.set(nameOf(declarator), '');
       return;
     }
-    if (type === 'LiquidCrystal_PCF8574') {
-      for (const declarator of declarators) this.lcds.add(nameOf(declarator));
-      return;
+    if (type === 'LiquidCrystal_PCF8574' || type === 'LiquidCrystal_I2C') {
+      // The blocks drive a 16x2 screen at address 0x27; others stay as code.
+      const fits = declarators.every((declarator) => {
+        const args = declarator.type === 'init_declarator' ? named(field(declarator, 'value')) : [];
+        const sizes = args
+          .slice(1)
+          .map((arg) => arg.text)
+          .join();
+        return args[0]?.text.toLowerCase() === '0x27' && (sizes === '' || sizes === '16,2');
+      });
+      if (fits) {
+        for (const declarator of declarators) this.lcds.add(nameOf(declarator));
+        return;
+      }
     }
     if (type === 'Adafruit_NeoPixel') {
       for (const declarator of declarators) {
         const args = declarator.type === 'init_declarator' ? named(field(declarator, 'value')) : [];
-        const count = numberValue(args[0] ?? null);
+        const countText = this.pin(args[0]);
+        const count = countText !== null && /^\d+$/.test(countText) ? Number(countText) : null;
         const pin = this.pin(args[1]);
         if (count === null || !pin) {
           globals.push(node.text);
@@ -1173,7 +1347,11 @@ class Converter {
       }
       return;
     }
-    if (VARIABLE_TYPES.has(type) && !/\bconst\b/.test(node.text)) {
+    const constant = /\bconst\b/.test(node.text);
+    if (
+      VARIABLE_TYPES.has(type) &&
+      (!constant || declarators.every((declarator) => !this.globalNames.has(nameOf(declarator))))
+    ) {
       for (const declarator of declarators) {
         const name = nameOf(declarator);
         if (!/^\w+$/.test(name)) {
@@ -1187,7 +1365,7 @@ class Converter {
         const value = field(declarator, 'value');
         // Blocks declare every variable with 0 or ""; other starting values are set first thing.
         const literal = numberValue(value);
-        const empty = unwrap(value)?.text === '""' || unwrap(value)?.text === 'false';
+        const empty = ['""', 'false', 'LOW'].includes(unwrap(value)?.text ?? '');
         if (literal === 0 || empty) continue;
         setupStart.push(
           this.block('variables_set', {
