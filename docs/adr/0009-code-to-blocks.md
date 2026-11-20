@@ -51,7 +51,7 @@ Options considered:
 - Hand-written code can always come back to blocks; the result is as readable
   as the code allows, never lossy.
 - Local variables become global ones, since blocks only have global variables.
-  Formatting and comments are not kept.
+  Formatting is not kept; comments inside functions become block comments.
 - New blocks should be added to the converter when they are added to the
   generator; the round-trip test over the examples catches the ones that are
   missing when an example uses them.

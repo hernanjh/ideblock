@@ -53,7 +53,8 @@ Opciones evaluadas:
 - El código escrito a mano siempre puede volver a bloques; el resultado es tan
   legible como el código lo permite, y nunca se pierde nada.
 - Las variables locales pasan a ser globales, porque los bloques solo tienen
-  variables globales. No se conservan el formato ni los comentarios.
+  variables globales. No se conserva el formato; los comentarios dentro de las
+  funciones pasan a ser comentarios de bloque.
 - Los bloques nuevos tienen que sumarse al conversor cuando se agregan al
   generador; la prueba de ida y vuelta con los ejemplos detecta los que faltan
   cuando un ejemplo los usa.

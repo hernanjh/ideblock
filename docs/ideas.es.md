@@ -27,11 +27,12 @@ Ideas nuevas de esta fase:
 - **Agregar de una vez todas las piezas que faltan (hecho).** Después de convertir
   o abrir un sketch el circuito suele estar vacío; ahora un solo botón ubica todas
   las piezas que usa el programa.
-- **Bloques para lo que los sketches clásicos todavía dejan como código (media):**
+- **Bloques para lo que los sketches clásicos todavía dejan como código (hecho):**
   `delayMicroseconds`, `pulseIn`, `tone` con duración y sin pausa, y
   `digitalWrite` con un nivel variable.
-- **Conservar los comentarios (media).** tree-sitter ve los comentarios; podrían
-  pasar a ser comentarios de bloque en lugar de perderse.
+- **Conservar los comentarios (hecho en parte).** Los comentarios dentro de las
+  funciones pasan a ser comentarios de bloque y vuelven al código; los del
+  principio del archivo todavía se pierden.
 - **Pegar C++ en el editor de bloques (media)** para convertir solo ese pedazo.
 - **Mostrar qué líneas quedan como código (baja)** marcándolas en el editor antes
   de convertir.

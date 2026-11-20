@@ -25,11 +25,12 @@ New ideas from this phase:
 - **Add every missing part at once (done).** After converting or opening a
   sketch the circuit is usually empty; one button now places every part the
   program uses.
-- **Blocks for what classic sketches still leave as code (medium):**
+- **Blocks for what classic sketches still leave as code (done):**
   `delayMicroseconds`, `pulseIn`, `tone` with a duration and no pause, and
   `digitalWrite` with a variable level.
-- **Keep comments (medium).** tree-sitter sees comments; they could become
-  block comments instead of being dropped.
+- **Keep comments (done in part).** Comments inside functions become block
+  comments and come back in the code; comments at the top of the file are
+  still dropped.
 - **Paste C++ into the block editor (medium)** to convert just that piece.
 - **Show which lines stayed as code (low)** by marking them in the code editor
   before converting.
