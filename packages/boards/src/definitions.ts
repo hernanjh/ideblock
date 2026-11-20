@@ -290,3 +290,22 @@ export const BOARD_INDEX_URLS: readonly string[] = [
 ];
 
 export const DEFAULT_BOARD_ID = uno.id;
+
+/** Libraries the blocks use beyond the servo, by part. */
+export const BLOCK_LIBRARIES = {
+  lcd: 'LiquidCrystal_PCF8574',
+  neopixel: 'Adafruit NeoPixel',
+} as const;
+
+/** Every library a program made with blocks may need, to install ahead of a class. */
+export const ALL_BLOCK_LIBRARIES: readonly string[] = [
+  ...new Set([
+    ...Object.values(BLOCK_LIBRARIES),
+    ...BOARDS.flatMap((board) => (board.servo.library ? [board.servo.library] : [])),
+  ]),
+];
+
+/** Board packages ("cores") with the supported boards each one brings. */
+export const BOARD_CORES: readonly { id: string; boards: readonly BoardDefinition[] }[] = [
+  ...new Set(BOARDS.map((board) => board.core.id)),
+].map((id) => ({ id, boards: BOARDS.filter((board) => board.core.id === id) }));

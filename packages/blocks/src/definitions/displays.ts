@@ -1,3 +1,4 @@
+import { BLOCK_LIBRARIES } from '@ideblock/boards';
 import { COLOURS } from '../colours';
 import { colourChannels } from '../fields/field-led-colour';
 import { Order } from '../generator/order';
@@ -24,7 +25,7 @@ void showDigit(int firstPin, int number) {
 function useLcd(generator: SketchGenerator): string {
   generator.addInclude('Wire.h');
   generator.addInclude('LiquidCrystal_PCF8574.h');
-  generator.addLibrary('LiquidCrystal_PCF8574');
+  generator.addLibrary(BLOCK_LIBRARIES.lcd);
   generator.addGlobal('lcd', `LiquidCrystal_PCF8574 lcd(${LCD_ADDRESS});`);
   generator.addSetup('lcd:begin', 'lcd.begin(16, 2);');
   generator.addSetup('lcd:backlight', 'lcd.setBacklight(255);');
@@ -34,7 +35,7 @@ function useLcd(generator: SketchGenerator): string {
 function useStrip(generator: SketchGenerator, pin: string, count: number): string {
   const name = `pixels_${pin}`;
   generator.addInclude('Adafruit_NeoPixel.h');
-  generator.addLibrary('Adafruit NeoPixel');
+  generator.addLibrary(BLOCK_LIBRARIES.neopixel);
   generator.addGlobal(
     `neopixel:${pin}`,
     `Adafruit_NeoPixel ${name}(${count}, ${pin}, NEO_GRB + NEO_KHZ800);`,
