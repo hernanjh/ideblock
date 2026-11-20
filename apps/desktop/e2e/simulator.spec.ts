@@ -99,20 +99,24 @@ test.describe('circuit', () => {
     await window.keyboard.insertText(
       [
         '#include <Servo.h>',
+        '#include <LiquidCrystal_I2C.h>',
         'Servo arm;',
+        'LiquidCrystal_I2C lcd(0x27, 16, 2);',
         '',
         'void setup() {',
         '  arm.attach(9);',
+        '  lcd.init();',
         '}',
         '',
         'void loop() {',
         '  arm.write(90);',
+        '  lcd.clear();',
         '}',
         '',
       ].join('\n'),
     );
     await expect(window.getByTestId('mismatches')).toContainText('pin 9');
-    await window.getByTestId('mismatch-add-servo').click();
+    await window.getByTestId('mismatch-add-all').click();
     await expect(window.getByTestId('mismatches')).toHaveCount(0);
   });
 

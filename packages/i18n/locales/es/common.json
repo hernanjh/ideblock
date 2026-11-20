@@ -284,7 +284,10 @@
     "temperature": "Temperatura: {{value}} °C",
     "x": "Izquierda/derecha: {{value}}",
     "y": "Abajo/arriba: {{value}}",
-    "unsimulatedParts": "En {{board}} el simulador todavía no maneja: {{parts}}. El resto del circuito funciona igual."
+    "unsimulatedParts": "En {{board}} el simulador todavía no maneja: {{parts}}. El resto del circuito funciona igual.",
+    "mismatchSeveral_one": "Falta {{count}} pieza en el circuito.",
+    "mismatchSeveral_other": "Faltan {{count}} piezas en el circuito.",
+    "mismatchAddAll": "Agregar todas"
   },
   "components": {
     "led": "LED",

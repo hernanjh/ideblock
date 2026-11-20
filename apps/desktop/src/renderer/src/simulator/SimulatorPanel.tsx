@@ -1,3 +1,4 @@
+import type { PartUse } from '@ideblock/blocks';
 import { getBoard, type BoardDefinition } from '@ideblock/boards';
 import type { CircuitDocument } from '@ideblock/project';
 import {
@@ -105,14 +106,14 @@ export function SimulatorPanel() {
             })),
           })
         }
-        onAdd={(component) =>
+        onAdd={(added) =>
           dispatch({
             type: 'setCircuit',
             circuit: {
               ...circuit,
               components: [
                 ...circuit.components,
-                component as unknown as (typeof circuit.components)[number],
+                ...(added as unknown as (typeof circuit.components)[number][]),
               ],
             },
           })
@@ -532,12 +533,23 @@ function BuzzerSound() {
   return null;
 }
 
+/** Circuit parts for program uses, with ids not yet in the circuit. */
+function newParts(uses: PartUse[], circuit: CircuitDocument): CircuitItem[] {
+  const ids = new Set(circuit.components.map((item) => item.id));
+  return uses.map((use) => {
+    let index = 1;
+    while (ids.has(`${use.type}${index}`)) index++;
+    ids.add(`${use.type}${index}`);
+    return { id: `${use.type}${index}`, type: use.type, pins: { ...use.pins } };
+  });
+}
+
 interface MismatchNoticeProps {
   circuit: CircuitDocument;
   board: BoardDefinition;
   names: Record<string, string>;
   uses: SimulatorSnapshot['programParts'];
-  onAdd: (component: CircuitItem) => void;
+  onAdd: (components: CircuitItem[]) => void;
   onMove: (id: string, pins: Record<string, string>) => void;
 }
 
@@ -548,8 +560,26 @@ function MismatchNotice({ circuit, board, names, uses, onAdd, onMove }: Mismatch
   if (mismatches.length === 0) return null;
   const manual = wiringMode(circuit) === 'manual';
   const items = circuitComponents(circuit);
+  // Parts with no part of their kind in the circuit, which can simply be added.
+  const missing = mismatches
+    .map(({ use }) => use)
+    .filter((use) => !items.some((item) => item.type === use.type));
   return (
     <ul className="mismatches" data-testid="mismatches">
+      {!manual && missing.length > 1 && (
+        <li className="notice mismatch">
+          <span>{t('simulator.mismatchSeveral', { count: missing.length })}</span>
+          <button
+            type="button"
+            className="button--small button--primary"
+            data-testid="mismatch-add-all"
+            onClick={() => onAdd(newParts(missing, circuit))}
+          >
+            <Plus aria-hidden="true" size="1em" />
+            {t('simulator.mismatchAddAll')}
+          </button>
+        </li>
+      )}
       {mismatches.map(({ use, occupant }) => {
         const part = t(`components.${use.type}` as never);
         // A part of the same kind wired elsewhere is moved rather than duplicated.
@@ -584,12 +614,7 @@ function MismatchNotice({ circuit, board, names, uses, onAdd, onMove }: Mismatch
                 type="button"
                 className="button--small"
                 data-testid={`mismatch-add-${use.type}`}
-                onClick={() => {
-                  let index = 1;
-                  const ids = new Set(circuit.components.map((item) => item.id));
-                  while (ids.has(`${use.type}${index}`)) index++;
-                  onAdd({ id: `${use.type}${index}`, type: use.type, pins: { ...use.pins } });
-                }}
+                onClick={() => onAdd(newParts([use], circuit))}
               >
                 <Plus aria-hidden="true" size="1em" />
                 {t('simulator.mismatchAdd', { part })}
