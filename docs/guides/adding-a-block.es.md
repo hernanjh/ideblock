@@ -81,7 +81,20 @@ un idioma le falta una clave o usa marcadores `%1` distintos.
   con `advanced: true` para ocultarlo a quienes empiezan hasta que elijan
   "Todos los bloques".
 
-## 6. Probarlo
+## 6. Enseñarle al conversor
+
+El código puede volver a convertirse en bloques (ver
+[ADR 0009](../adr/0009-code-to-blocks.es.md)). En
+`packages/code-to-blocks/src/convert.ts`, reconocé el código que escribe el
+generador para el bloque y armá el bloque a partir de él: las instrucciones en
+`callStatement` y los valores en `callValue`. Si el generador escribe `pinMode`
+para un pin, llamá a `this.uses(pin, modo)` para que el `pinMode` convertido no
+quede repetido. El código que el conversor no reconoce queda en un bloque de
+código, así que este paso puede esperar, pero un ejemplo que use el bloque va a
+fallar en la prueba de ida y vuelta de
+`packages/code-to-blocks/test/examples.test.ts` hasta que esté hecho.
+
+## 7. Probarlo
 
 Agregá un caso en `packages/blocks/test/generator.test.ts` que arme un programa
 chico con el bloque y verifique el código generado. Ejecutá `npm test`.

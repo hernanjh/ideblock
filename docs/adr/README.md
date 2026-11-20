@@ -15,5 +15,6 @@ Records are immutable once accepted; a later record supersedes an earlier one.
 | [0006](0006-toolchain.md)                 | Compiling, uploading and serial through arduino-cli | Accepted |
 | [0007](0007-simulator.md)                 | Simulator architecture                              | Accepted |
 | [0008](0008-hand-wiring.md)               | Hand wiring and the circuit check                   | Accepted |
+| [0009](0009-code-to-blocks.md)            | Converting code to blocks                           | Accepted |
 
 New records use the [template](template.md).

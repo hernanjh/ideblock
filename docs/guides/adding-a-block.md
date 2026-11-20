@@ -78,7 +78,18 @@ language is missing a key or uses different `%1` placeholders.
 - Add the block to a category in `packages/blocks/src/toolbox.ts`. Mark it
   `advanced: true` to hide it from beginners until they choose "All blocks".
 
-## 6. Test it
+## 6. Teach the converter
+
+Code can turn back into blocks (see [ADR 0009](../adr/0009-code-to-blocks.md)).
+In `packages/code-to-blocks/src/convert.ts`, recognise the code the generator
+writes for the block and build the block from it: statements in
+`callStatement`, values in `callValue`. If the generator writes `pinMode` for
+a pin, call `this.uses(pin, mode)` so the converted `pinMode` is not kept twice.
+Code the converter does not recognise stays in a code block, so this step can
+wait, but an example that uses the block will fail the round-trip test in
+`packages/code-to-blocks/test/examples.test.ts` until it is done.
+
+## 7. Test it
 
 Add a case to `packages/blocks/test/generator.test.ts` that builds a small
 program with the block and checks the generated code. Run `npm test`.

@@ -12,7 +12,9 @@ teenagers and adults who want to move on to real code.
 
 - **Blocks and code side by side.** Show the blocks, the code, or both, and
   resize them. The code updates as you move blocks, and you can switch a project
-  to hand-written C++ at any time.
+  to hand-written C++ at any time. Hand-written code, or a sketch from a book,
+  turns back into blocks; anything without a matching block stays as a grey
+  code block, so nothing is lost.
 - **Simulator.** Run the program on a simulated Arduino Uno, Nano, Mega, Leonardo, Micro or
   Raspberry Pi Pico with LEDs,
   RGB LEDs, buttons, switches, potentiometers, light, temperature, motion, tilt

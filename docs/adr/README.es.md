@@ -15,5 +15,6 @@ Una vez aceptados no se modifican; una decisión posterior reemplaza a la anteri
 | [0006](0006-toolchain.es.md)                 | Compilación, subida y puerto serie con arduino-cli | Aceptada |
 | [0007](0007-simulator.es.md)                 | Arquitectura del simulador                         | Aceptada |
 | [0008](0008-hand-wiring.es.md)               | Cableado a mano y revisión del circuito            | Aceptada |
+| [0009](0009-code-to-blocks.es.md)            | Convertir código en bloques                        | Aceptada |
 
 Los registros nuevos usan la [plantilla](template.md).

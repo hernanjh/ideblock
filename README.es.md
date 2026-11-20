@@ -12,7 +12,10 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
 
 - **Bloques y código lado a lado.** Mostrá los bloques, el código o ambos, y
   cambiá su tamaño. El código se actualiza mientras movés los bloques, y en
-  cualquier momento podés pasar un proyecto a C++ escrito a mano.
+  cualquier momento podés pasar un proyecto a C++ escrito a mano. El código
+  escrito a mano, o un sketch de un libro, vuelve a convertirse en bloques; lo
+  que no tiene un bloque parecido queda en un bloque gris de código, así no se
+  pierde nada.
 - **Simulador.** Ejecutá el programa en un Arduino Uno, Nano, Mega, Leonardo, Micro o Raspberry
   Pi Pico simulado con LED,
   LED RGB, botones, interruptores, potenciómetros, sensores de luz, temperatura,
