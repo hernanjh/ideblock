@@ -43,6 +43,12 @@ const CATEGORIES: ToolboxCategory[] = [
         type: 'buzzer_tone',
         inputs: { FREQUENCY: number(440), DURATION: number(500) },
       },
+      {
+        kind: 'block',
+        type: 'buzzer_tone_start',
+        inputs: { FREQUENCY: number(440) },
+        advanced: true,
+      },
       { kind: 'block', type: 'buzzer_stop', advanced: true },
       { kind: 'block', type: 'servo_write', inputs: { ANGLE: number(90) } },
       { kind: 'block', type: 'rgb_led_color' },
@@ -97,6 +103,7 @@ const CATEGORIES: ToolboxCategory[] = [
     contents: [
       { kind: 'block', type: 'time_delay_seconds', inputs: { SECONDS: number(1) } },
       { kind: 'block', type: 'time_delay', inputs: { MS: number(500) } },
+      { kind: 'block', type: 'time_delay_us', inputs: { US: number(10) }, advanced: true },
       { kind: 'block', type: 'time_millis', advanced: true },
     ],
   },
@@ -205,7 +212,13 @@ const CATEGORIES: ToolboxCategory[] = [
     advanced: true,
     contents: [
       { kind: 'block', type: 'io_digital_write' },
+      {
+        kind: 'block',
+        type: 'io_digital_write_value',
+        inputs: { VALUE: { shadow: { type: 'logic_boolean', fields: { BOOL: 'TRUE' } } } },
+      },
       { kind: 'block', type: 'io_digital_read' },
+      { kind: 'block', type: 'io_pulse_in' },
       { kind: 'block', type: 'io_analog_read' },
       { kind: 'block', type: 'io_analog_write', inputs: { VALUE: number(128) } },
     ],

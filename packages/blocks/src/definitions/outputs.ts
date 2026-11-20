@@ -98,6 +98,19 @@ export const outputsModule: BlockModule = {
       tooltip: '%{BKY_IDEBLOCK_BUZZER_TONE_TOOLTIP}',
     },
     {
+      type: 'buzzer_tone_start',
+      message0: '%{BKY_IDEBLOCK_BUZZER_TONE_START}',
+      args0: [
+        { type: 'field_pin', name: 'PIN', pinKind: 'output' },
+        { type: 'input_value', name: 'FREQUENCY', check: 'Number' },
+      ],
+      inputsInline: true,
+      previousStatement: null,
+      nextStatement: null,
+      colour: COLOURS.outputs,
+      tooltip: '%{BKY_IDEBLOCK_BUZZER_TONE_START_TOOLTIP}',
+    },
+    {
       type: 'buzzer_stop',
       message0: '%{BKY_IDEBLOCK_BUZZER_STOP}',
       args0: [{ type: 'field_pin', name: 'PIN', pinKind: 'output' }],
@@ -155,6 +168,11 @@ export const outputsModule: BlockModule = {
       const duration = generator.valueOrDefault(block, 'DURATION', Order.NONE, '0');
       // tone() returns immediately; waiting keeps consecutive notes audible.
       return `tone(${pin}, ${frequency}, ${duration});\ndelay(${duration});\n`;
+    },
+    buzzer_tone_start: (block, generator) => {
+      const pin = block.getFieldValue('PIN') as string;
+      const frequency = generator.valueOrDefault(block, 'FREQUENCY', Order.COMMA, '440');
+      return `tone(${pin}, ${frequency});\n`;
     },
     buzzer_stop: (block) => `noTone(${block.getFieldValue('PIN') as string});\n`,
     servo_write: (block, generator) => {

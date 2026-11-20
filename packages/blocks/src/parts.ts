@@ -20,6 +20,7 @@ const PART_BLOCKS: Record<string, (fields: FieldMap, board: BoardDefinition) => 
   light_sensor_read: (f) => part('photoresistor', { signal: f['PIN'] }),
   buzzer_tone: (f) => part('buzzer', { signal: f['PIN'] }),
   buzzer_stop: (f) => part('buzzer', { signal: f['PIN'] }),
+  buzzer_tone_start: (f) => part('buzzer', { signal: f['PIN'] }),
   servo_write: (f) => part('servo', { signal: f['PIN'] }),
   switch_on: (f) => part('slide-switch', { signal: f['PIN'] }),
   motion_detected: (f) => part('pir-sensor', { signal: f['PIN'] }),

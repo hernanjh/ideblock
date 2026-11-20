@@ -109,5 +109,13 @@
   "CODE_EXPRESSION": "code %1",
   "CODE_GLOBAL": "program code %1",
   "CODE_TOOLTIP": "C++ code that has no block. It is copied into the program as is.",
-  "CODE_GLOBAL_TOOLTIP": "C++ code that goes before setup(): libraries, variables or functions. It is copied as is."
+  "CODE_GLOBAL_TOOLTIP": "C++ code that goes before setup(): libraries, variables or functions. It is copied as is.",
+  "DELAY_US": "wait %1 microseconds",
+  "DELAY_US_TOOLTIP": "A very short pause: 1000 microseconds are one millisecond. Useful for sensors that need quick pulses.",
+  "DIGITAL_WRITE_VALUE": "set digital pin %1 to the value %2",
+  "DIGITAL_WRITE_VALUE_TOOLTIP": "Turns the pin on when the value is true (or not zero) and off when it is false. Useful with a variable.",
+  "PULSE_IN": "length of a %1 pulse on pin %2 (µs)",
+  "PULSE_IN_TOOLTIP": "Waits for a pulse on the pin and measures how long it lasts, in microseconds. Gives 0 if none arrives within a second.",
+  "BUZZER_TONE_START": "start sounding on pin %1 at %2 Hz",
+  "BUZZER_TONE_START_TOOLTIP": "The buzzer keeps sounding while the program goes on, until you use \"stop the sound\"."
 }

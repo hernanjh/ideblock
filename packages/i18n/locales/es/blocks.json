@@ -109,5 +109,13 @@
   "CODE_EXPRESSION": "código %1",
   "CODE_GLOBAL": "código del programa %1",
   "CODE_TOOLTIP": "Código C++ que no tiene un bloque. Se copia tal cual al programa.",
-  "CODE_GLOBAL_TOOLTIP": "Código C++ que va antes de setup(): librerías, variables o funciones. Se copia tal cual."
+  "CODE_GLOBAL_TOOLTIP": "Código C++ que va antes de setup(): librerías, variables o funciones. Se copia tal cual.",
+  "DELAY_US": "esperar %1 microsegundos",
+  "DELAY_US_TOOLTIP": "Una pausa muy corta: 1000 microsegundos son un milisegundo. Sirve para sensores que necesitan pulsos rápidos.",
+  "DIGITAL_WRITE_VALUE": "poner la salida digital del pin %1 en el valor %2",
+  "DIGITAL_WRITE_VALUE_TOOLTIP": "Enciende el pin si el valor es verdadero (o distinto de cero) y lo apaga si es falso. Sirve para usar una variable.",
+  "PULSE_IN": "duración de un pulso %1 en el pin %2 (µs)",
+  "PULSE_IN_TOOLTIP": "Espera un pulso en el pin y mide cuánto dura, en microsegundos. Da 0 si no llega ninguno en un segundo.",
+  "BUZZER_TONE_START": "empezar a sonar en el pin %1 a %2 Hz",
+  "BUZZER_TONE_START_TOOLTIP": "El buzzer suena sin parar mientras el programa sigue, hasta que uses \"silenciar el pin\"."
 }

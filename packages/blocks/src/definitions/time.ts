@@ -26,6 +26,16 @@ export const timeModule: BlockModule = {
       tooltip: '%{BKY_IDEBLOCK_DELAY_SECONDS_TOOLTIP}',
     },
     {
+      type: 'time_delay_us',
+      message0: '%{BKY_IDEBLOCK_DELAY_US}',
+      args0: [{ type: 'input_value', name: 'US', check: 'Number' }],
+      inputsInline: true,
+      previousStatement: null,
+      nextStatement: null,
+      colour: COLOURS.time,
+      tooltip: '%{BKY_IDEBLOCK_DELAY_US_TOOLTIP}',
+    },
+    {
       type: 'time_millis',
       message0: '%{BKY_IDEBLOCK_MILLIS}',
       output: 'Number',
@@ -45,6 +55,8 @@ export const timeModule: BlockModule = {
         : `${seconds} * 1000`;
       return `delay(${ms});\n`;
     },
+    time_delay_us: (block, generator) =>
+      `delayMicroseconds(${generator.valueOrDefault(block, 'US', Order.NONE, '0')});\n`,
     time_millis: () => ['millis()', Order.POSTFIX],
   },
   valueTypes: {
