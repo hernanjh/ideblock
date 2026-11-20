@@ -26,11 +26,13 @@ teenagers and adults who want to move on to real code.
   into a breadboard, lay the wires and add resistors. A circuit check explains
   missing wires, short circuits and LEDs without a resistor, which burn out in
   the simulation like real ones.
-- **Program and circuit together.** A notice appears when the blocks use a part
-  the circuit does not have, with a button to add it.
+- **Program and circuit together.** A notice appears when the blocks or the code
+  use a part the circuit does not have, with a button to add it.
 - **Real boards.** Verify, upload and use the serial monitor and graph with
   Arduino Uno, Nano, Mega and ESP32 compatible boards. Board tools are installed
-  the first time they are needed.
+  the first time they are needed, or ahead of a class from **File → Boards and
+  libraries**, which also copies them to a folder for classroom computers
+  without internet.
 - **Plain-language help.** Common compiler and upload errors are explained in
   simple English or Spanish, with a link to the line.
 - **Projects.** Projects are saved automatically, open in the Arduino IDE, and

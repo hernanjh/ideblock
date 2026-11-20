@@ -27,11 +27,13 @@ pasos y acompaña a adolescentes y adultos que quieren pasar a programar en cód
   piezas en una protoboard, tendé los cables y agregá resistencias. Una revisión
   del circuito explica los cables que faltan, los cortocircuitos y los LED sin
   resistencia, que se queman en la simulación como los de verdad.
-- **Programa y circuito juntos.** Aparece un aviso cuando los bloques usan una
-  pieza que el circuito no tiene, con un botón para agregarla.
+- **Programa y circuito juntos.** Aparece un aviso cuando los bloques o el código
+  usan una pieza que el circuito no tiene, con un botón para agregarla.
 - **Placas reales.** Verificá, subí el programa y usá el monitor serie y el
   gráfico con placas compatibles con Arduino Uno, Nano, Mega y ESP32. Las
-  herramientas de cada placa se instalan la primera vez que hacen falta.
+  herramientas de cada placa se instalan la primera vez que hacen falta, o antes
+  de una clase desde **Archivo → Placas y librerías**, que también las copia a
+  una carpeta para las computadoras del aula sin internet.
 - **Ayuda en lenguaje simple.** Los errores de compilación y de subida más comunes
   se explican en un español o inglés simple, con un enlace a la línea.
 - **Proyectos.** Los proyectos se guardan solos, se abren en el Arduino IDE y se
