@@ -1,0 +1,23 @@
+{
+  "name": "@ideblock/code-to-blocks",
+  "version": "0.0.0",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./grammar/tree-sitter-cpp.wasm": "./grammar/tree-sitter-cpp.wasm"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ideblock/boards": "0.0.0",
+    "web-tree-sitter": "0.27.2"
+  },
+  "devDependencies": {
+    "@ideblock/blocks": "0.0.0",
+    "@ideblock/project": "0.0.0",
+    "blockly": "13.4.0"
+  }
+}
